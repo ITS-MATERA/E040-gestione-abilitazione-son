@@ -1,0 +1,91 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core" 
+    xmlns:l="sap.ui.layout"
+>
+	<Popover
+		title="{i18n>titleDialogPayMode}"
+		class="sapUiContentPadding"
+        contentWidth="80%"
+        placement="Auto"
+        contentHeight="15%"
+		initialFocus="close">
+        <VBox width="100%">
+            <items>
+                <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                    <VBox>
+                        <items>
+                            <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                <items>
+                                    <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                        <Label  design="Bold" width="100%" text="{i18n>filterNameLifnr}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                            <layoutData><l:GridData span="XL10 L10 M10 S10" /></layoutData>
+                                        </Label>
+                                        <Input width="100%" editable="false">
+                                            <layoutData><l:GridData span="XL10 L10 M10 S10"/></layoutData>
+                                        </Input>
+                                    </l:Grid>
+                                </items>     
+                            </FlexBox>                                
+                        </items>
+                        <layoutData><l:GridData span="XL4 L4 M12 S12" linebreak="true"/></layoutData>
+                    </VBox>     
+                        <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                            <Label required="true" design="Bold" width="100%" text="{i18n>wizardStep2SubTitle2}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData><l:GridData span="XL10 L10 M10 S10" /></layoutData>
+                                            </Label>
+                                            <ComboBox
+                                                id=""
+                                                width="100%"
+                                                selectedKey=""
+                                                change=""
+                                                items=""
+                                                >
+                                                <core:Item  key="" text="" />
+                                                <layoutData>
+                                                    <l:GridData span="XL10 L10 M10 S10"  />
+                                                </layoutData>
+                                            </ComboBox>		
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL4 L4 M12 S12"/></layoutData>
+                        </VBox>      
+                    <VBox>
+                        <items>
+                            <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                <items>
+                                    <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                        <Label  design="Bold" width="100%" text="{i18n>fieldIbanLifnr}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                            <layoutData><l:GridData span="XL10 L10 M10 S10" /></layoutData>
+                                        </Label>
+                                        <Input width="100%" >
+                                            <layoutData><l:GridData span="XL10 L10 M10 S10"/></layoutData>
+                                        </Input>
+                                    </l:Grid>
+                                </items>     
+                            </FlexBox>                                
+                        </items>
+                        <layoutData><l:GridData span="XL4 L4 M12 S12"/></layoutData>
+                    </VBox>   
+                     
+                </l:Grid>
+            </items>
+            <layoutData><l:GridData  span="XL3 L4 M6 S12"/></layoutData>
+        </VBox>	      
+		<footer>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Button
+					id="close"
+					text="{i18n>btnClose}"
+					press="handleClosePress" />
+			</Toolbar>
+		</footer>
+	</Popover>
+</core:FragmentDefinition>

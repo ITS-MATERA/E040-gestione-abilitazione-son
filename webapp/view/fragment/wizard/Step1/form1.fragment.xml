@@ -1,0 +1,69 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core"		
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+
+  <Panel expandable="true"   width="auto" class="margin0 padding0 expanded">
+		<content >
+			<f:SimpleForm id="idStep1Form1"
+					editable="true"
+					class="formHiddenTitleL"
+					layout="ResponsiveGridLayout"
+					labelSpanXL="4"
+					labelSpanL="4"
+					labelSpanM="4"
+					adjustLabelSpan="false"
+					emptySpanXL="0"
+					emptySpanL="2"
+					columnsXL="2"
+					columnsL="2"
+					singleContainerFullSize="false">
+				
+					<f:content>
+						
+						<Label design="Bold" text="{i18n>wizardFieldGjahr}" class="sapUiSmallMarginBottom"/>
+				
+						<Input editable="{wizardModel>/isInChange}" id="idWizardGjahr"  app:property="Gjahr" value="{wizardModel>/Gjahr}" liveChange="onLiveChange" submit="onSubmitGjahr">
+							<layoutData>
+								<l:GridData span="XL3 L5 M6 S12"  />
+							</layoutData>
+						</Input>
+						<Label design="Bold" text="{i18n>wizardFieldZufficioCont}" class="sapUiSmallMarginBottom"/>
+						<Input editable="{wizardModel>/isInChange}" id="idWizardZufficioCont"  app:property="ZufficioCont" value="{wizardModel>/ZufficioCont}" submit="onSubmitZufficioCont"  liveChange="onLiveChange">
+							<layoutData>
+								<l:GridData span="XL3 L5 M6 S12"  />
+							</layoutData>
+						</Input>
+
+						<Label design="Bold" text="{i18n>wizardFieldZdesctipodisp3}" class="sapUiSmallMarginBottom"/>		
+						<ComboBox
+							id="idWizardZdesctipodisp3"
+							width="100%"
+							editable="{wizardModel>/isInChange}"
+							change="onLiveChangeZtipodisp3List"
+							items="{wizardModel>/Ztipodisp3List}"
+							selectedKey="{defaultModel>/Ztipodisp3}"
+							>
+							<core:Item  key="{wizardModel>Ztipodisp3}" text="{wizardModel>Zdesctipodisp3}" />
+							<layoutData>
+								<l:GridData span="XL8 L8 M6 S12"  />
+							</layoutData>
+						</ComboBox>		              
+						<core:Title text="" />
+						<Label design="Bold" text="{i18n>wizardFieldZvimDescrufficio}" class="sapUiSmallMarginBottom"/>
+						<Input value="{wizardModel>/ZvimDescrufficio}" editable="false">
+							<layoutData>
+								<l:GridData span="XL8 L8 M6 S12"  />
+							</layoutData>
+						</Input>
+					</f:content>
+				</f:SimpleForm>
+		</content>
+	</Panel>
+
+
+	
+</core:FragmentDefinition>

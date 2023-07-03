@@ -1,0 +1,355 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+	<VBox class="bgWhite">
+		<items>
+			<l:Grid id="_idVBoxGridToolBar" defaultSpan="XL12 L12 M12 S12" vSpacing="0" class="sapUiSmallMargin">		
+			<!-- Gjahr -->
+				<VBox >
+					<items>
+						<Label  design="Bold" text="{i18n>filterNameGjahr}" required = "true" tooltip = "required"></Label>
+						<ComboBox
+							id="fGjahr"
+							width="100%"
+							app:searchPropertyModel="Gjahr"
+							>
+							
+						</ComboBox>
+					</items>
+					<layoutData><l:GridData span="XL2 L4 M4 S12"/></layoutData>
+				</VBox> 
+			<!-- Zzamministr -->				
+				<VBox >
+					<items>
+						<Label  design="Bold" text="{i18n>filterNameZzamministr}"></Label>
+							<FlexBox  alignItems="Start">								
+								<Input
+									id="fZzamministr"
+									app:searchPropertyModel="Zzamministr"						
+									>	
+								    <layoutData>
+										<FlexItemData  growFactor="4" />
+									</layoutData>
+								</Input>
+							</FlexBox>
+					</items>
+					<layoutData><l:GridData  span="XL2 L4 M4 S12" /></layoutData>
+				</VBox>
+			<!-- Fipos -->					
+				<VBox >
+					<items>
+						<Label  design="Bold" text="{i18n>filterNameCapitolo}"></Label>
+							<FlexBox  alignItems="Start">								
+								<Input
+									id="fCapitolo"
+									app:searchPropertyModel="Capitolo"						
+									>	
+								    <layoutData>
+										<FlexItemData  growFactor="4" />
+									</layoutData>
+								</Input>
+							</FlexBox>
+					</items>
+					<layoutData><l:GridData  span="XL2 L4 M4 S12" /></layoutData>
+				</VBox>
+			<!-- ZufficioCont -->				
+				<VBox >
+					<items>
+						<Label  design="Bold" text="{i18n>filterNameZufficioCont}"></Label>
+							<FlexBox  alignItems="Start">								
+								<Input
+									id="fZufficioCont"
+									app:searchPropertyModel="ZufficioCont"							
+									>	
+								    <layoutData>
+										<FlexItemData  growFactor="4" />
+									</layoutData>
+								</Input>
+							</FlexBox>
+					</items>
+					<layoutData><l:GridData  span="XL2 L4 M4 S12" /></layoutData>
+				</VBox>
+			<!-- ZnumsopFrom -->						
+				<VBox >
+					<items>
+						<Label  design="Bold" text="{i18n>filterNameZnumsopFrom}"></Label>
+							<FlexBox  alignItems="Start">								
+								<Input
+									id="fZnumsopFrom"
+									app:searchPropertyModel="Znumsop"						
+									>	
+								    <layoutData>
+										<FlexItemData  growFactor="4" />
+									</layoutData>
+								</Input>
+							</FlexBox>
+					</items>
+					<layoutData><l:GridData  span="XL2 L4 M4 S12" /></layoutData>
+				</VBox>	
+			<!-- ZnumsopTo -->						
+				<VBox >
+					<items>
+						<Label  design="Bold" text="{i18n>filterNameZnumsopTo}"></Label>
+							<FlexBox  alignItems="Start">								
+								<Input
+									id="fZnumsopTo"
+									app:searchPropertyModel="Znumsop"							
+									>	
+								    <layoutData>
+										<FlexItemData  growFactor="4" />
+									</layoutData>
+								</Input>
+							</FlexBox>
+					</items>
+					<layoutData><l:GridData  span="XL2 L4 M4 S12" /></layoutData>
+				</VBox>
+			<!-- ZstatoSop -->				
+				<VBox >
+					<items>
+						<Label  design="Bold" text="{i18n>filterNameZstatoSop}" required = "true" tooltip = "required" labelFor="fExercise"></Label>
+						<ComboBox
+							id="fZstatoSop"
+							width="100%"
+							selectedKey=""
+
+							change="onChangeFilterZstatoSop"
+							value= "{i18n>defaultZstatoSop}"
+							app:searchPropertyModel="ZstatoSop"
+							items="{
+								path: '/ZstatoSopMcSet',
+								sorter: { path: 'ZstatoSop' }
+							}"
+							>
+							<core:Item  key="{ZstatoSop}" text="{Descrizione}" />
+						</ComboBox>
+					</items>
+					<layoutData><l:GridData span="XL2 L4 M4 S12"/></layoutData>
+				</VBox> 
+			<!-- Zdesctipodisp3 -->					
+				<VBox >
+					<items>
+						<Label  design="Bold" text="{i18n>filterNameZdesctipodisp3}" required = "true" tooltip = "required" labelFor="fExercise"></Label>
+						<ComboBox
+							id="fZdesctipodisp3"
+							width="100%"
+							selectedKey=""
+							value="{i18n>defaultZtipodisp3}"
+							app:searchPropertyModel="Ztipodisp3"
+							items="{
+								path: '/TipoDispSet',
+								sorter: { path: 'Ztipodisp3' }
+							}"
+							>
+							<core:Item  key="{Ztipodisp3}" text="{Zdesctipodisp3}" />
+						</ComboBox>
+					</items>
+					<layoutData><l:GridData span="XL2 L4 M4 S12"/></layoutData>
+				</VBox> 	
+			<!-- Zricann -->						
+				<VBox >
+					<items>
+						<Label  design="Bold" text="{i18n>filterNameZricann}" required = "true" tooltip = "required" labelFor="fExercise"></Label>
+						<ComboBox
+							id="fZricann"
+							editable="{listSONModel>/filterRequestEnable}"
+							selectedKey="{i18n>ItemNO}"
+							app:searchPropertyModel="Zricann"	
+							>
+							<core:Item  key="{i18n>ItemYes}" text="{i18n>ItemYes}" />
+							<core:Item  key="{i18n>ItemNO}" text="{i18n>ItemNO}" />
+						</ComboBox>
+					</items>
+					<layoutData><l:GridData span="XL2 L4 M4 S12"/></layoutData>
+				</VBox> 	
+			<!-- ZdatasopFrom-->					
+				<VBox >
+					<items>
+						<Label  design="Bold" text="{i18n>filterNameZdatasopFrom}"></Label>
+							<FlexBox alignItems="Start">								
+								<DatePicker
+									id="fZdatasopFrom"
+									app:searchPropertyModel="Zdatasop"
+									change="handleChangeDatePicker"										
+									valueFormat="yyyy-MM-dd"
+									displayFormat="dd.MM.yyyy"
+							
+									>	
+								    <layoutData>
+										<FlexItemData  growFactor="4" />
+									</layoutData>
+								</DatePicker>
+							</FlexBox>
+					</items>
+					<layoutData><l:GridData  span="XL2 L4 M4 S12" /></layoutData>
+				</VBox>
+			<!-- ZdatasopTo-->				
+				<VBox >
+					<items>
+						<Label  design="Bold" text="{i18n>filterNameZdatasopTo}"></Label>
+							<FlexBox alignItems="Start">								
+								<DatePicker
+									id="fZdatasopTo"
+									app:searchPropertyModel="Zdatasop"								
+									change="handleChangeDatePicker"										
+									valueFormat="yyyy-MM-dd"
+									displayFormat="dd.MM.yyyy"
+								
+									>	
+								    <layoutData>
+										<FlexItemData  growFactor="4" />
+									</layoutData>
+								</DatePicker>
+							</FlexBox>
+					</items> 
+					<layoutData><l:GridData  span="XL2 L4 M4 S12" indent="XL2 L4 M4 S0" moveBackwards="XL2 L4 M4 S0"/></layoutData>
+				</VBox>
+			<!-- Zdataprot-->					
+				<VBox >
+					<items>
+						<Label  design="Bold" text="{i18n>filterNameZdataprot}"></Label>
+							<FlexBox alignItems="Start">								
+								<DatePicker
+									id="fZdataprot"
+									app:searchPropertyModel="Zdataprot"		
+									change="handleChangeDatePicker"								
+									valueFormat="yyyy-MM-dd"
+									displayFormat="dd.MM.yyyy"
+								
+									>	
+								    <layoutData>
+										<FlexItemData  growFactor="4" />
+									</layoutData>
+								</DatePicker>
+							</FlexBox>
+					</items>
+					<layoutData><l:GridData  span="XL2 L4 M4 S12"  /></layoutData>
+				</VBox>
+			<!-- Znumprot-->				
+				<VBox >
+					<items>
+						<Label  design="Bold" text="{i18n>filterNameZnumprot}"></Label>
+							<FlexBox  alignItems="Start">								
+								<Input
+									id="fZnumprot"
+									app:searchPropertyModel="Znumprot"							
+									>	
+								    <layoutData>
+										<FlexItemData  growFactor="4" />
+									</layoutData>
+								</Input>
+							</FlexBox>
+					</items>
+					<layoutData><l:GridData  span="XL2 L4 M4 S12" indent="XL8 L4 M4 S0" moveBackwards="XL8 L4 M4 S0"/></layoutData>
+				</VBox>	
+			<!-- Lifnr-->					
+				<VBox >
+					<items>
+						<Label  design="Bold" text="{i18n>filterNameLifnr}"></Label>
+							<FlexBox  alignItems="Start">								
+								<Input
+									id="fBeneficiario"
+									app:searchPropertyModel="Lifnr"								
+									>	
+								    <layoutData>
+										<FlexItemData  growFactor="4" />
+									</layoutData>
+								</Input>
+							</FlexBox>
+					</items>
+					<layoutData><l:GridData  span="XL2 L4 M4 S12" indent="XL10 L8 M8 S0" moveBackwards="XL10 L8 M8 S0"/></layoutData>
+				</VBox>	
+			<!-- FiposFrom-->					
+				<VBox >
+					<items>
+						<Label  design="Bold" text="{i18n>filterNameFiposFrom}"></Label>
+							<FlexBox  alignItems="Start">								
+								<Input
+									id="fFiposFrom"
+									app:searchPropertyModel="Fipos"								
+									>	
+								    <layoutData>
+										<FlexItemData  growFactor="4" />
+									</layoutData>
+								</Input>
+							</FlexBox>
+					</items>
+					<layoutData><l:GridData  span="XL2 L4 M4 S12"/></layoutData>
+				</VBox>	
+			<!-- FiposTo-->				
+				<VBox >
+					<items>
+						<Label  design="Bold" text="{i18n>filterNameFiposTo}"></Label>
+							<FlexBox  alignItems="Start">								
+								<Input
+									id="fFiposTo"
+									app:searchPropertyModel="Fipos"								
+									>	
+								    <layoutData>
+										<FlexItemData  growFactor="4" />
+									</layoutData>
+								</Input>
+							</FlexBox>
+					</items>
+					<layoutData><l:GridData  span="XL2 L4 M4 S12"/></layoutData>
+				</VBox>	
+			<!-- Fistl-->					
+				<VBox >
+					<items>
+						<Label  design="Bold" text="{i18n>filterNameFistl}"></Label>
+							<FlexBox  alignItems="Start">								
+								<Input
+									id="fFistl"
+									app:searchPropertyModel="Fistl"									
+									>	
+								    <layoutData>
+										<FlexItemData  growFactor="4" />
+									</layoutData>
+								</Input>
+							</FlexBox>
+					</items>
+					<layoutData><l:GridData  span="XL3 L4 M6 S12"/></layoutData>
+				</VBox>													
+				<Button 
+					id="btnStart"
+					text="{i18n>btnStart}"
+					tooltip="{i18n>btnStart}"
+					class="button"
+					width="100%"
+					type="Emphasized"
+					press="onStart">
+					<layoutData>
+						<l:GridData
+							linebreak="true"
+							span="XL1 L1 M2 S4"
+							indent="XL11 L11 M10"
+						/>
+					</layoutData>
+				</Button>
+
+			</l:Grid>
+			<FlexBox id="_idFlexBoxToggle" alignItems="Center"	justifyContent="Center">								
+				<Button 
+					id="btnToggle"
+					class="button"
+					icon="sap-icon://slim-arrow-up"
+					tooltip="{i18n>tooltipArrowHide}"
+					width="100%"
+					type="Emphasized"
+					press="onToggle">
+				</Button>
+				<Button 
+					class="sapUiTinyMarginBegin"
+					icon="sap-icon://pushpin-off"
+					tooltip="{i18n>tooltipArrowHide}"
+					width="100%"
+					type="Emphasized"
+					press="onBlockToggle">
+				</Button>
+			</FlexBox>
+			
+		</items>
+	</VBox>
+</core:FragmentDefinition>

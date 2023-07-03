@@ -1,0 +1,302 @@
+{
+  "_version": "1.17.0",
+  "sap.app": {
+    "id": "gestioneabilitazioneeson",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:worklist",
+      "version": "1.9.1",
+      "toolsId": "7a8b2be2-36f3-4c1e-9cb9-4b4c5c61d234"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/sap/opu/odata/sap/ZS4_SOSPAUTPERMANENTE_SRV/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/metadata.xml",
+          "odataVersion": "2.0"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "fullWidth": true,
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": false,
+    "dependencies": {
+      "minUI5Version": "1.113.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.f": {},
+        "sap.suite.ui.generic.template": {},
+        "sap.ui.comp": {},
+        "sap.ui.generic.app": {},
+        "sap.ui.table": {},
+        "sap.ushell": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "gestioneabilitazioneeson.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "defaultBindingMode": "TwoWay",
+          "defaultCountMode": "Inline",
+          "refreshAfterChange": false
+        }
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css",
+          "id": "stylecss"
+        }
+      ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "viewPath": "gestioneabilitazioneeson.view",
+        "controlId": "app",
+        "controlAggregation": "pages",
+        "bypassed": {
+          "target": ["notFound"]
+        },
+        "async": true
+      },
+      "routes": [
+        {
+          "pattern": "",
+          "name": "startPage",
+          "target": ["startPage"]
+        },
+        {
+          "pattern": "ListAuth",
+          "name": "listAuth",
+          "target": ["listAuth"]
+        },
+        {
+          "pattern": "ListSON",
+          "name": "listSON",
+          "target": ["listSON"]
+        },
+        {
+          "pattern": "AddAuth",
+          "name": "addAuth",
+          "target": ["addAuth"]
+        },
+        {
+          "pattern": "ChangeAuth",
+          "name": "changeAuth",
+          "target": ["changeAuth"]
+        },
+        {
+          "pattern": "RegisterSON",
+          "name": "registerSON",
+          "target": ["registerSON"]
+        },
+        {
+          "pattern": "DetailSON/{action}",
+          "name": "detailSON",
+          "target": ["detailSON"]
+        },
+        {
+          "pattern": "ResponseSet/{objectId}",
+          "name": "object",
+          "target": ["object"]
+        },
+        
+
+        {
+          "pattern": "CancelSON",
+          "name": "cancelSON",
+          "target": ["cancelSON"]
+        },
+        {
+          "pattern": "SendSignSON",
+          "name": "sendSignSON",
+          "target": ["sendSignSON"]
+        },
+        {
+          "pattern": "DeleteSendSignSON",
+          "name": "deleteSendSignSON",
+          "target": ["deleteSendSignSON"]
+        },
+        {
+          "pattern": "DeleteSignSON",
+          "name": "deleteSignSON",
+          "target": ["deleteSignSON"]
+        },
+        {
+          "pattern": "SignSON",
+          "name": "signSON",
+          "target": ["signSON"]
+        },
+        {
+          "pattern": "RegisterCancelSON",
+          "name": "registerCancelSON",
+          "target": ["registerCancelSON"]
+        },
+        {
+          "pattern": "DeleteCancelSON",
+          "name": "deleteCancelSON",
+          "target": ["deleteCancelSON"]
+        }
+
+
+        
+
+        
+
+
+        
+
+      ],
+      "targets": {
+        "startPage": {
+          "viewName": "startPage",
+          "viewId": "startPage",
+          "viewLevel": 1,
+          "title": "{i18n>worklistViewTitle}"
+        },
+        "listAuth": {
+          "viewName": "ListAuth",
+          "viewId": "listAuth",
+          "viewLevel": 2,
+          "title": "{i18n>worklistViewTitle}"
+        },
+        "listSON": {
+          "viewName": "ListSON",
+          "viewId": "listSON",
+          "viewLevel": 2,
+          "title": "{i18n>worklistViewTitle}"
+        },
+        "addAuth": {
+          "viewName": "AddAuth",
+          "viewId": "addAuth",
+          "viewLevel": 3,
+          "title": "{i18n>worklistViewTitle}"
+        },
+        "changeAuth": {
+          "viewName": "ChangeAuth",
+          "viewId": "changeAuth",
+          "viewLevel": 3,
+          "title": "{i18n>worklistViewTitle}"
+        },
+        "detailSON": {
+          "viewName": "DetailSON",
+          "viewId": "detailSON",
+          "viewLevel": 2,
+          "title": "{i18n>worklistViewTitle}"
+        },
+        "registerSON": {
+          "viewName": "RegisterSON",
+          "viewId": "registerSON",
+          "viewLevel": 3,
+          "title": "{i18n>worklistViewTitle}"
+        },
+        "object": {
+          "viewName": "Object",
+          "viewId": "object",
+          "viewLevel": 2,
+          "title": "{i18n>objectViewTitle}"
+        },
+        "objectNotFound": {
+          "viewName": "ObjectNotFound",
+          "viewId": "objectNotFound"
+        },
+        "notFound": {
+          "viewName": "NotFound",
+          "viewId": "notFound"
+        },
+
+
+        "cancelSON": {
+          "viewName": "CancelSON",
+          "viewId": "cancelSON",
+          "viewLevel": 2,
+          "title": "blablabla"
+        },
+        "sendSignSON": {
+          "viewName": "SendSignSON",
+          "viewId": "sendSignSON",
+          "viewLevel": 2,
+          "title": "blablabla"
+        },
+        "deleteSendSignSON": {
+          "viewName": "DeleteSendSignSON",
+          "viewId": "deleteSendSignSON",
+          "viewLevel": 2,
+          "title": "blablabla"
+        },
+        "deleteSignSON": {
+          "viewName": "DeleteSignSON",
+          "viewId": "deleteSignSON",
+          "viewLevel": 2,
+          "title": "blablabla"
+        },
+        "signSON": {
+          "viewName": "SignSON",
+          "viewId": "signSON",
+          "viewLevel": 2,
+          "title": "blablabla"
+        },
+        "registerCancelSON": {
+          "viewName": "RegisterCancelSON",
+          "viewId": "registerCancelSON",
+          "viewLevel": 2,
+          "title": "blablabla"
+        },
+        "deleteCancelSON": {
+          "viewName": "DeleteCancelSON",
+          "viewId": "deleteCancelSON",
+          "viewLevel": 2,
+          "title": "blablabla"
+        }
+
+      }
+    },
+    "rootView": {
+      "viewName": "gestioneabilitazioneeson.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "app"
+    }
+  }
+}

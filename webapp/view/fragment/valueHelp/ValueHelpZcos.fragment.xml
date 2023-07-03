@@ -1,0 +1,38 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+	<TableSelectDialog
+		id="selectDialogZcos"
+        noDataText="{i18n>noDataZcos}"
+		title="{i18n>valueNameZcos}"
+		search="handleHeaderSearch"
+		confirm="handleHeaderClose"
+		cancel="handleHeaderClose"
+		app:searchPropertyModel="Zcos"
+		app:dialogName="selectDialogZcos"
+		items="{
+			path: 'CodiceGestionale>/'
+		}"
+		>
+		<ColumnListItem >
+			<cells>
+		        <ObjectIdentifier  title="{CodiceGestionale>Zcos}"/>
+				<Text text="{CodiceGestionale>ZcosDesc}"/>	
+			</cells>
+		</ColumnListItem>
+		<columns>
+			<Column >
+				<header>
+					<Text  text="{i18n>valueNameZcos}" />
+				</header>
+			</Column>
+			<Column >
+				<header>
+					<Text  text="Descrizione" />
+				</header>
+			</Column>
+		</columns>
+	</TableSelectDialog>
+</core:FragmentDefinition>

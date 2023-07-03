@@ -1,0 +1,26 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+><FlexBox  class="bgGray" justifyContent="SpaceBetween">
+	<FlexBox  class="bgGray">
+		<CheckBox id="idCheckSelectAll" class="sapUiTinyMargin textBlack" select="onCheck" text="{i18n>checkBoxText}" />
+    </FlexBox>
+	<FlexBox  class="bgGray" >
+		<Button class="sapUiTinyMargin" icon="sap-icon://edit"  text="{i18n>btnChange}" type="Emphasized"  press="onChange">
+                <layoutData>
+                    <OverflowToolbarLayoutData priority="NeverOverflow" />
+                </layoutData>
+        </Button>
+        <Button class="sapUiTinyMargin" text="{i18n>btnValidate}" type="Emphasized" press="onValidate">
+            <layoutData>
+                <OverflowToolbarLayoutData priority="NeverOverflow" />
+            </layoutData>
+        </Button>
+        <Button class="sapUiTinyMargin" icon="sap-icon://excel-attachment" text="{i18n>btnExport}" type="Emphasized" press="onExport">
+            <layoutData>
+                <OverflowToolbarLayoutData priority="NeverOverflow" />
+            </layoutData>
+        </Button>
+    </FlexBox>
+     </FlexBox>
+</c:FragmentDefinition>

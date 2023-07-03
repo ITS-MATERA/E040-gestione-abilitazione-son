@@ -1,0 +1,166 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core" 
+    xmlns:l="sap.ui.layout"
+>
+	<Popover
+		title="{i18n>columnNameFipos}"
+		class="sapUiContentPadding"
+        contentWidth="80%"
+        placement="Auto"
+        contentHeight="80%"
+		initialFocus="close">
+        <VBox width="100%">
+            <items>
+                <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                    <VBox>
+                        <items>
+                            <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                <items>
+                                    <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                        <Label  design="Bold"  text="Titolo medio di prova" >
+                                            <layoutData><l:GridData span="XL8 L12 M12 S12" /></layoutData>
+                                        </Label>
+                                        <Text text="Hello">
+                                            <layoutData><l:GridData span="XL4 L12 M12 S12"/></layoutData>
+                                        </Text>
+                                    </l:Grid>
+                                </items>     
+                            </FlexBox>                                
+                        </items>
+                        <layoutData><l:GridData span="XL4 L6 M12 S12"/></layoutData>
+                    </VBox>      
+                    <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                            <Label  design="Bold"  text="Titolo medio di prova">
+                                                <layoutData><l:GridData span="XL3 L12 M12 S12" /></layoutData>
+                                            </Label>
+                                            <Text text="Testo mooooooooooooooooooooooooooooooooolto lungo di prova">
+                                                <layoutData><l:GridData span="XL9 L12 M12 S12"/></layoutData>
+                                            </Text>
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL8 L6 M12 S12" /></layoutData>
+                        </VBox>    
+                    <VBox>
+                        <items>
+                            <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                <items>
+                                    <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                        <Label  design="Bold"  text="Titolo medio di prova" >
+                                            <layoutData><l:GridData span="XL8 L12 M12 S12" /></layoutData>
+                                        </Label>
+                                        <Text text="Hello">
+                                            <layoutData><l:GridData span="XL4 L12 M12 S12"/></layoutData>
+                                        </Text>
+                                    </l:Grid>
+                                </items>     
+                            </FlexBox>                                
+                        </items>
+                        <layoutData><l:GridData span="XL4 L6 M12 S12"/></layoutData>
+                    </VBox>      
+                    <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                            <Label  design="Bold"  text="Titolo medio di prova">
+                                                <layoutData><l:GridData span="XL3 L12 M12 S12" /></layoutData>
+                                            </Label>
+                                            <Text text="Testo mooooooooooooooooooooooooooooooooolto lungo di prova">
+                                                <layoutData><l:GridData span="XL9 L12 M12 S12"/></layoutData>
+                                            </Text>
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL8 L6 M12 S12" /></layoutData>
+                        </VBox>   
+                    <VBox>
+                        <items>
+                            <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                <items>
+                                    <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                        <Label  design="Bold"  text="Titolo medio di prova" >
+                                            <layoutData><l:GridData span="XL8 L12 M12 S12" /></layoutData>
+                                        </Label>
+                                        <Text text="Hello">
+                                            <layoutData><l:GridData span="XL4 L12 M12 S12"/></layoutData>
+                                        </Text>
+                                    </l:Grid>
+                                </items>     
+                            </FlexBox>                                
+                        </items>
+                        <layoutData><l:GridData span="XL4 L6 M12 S12"/></layoutData>
+                    </VBox>      
+                    <VBox>
+                        <items>
+                            <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                <items>
+                                    <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                        <Label  design="Bold"  text="Titolo medio di prova">
+                                            <layoutData><l:GridData span="XL3 L12 M12 S12" /></layoutData>
+                                        </Label>
+                                        <Text text="Testo mooooooooooooooooooooooooooooooooolto lungo di prova">
+                                            <layoutData><l:GridData span="XL9 L12 M12 S12"/></layoutData>
+                                        </Text>
+                                    </l:Grid>
+                                </items>     
+                            </FlexBox>                                
+                        </items>
+                        <layoutData><l:GridData span="XL8 L6 M12 S12" /></layoutData>
+                    </VBox>   
+                     <VBox>
+                        <items>
+                            <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                <items>
+                                    <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                        <Label  design="Bold"  text="Titolo medio di prova" >
+                                            <layoutData><l:GridData span="XL8 L12 M12 S12" /></layoutData>
+                                        </Label>
+                                        <Text text="Hello">
+                                            <layoutData><l:GridData span="XL4 L12 M12 S12"/></layoutData>
+                                        </Text>
+                                    </l:Grid>
+                                </items>     
+                            </FlexBox>                                
+                        </items>
+                        <layoutData><l:GridData span="XL4 L6 M12 S12"/></layoutData>
+                    </VBox>      
+                    <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                            <Label  design="Bold"  text="Titolo medio di prova">
+                                                <layoutData><l:GridData span="XL3 L12 M12 S12" /></layoutData>
+                                            </Label>
+                                            <Text text="Testo mooooooooooooooooooooooooooooooooolto lungo di prova">
+                                                <layoutData><l:GridData span="XL9 L12 M12 S12"/></layoutData>
+                                            </Text>
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL8 L6 M12 S12" /></layoutData>
+                        </VBox>                      
+                </l:Grid>
+            </items>
+            <layoutData><l:GridData  span="XL3 L4 M6 S12"/></layoutData>
+        </VBox>	      
+		<footer>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Button
+					id="close"
+					text="{i18n>btnClose}"
+					press="handleClosePress" />
+			</Toolbar>
+		</footer>
+	</Popover>
+</core:FragmentDefinition>

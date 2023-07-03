@@ -1,0 +1,138 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+    xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+
+
+    <Panel expandable="true"  width="auto" class="margin0 padding0 expanded">
+		<content >           
+            <VBox id="idStep4Form1"> 
+                <items>
+                    <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">
+                        <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                            <Label  design="Bold" width="100%" text="{i18n>fieldNameZnumprot}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData><l:GridData span="XL4 L4 M7 S12" /></layoutData>
+                                            </Label>
+                                            <Input   editable="{wizardModel>/isInChange}" id="idWizardZnumprot"  app:property="Znumprot" width="100%" value="{wizardModel>/Znumprot}" liveChange="onLiveChange">
+                                                <layoutData><l:GridData span="XL4 L6 M7 S12"/></layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL6 L7 M8 S12" /></layoutData>
+                        </VBox>                    		
+                           <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                            <Label design="Bold" width="100%" text="{i18n>fieldNameZdataprot}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData><l:GridData span="XL3 L3 M7 S12" /></layoutData>
+                                            </Label>
+                                            <DatePicker							     
+                                                        class="sapUiTinyMarginBottom"	
+                                                        valueFormat="dd.MM.yyyy"
+                                                        displayFormat="dd.MM.yyyy"
+                                                        editable="{wizardModel>/isInChange}"
+                                                        value="{
+                                                                path: 'wizardModel>/Zdataprot',
+                                                                type: 'sap.ui.model.type.Date',
+                                                                formatOptions: {
+                                                                    pattern: 'dd.MM.yyyy'
+                                                                    }
+                                                                }"
+                                                        change="onChangeUpdateDate">	          
+                                                        <layoutData><l:GridData span="XL4 L5 M7 S12"/></layoutData>                
+                                            </DatePicker>
+                                            <!-- <Input id="idWizardZdataprot"  app:property="Zdataprot" width="100%" value="{wizardModel>/Zdataprot}" liveChange="onLiveChange">
+                                                <layoutData><l:GridData span="XL3 L3 M7 S12"/></layoutData>
+                                            </Input> -->
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL5 L5 M8 S12" /></layoutData>
+                        </VBox> 
+                        <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                            <Label  required="true"   design="Bold" width="100%" text="{i18n>fieldNameZlocpag}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData><l:GridData span="XL2 L4 M7 S12" /></layoutData>
+                                            </Label>
+                                            <Input   editable="{wizardModel>/isInChange}" id="idWizardZlocpag"  app:property="Zlocpag" width="100%" value="{wizardModel>/Zlocpag}" liveChange="onLiveChange">
+                                                <layoutData><l:GridData span="XL4 L6 M7 S12"/></layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL11 L7 M8 S12" /></layoutData>
+                        </VBox>  
+                         <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                            <Label  required="true" design="Bold" width="100%" text="{i18n>fieldNameZcausale}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData><l:GridData span="XL2 L4 M7 S12" /></layoutData>
+                                            </Label>
+                                            <Input   editable="{wizardModel>/isInChange}" id="idWizardZcausale"  app:property="Zcausale" width="100%" value="{wizardModel>/Zcausale}" liveChange="onLiveChange">
+                                                <layoutData><l:GridData span="XL9 L6 M7 S12"/></layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL11 L7 M8 S12" /></layoutData>
+                        </VBox>   
+                            <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                            <Label   design="Bold" width="100%" text="{i18n>fieldNameZE2e}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData><l:GridData span="XL2 L4 M7 S12" /></layoutData>
+                                            </Label>
+                                            <Input  editable="{wizardModel>/isInChange}" id="idWizardZE2e"  app:property="ZE2e" width="100%" value="{wizardModel>/ZE2e}" liveChange="onLiveChange">
+                                                <layoutData><l:GridData span="XL9 L6 M7 S12"/></layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL11 L7 M8 S12" /></layoutData>
+                        </VBox> 
+                        <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                            <Label  required="true" design="Bold" width="100%" text="{i18n>fieldNameZzonaint}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData><l:GridData span="XL2 L4 M7 S12" /></layoutData>
+                                            </Label>
+                                            <Input  editable="{wizardModel>/isInChange}" id="idWizardZzonaint"  app:property="Zzonaint" width="100%" value="{wizardModel>/Zzonaint}" liveChange="onLiveChange">
+                                                <layoutData><l:GridData span="XL3 L6 M7 S12"/></layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL11 L7 M8 S12" /></layoutData>
+                        </VBox>                                                                                         
+                    </l:Grid>
+                </items>
+                <layoutData><l:GridData  span="XL3 L4 M6 S12"/></layoutData>
+            </VBox>	
+	    </content>
+	</Panel>
+
+</core:FragmentDefinition>

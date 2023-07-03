@@ -1,0 +1,121 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+	xmlns:l="sap.ui.layout"
+	xmlns:plugins="sap.m.plugins"
+>
+<VBox  width="100%"  class="bgWhite">
+<Title text="{listSONModel>/listSONTableTitle}"  class="sapUiTinyMargin titleSize"></Title></VBox>
+
+  <Table  	id="idListSonTable"
+			mode="MultiSelect"
+			fixedLayout="false"
+			contextualWidth="Auto"
+			growing="true"
+			selectionChange="onSelectedItem"
+			updateFinished="onUpdateFinished"
+				items="{
+				path: 'SonSet>/'
+			}"
+		>
+		<dependents>
+			<plugins:ColumnResizer/>
+		</dependents>
+		<headerToolbar>
+			<OverflowToolbar >
+				<FlexBox >
+					<CheckBox id="idCheckSelectAll" class="sapUiTinyMargin textBlack" select="onCheck" text="{i18n>checkBoxText}" />
+				</FlexBox>
+				<ToolbarSpacer/>
+				<Button  enabled="{actionModel>/CancelSONEnabled}" text="{i18n>btnCancelSON}" type="Emphasized" press="onCancelSON">
+				
+				</Button>				
+				<Button enabled="{actionModel>/SendSignSONEnabled}" text="{i18n>btnSendSign}" type="Emphasized" press="onSendSignSON">
+					
+				</Button>				
+				<Button enabled="{actionModel>/DeleteSendSignSONEnabled}" text="{i18n>btnDeleteSendSign}" type="Emphasized" press="onDeleteSendSignSON">
+					
+				</Button>				
+				<Button enabled="{actionModel>/DeleteSignSONEnabled}" text="{i18n>btnDeleteSign}" type="Emphasized" press="onDeleteSignSON">
+					
+				</Button>					
+				<Button enabled="{actionModel>/SignSONEnabled}" text="{i18n>btnSign}" type="Emphasized" press="onSignSON">
+					
+				</Button>				
+				<Button enabled="{actionModel>/RegisterCancelSONEnabled}"  text="{i18n>btnRegisterCancel}" type="Emphasized" press="onRegisterCancelSON">
+				
+				</Button>				
+				<Button enabled="{actionModel>/DeleteCancelSONEnabled}" text="{i18n>btnDeleteCancel}" type="Emphasized" press="onDeleteCancelSON">
+					
+				</Button>
+				<Button enabled="{actionModel>/DetailEnabled}"  icon="sap-icon://search" text="{i18n>btnDetail}" type="Emphasized" press="onDetail">
+					
+				</Button>
+				<Button icon="sap-icon://excel-attachment" text="{i18n>btnExport}" type="Emphasized" press="onExport">
+				
+				</Button>
+			</OverflowToolbar>
+		</headerToolbar>
+		<columns>
+		<Column minScreenWidth="Tablet" demandPopin="true">
+				<header><Text text="{i18n>columnNameZchiavesop}" /></header>
+		</Column>
+		<Column minScreenWidth="Tablet" demandPopin="true">
+				<header><Text text="{i18n>columnNameZdatasop}" /></header>
+		</Column>
+		<Column minScreenWidth="Tablet" demandPopin="true">
+				<header><Text text="{i18n>columnNameLifnr}" /></header>
+		</Column>
+		<Column minScreenWidth="Tablet" demandPopin="true">
+				<header><Text text="{i18n>columnNameFipos}" /></header>
+		</Column>
+		<Column minScreenWidth="Tablet" demandPopin="true">
+				<header><Text text="{i18n>columnNameFistl}" /></header>
+		</Column>
+		<Column minScreenWidth="Tablet" demandPopin="true">
+				<header><Text text="{i18n>columnNameZimptot}" /></header>
+		</Column>
+		<Column minScreenWidth="Tablet" demandPopin="true">
+				<header><Text text="{i18n>columnNameZtipodisp3}" /></header>
+		</Column>
+		<Column minScreenWidth="Tablet" demandPopin="true">
+				<header><Text text="{i18n>columnNameZstatoSop}" /></header>
+		</Column>
+		</columns>
+		<items>
+			<ColumnListItem vAlign="Middle">
+				<cells>
+					<Text  text="{SonSet>Zchiavesop}" />
+					<Text   text="{
+								path: 'SonSet>Zdatasop',
+								type: 'sap.ui.model.type.Date',
+								formatOptions: {
+									pattern: 'dd.MM.yyyy'
+									}
+							}"/>					
+					<Text  text="{SonSet>Beneficiario}" />
+					<Text  text="{SonSet>Fipos}" />
+					<Text  text="{SonSet>Fistl}" />
+					<Text  text="{SonSet>Zimptot}" />
+					<Text  text="{SonSet>Zdesctipodisp3}" />
+					<Text  text="{
+							path: 'SonSet>ZstatoSop',
+							formatter: '.formatter.formatZstatoSop'
+						}" />												
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+	<Panel id="paginatorPanel" >
+		<c:Fragment
+			fragmentName="gestioneabilitazioneeson.view.fragment.Paginator"
+			type="XML"
+		/>
+		<layoutData>
+			<l:GridData
+				span="XL6 L6 M6 S12"
+				indent="XL3 L3 M3"
+			/>
+		</layoutData>
+	</Panel>	
+</c:FragmentDefinition>

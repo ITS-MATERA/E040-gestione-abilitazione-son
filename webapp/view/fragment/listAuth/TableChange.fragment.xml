@@ -1,0 +1,83 @@
+<core:FragmentDefinition
+	xmlns:plugins="sap.m.plugins"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core" 
+>
+        <Table  id="idChangeAuthTable"
+				fixedLayout="false"
+				contextualWidth="Auto"
+				growing="true"
+				updateFinished="onUpdateFinished"
+					items="{
+					path: 'AbilitazioneSet>/'
+				}"
+		>
+		<dependents>
+			<plugins:ColumnResizer/>
+		</dependents>
+		<columns>
+		<Column minScreenWidth="Tablet" demandPopin="true">
+				<header><Text text="{i18n>columnNameZufficioCont}" /></header>
+		</Column>
+		<Column minScreenWidth="Tablet" demandPopin="true">
+				<header><Text text="{i18n>columnNameZvimDescrufficio}" /></header>
+		</Column>
+		<Column minScreenWidth="Tablet" demandPopin="true">
+				<header><Text text="{i18n>columnNameFipos}" /></header>
+		</Column>
+		<Column minScreenWidth="Tablet" demandPopin="true">
+				<header><Text text="{i18n>columnNameFistl}" /></header>
+		</Column>
+		<Column minScreenWidth="Tablet" demandPopin="true">
+				<header><Text text="{i18n>columnNameZtipodisp3}" /></header>
+		</Column>
+		<Column minScreenWidth="Tablet" demandPopin="true">
+				<header><Text text="{i18n>columnNameDatab}" /></header>
+		</Column>
+		<Column minScreenWidth="Tablet" demandPopin="true">
+				<header><Text text="{i18n>columnNameDatbi}" /></header>
+		</Column>
+		<Column minScreenWidth="Tablet" demandPopin="true">
+				<header><Text text="{i18n>columnNameZstatoAbi}" /></header>
+		</Column>
+		</columns>
+		<items>
+			<ColumnListItem vAlign="Middle">
+				<cells>
+						<Text  text="{AbilitazioneSet>ZufficioCont}" />
+						<Text  text="{AbilitazioneSet>ZvimDescrufficio}" />
+						<Text  text="{AbilitazioneSet>Fipos}" />
+						<Text  text="{AbilitazioneSet>Fistl}" />
+						<Text  text="{AbilitazioneSet>Zdesctipodisp3}" />
+						<Text   text="{
+									path: 'AbilitazioneSet>Datab',
+									type: 'sap.ui.model.type.Date',
+									formatOptions: {
+										pattern: 'dd.MM.yyyy'
+										}
+								}"/>
+					 
+						<DatePicker
+							id="idDateRow"
+							value="{ path: 'AbilitazioneSet>Datbi',
+                            type: 'sap.ui.model.type.Date',
+                            formatOptions: {
+                                pattern: 'dd.MM.yyyy'
+                                }}"
+							
+							change="onChangeUpdateDateRow"
+							>	
+							<layoutData>
+								<FlexItemData  growFactor="4" />
+							</layoutData>
+						</DatePicker>	
+						<Text  text="{
+								path: 'AbilitazioneSet>ZstatoAbi',
+								formatter: '.formatter.formatZstatoAbi'
+							}" />																					
+
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</core:FragmentDefinition>

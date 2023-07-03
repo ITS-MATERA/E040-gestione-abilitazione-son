@@ -1,0 +1,82 @@
+<mvc:View
+	controllerName="gestioneabilitazioneeson.controller.RegisterSON"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+>
+
+	<Page showHeader="false" > 
+		<content>
+				<Panel class="bgBlue margin0">
+					<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.HeaderPanel" type="XML"/>
+				</Panel>
+				<Wizard id="CreateProductWizard"  finishButtonText="{i18n>btnSaveAll}" class="sapUiResponsivePadding--header sapUiResponsivePadding--content"
+								>
+							<WizardStep id="idWizardStep1"
+										title="{i18n>wizardStep1Title}"
+										validated="true">
+
+								<VBox>	
+									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step1.form1" type="XML"/>
+									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step1.form2" type="XML"/>
+									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step1.form3" type="XML"/>
+								</VBox>	
+							</WizardStep>
+							<WizardStep id="idWizardStep2"
+										title="{i18n>wizardStep2Title}"
+										activate="goToTwo"
+										validated="true">
+
+								<VBox>	
+									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form1" type="XML"/>
+									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form2" type="XML"/>
+									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form3" type="XML"/>
+									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form4" type="XML"/>
+									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form5" type="XML"/>
+								</VBox>		
+							
+							</WizardStep>
+							<WizardStep id="idWizardStep3"
+										title="{i18n>wizardStep3Title}"
+										activate="goToThree"
+										validated="true">
+								<VBox>	
+									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step3.table1" type="XML"/>
+								</VBox>		
+							</WizardStep>	
+							<WizardStep id="idWizardStep4"
+										activate="goToFour"
+										complete="onSaveAll"
+										title="{i18n>wizardStep4Title}"
+										validated="true">
+							<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step4.form1" type="XML"/>
+							</WizardStep>													
+						</Wizard>
+				<!-- <core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.listSON.HeaderPanel" type="XML"/>
+				<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.listSON.TableListSON" type="XML"/> -->
+		</content>
+			<footer>
+				<OverflowToolbar>
+					<Button type="Emphasized" text="{i18n>btnBack}" press="onNavBack" >
+						<layoutData>
+							<OverflowToolbarLayoutData priority="NeverOverflow" />
+						</layoutData>
+					</Button>
+					<Button
+				    icon="{ path: 'logModel>/', formatter: '.buttonIconFormatter' }"
+					type="{ path: 'logModel>/', formatter: '.buttonTypeFormatter' }"
+					text= "{path: 'logModel>/', formatter: '.highestSeverityMessages' }"
+			        press="handleDialogPress"/>
+					<!-- <ToolbarSpacer />
+					<Button type="Emphasized" text="{i18n>btnRegisterSON}" press="onRegisterSON" >
+						<layoutData>
+							<OverflowToolbarLayoutData priority="NeverOverflow" />
+						</layoutData>
+					</Button> -->
+				</OverflowToolbar>
+			</footer>
+    </Page>
+
+
+
+</mvc:View>

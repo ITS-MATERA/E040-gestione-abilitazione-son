@@ -1,0 +1,81 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core"
+      xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+    <Panel expandable="true"  headerText="{i18n>wizardStep2SubTitle4}" width="auto" class="margin0 padding0 expanded">
+		<content >
+            <f:SimpleForm id="idStep2Form4"
+                editable="true"
+                class="formHiddenTitle"
+                layout="ResponsiveGridLayout"
+                labelSpanXL="4"
+                labelSpanL="3"
+                labelSpanM="4"
+                adjustLabelSpan="false"
+                emptySpanXL="0"
+                emptySpanL="4"
+                columnsXL="3"
+                columnsL="1"
+                singleContainerFullSize="false">
+                <f:content>
+                    <Label design="Bold" text="{i18n>wizardFieldZcodprov}" class="sapUiSmallMarginBottom"/>
+                    <Input  editable="false">
+                        <layoutData>
+                            <l:GridData span="XL6 L6 M6 S12"  />
+                        </layoutData>
+                    </Input>
+                    <Label design="Bold" text="{i18n>wizardFieldZperiodrifida}" class="sapUiSmallMarginBottom"/>
+                    <Input  editable="false">
+                        <layoutData>
+                            <l:GridData span="XL6 L6 M6 S12"  />
+                        </layoutData>
+                    </Input>   
+                    <Label design="Bold" text="{i18n>wizardFieldZcodvers}" class="sapUiSmallMarginBottom"/>
+                    <Input  editable="false" >
+                        <layoutData>
+                            <l:GridData span="XL6 L6 M6 S12"  />
+                        </layoutData>
+                    </Input>                             
+                    <core:Title text="" />
+                    <Label design="Bold" text="{i18n>wizardFieldZcfcommit}" class="sapUiSmallMarginBottom"/>
+                    <Input  editable="false" >
+                        <layoutData>
+                            <l:GridData span="XL6 L6 M6 S12"  />
+                        </layoutData>
+                    </Input>
+                    <Label design="Bold" text="{i18n>wizardFieldZperiodrifia}" class="sapUiSmallMarginBottom"/>
+                    <Input  editable="false" >
+                        <layoutData>
+                            <l:GridData span="XL6 L6 M6 S12"  />
+                        </layoutData>
+                    </Input>      
+                    <Label design="Bold" text="{i18n>wizardFieldZcfvers}" class="sapUiSmallMarginBottom"/>
+                    <Input  editable="false" >
+                        <layoutData>
+                            <l:GridData span="XL6 L6 M6 S12"  />
+                        </layoutData>
+                    </Input>                                
+					 <core:Title text="" />
+                    <Label design="Bold" text="{i18n>wizardFieldZcodtrib}" class="sapUiSmallMarginBottom"/>
+                    <Input  editable="false">
+                        <layoutData>
+                            <l:GridData span="XL6 L6 M6 S12"  />
+                        </layoutData>
+                    </Input>  
+                    <Label design="Bold" text="{i18n>wizardFieldZcodinps}" class="sapUiSmallMarginBottom"/>
+                    <Input   editable="false">
+                        <layoutData>
+                            <l:GridData span="XL6 L6 M6 S12"  />
+                        </layoutData>
+                    </Input>                          
+                </f:content>
+            </f:SimpleForm>
+	    </content>
+	</Panel>
+
+    
+             
+</core:FragmentDefinition>

@@ -1,0 +1,1116 @@
+sap.ui.define(
+  [
+    "./BaseController",
+    "sap/ui/model/json/JSONModel",
+    "../model/formatter",
+    "sap/ui/export/library",
+    "sap/ui/export/Spreadsheet",
+    "sap/m/MessageBox",
+    "sap/m/MessageItem",
+    "sap/m/MessageView",
+    "sap/m/Button",
+    "sap/m/Dialog",
+    "sap/m/Bar",
+    "sap/m/Input",
+  ],
+  function (
+    BaseController,
+    JSONModel,
+    formatter,
+    exportLibrary,
+    Spreadsheet,
+    MessageBox,
+    MessageItem,
+    MessageView,
+    Button,
+    Dialog,
+    Bar,
+    Input
+  ) {
+    "use strict";
+
+    const EDM_TYPE = exportLibrary.EdmType;
+
+    const ACTION_MODEL = "actionModel";
+    const LOG_MODEL = "logModel";
+    const MESSAGE_MODEL = "messageModel";
+
+    const PAGINATOR_MODEL = "paginatorModel";
+    const LISTSON_MODEL = "listSONModel";
+    const SON_SET = "SonSet";
+    const SON_MODEL_EXPORT = "SONModelExport";
+    const TABLE_LISTSON = "idListSonTable";
+    const CHECK_ALL = "idCheckSelectAll";
+
+    return BaseController.extend(
+      "gestioneabilitazioneeson.controller.ListSON",
+      {
+        formatter: formatter,
+        onInit: function () {
+          var oListSonModel, oPaginatorModel, oActionDisabled;
+          oListSonModel = new JSONModel({
+            listSonTableTitle:
+              this.getResourceBundle().getText("listSonPageTitle"),
+            total: 0,
+            areFiltersValid: true,
+            isSelectedAll: false,
+            checkList: [],
+            filterRequestEnable: true,
+          });
+          oPaginatorModel = new JSONModel({
+            btnPrevEnabled: false,
+            btnFirstEnabled: false,
+            btnNextEnabled: false,
+            btnLastEnabled: false,
+            recordForPageEnabled: false,
+            currentPageEnabled: true,
+            stepInputDefault: 3,
+            currentPage: 1,
+            maxPage: 1,
+            paginatorSkip: 0,
+            paginatorClick: 0,
+          });
+          oActionDisabled = new JSONModel({
+            DetailEnabled: false,
+            CancelSONEnabled: false,
+            SendSignSONEnabled: false,
+            DeleteSendSignSONEnabled: false,
+            SignSONEnabled: false,
+            DeleteSignSONEnabled: false,
+            RegisterCancelSONEnabled: false,
+            DeleteCancelSONEnabled: false,
+            ChangeSONEnabled: false            
+          });
+
+          var oReloadModel = new JSONModel({
+            canRefresh:false
+          });
+          
+          this.setModel(oListSonModel, LISTSON_MODEL);
+          this.setModel(oPaginatorModel, PAGINATOR_MODEL);
+          this.setModelGlobal(oActionDisabled, ACTION_MODEL);
+          this.setModelGlobal(oReloadModel, this.RELOAD_MODEL);
+
+          var oMessageTemplate = new MessageItem({
+            type: "{logModel>type}",
+            title: "{logModel>title}",
+            description: "{logModel>description}",
+            subtitle: "{logModel>subtitle}",
+            counter: "{logModel>counter}",
+          });
+
+          var aMockMessages = [];
+
+          var oModel = new JSONModel();
+
+          oModel.setData(aMockMessages);
+
+          this.oMessageView = new MessageView({
+            showDetailsPageHeader: false,
+            items: {
+              path: "logModel>/",
+              template: oMessageTemplate,
+            },
+          });
+
+          var oExportButton = new Button({
+            text: this.getResourceBundle().getText("btnExport"),
+            type: "Emphasized",
+            visible: true,
+            press: function () {
+              self.configExportMessage();
+            },
+          });
+
+          var oInputFilter = new Input({
+            placeholder: this.getResourceBundle().getText("msgSearch"),
+            visible: true,
+            liveChange: function (oEvent) {
+              self.filterMessage(oEvent);
+            },
+          });
+
+          this.oMessageView.setModel(oModel, "logModel");
+          this.setModel(oModel, LOG_MODEL);
+          this.setModel(oModel, MESSAGE_MODEL);
+
+          this.oDialog = new Dialog({
+            resizable: true,
+            content: this.oMessageView,
+            state: "Error",
+            beginButton: new Button({
+              press: function () {
+                this.getParent().close();
+              },
+              text: this.getResourceBundle().getText("btnClose"),
+            }),
+            customHeader: new Bar({
+              // contentLeft: [oBackButton],
+              contentMiddle: [oInputFilter],
+              contentRight: [oExportButton],
+            }),
+            contentHeight: "50%",
+            contentWidth: "50%",
+            verticalScrolling: false,
+          });
+
+          this.getRouter()
+            .getRoute("listSON")
+            .attachPatternMatched(this._onObjectMatched, this);
+        },
+
+        _onObjectMatched: function (oEvent) {
+          var self = this,
+              reloadModel = self.getModelGlobal(self.RELOAD_MODEL).getData();
+          
+          if(reloadModel && reloadModel !== null && reloadModel.canRefresh){
+            self.setPropertyGlobal(self.RELOAD_MODEL,"canRefresh",false);
+            location.reload();
+          }
+        },
+
+        handleDialogPress: function (oEvent) {
+          this.oMessageView.navigateBack();
+          this.oDialog.open();
+        },
+        // ----------------------------- START INITIALIZATION -----------------------------  //
+        resetPage: function () {
+          //PULIRE ANCHE I FILTRI
+          var oListSonModel, oPaginatorModel;
+          oListSonModel = new JSONModel({
+            listSonTableTitle:
+              this.getResourceBundle().getText("listSonPageTitle"),
+            total: 0,
+            areFiltersValid: true,
+            isSelectedAll: false,
+            checkList: [],
+          });
+          oPaginatorModel = new JSONModel({
+            btnPrevEnabled: false,
+            btnFirstEnabled: false,
+            btnNextEnabled: false,
+            btnLastEnabled: false,
+            recordForPageEnabled: false,
+            currentPageEnabled: true,
+            stepInputDefault: 3,
+            currentPage: 1,
+            maxPage: 1,
+            paginatorSkip: 0,
+            paginatorClick: 0,
+          });
+          this.setModel(oListSonModel, LISTSON_MODEL);
+          this.setModel(oPaginatorModel, PAGINATOR_MODEL);
+
+          var oTable = this.getView().byId(TABLE_LISTSON);
+          oTable.removeSelections(true);
+          var checkBox = this.getView().byId(CHECK_ALL);
+          checkBox.setSelected(false);
+        },
+
+        onBeforeRendering: function () {
+          var self = this;
+          self.resetPaginator(PAGINATOR_MODEL);
+          self._setEntityProperties();
+
+          var oTable = self.getView().byId(TABLE_LISTSON);
+          oTable._getSelectAllCheckbox().setVisible(false);
+        },
+        _setEntityProperties() {
+          var self = this,
+            oView = self.getView();
+
+          self.resetEntityModel(SON_MODEL_EXPORT);
+          self.resetEntityModel(SON_SET);
+          oView.setBusy(true);
+
+          self._getEntity(false, true);
+        },
+
+        _getEntity: function (getAll = false, getKey = false) {
+          var self = this,
+            obj = {},
+            oDataModel = self.getModel(),
+            nameModel = null,
+            oView = self.getView(),
+            oBundle = self.getResourceBundle(),
+            paginatorModel = self.getModel(PAGINATOR_MODEL),
+            numRecordsForPage = paginatorModel.getProperty("/stepInputDefault");
+          var listSONModel = self.getModel(LISTSON_MODEL);
+          oView.setBusy(true);
+
+          if (getAll) {
+            obj = {
+              // AgrName: sAgrName,
+            };
+            nameModel = SON_MODEL_EXPORT;
+          } else {
+            obj = {
+              $top: numRecordsForPage,
+              $skip: paginatorModel.getProperty("/paginatorSkip"),
+              // AgrName: sAgrName,
+            };
+            nameModel = SON_SET;
+          }
+
+          var headerObject = self.getHeaderFilterSON();
+
+          if (!headerObject.isValidate) {
+            oView.setBusy(false);
+            MessageBox.warning(
+              oBundle.getText(headerObject.validationMessage),
+              {
+                title: oBundle.getText("titleDialogWarning"),
+                onClose: function (oAction) {},
+              }
+            );
+            listSONModel.setProperty("/areFiltersValid", false);
+            oView.setBusy(false);
+            return false;
+          }
+          listSONModel.setProperty("/areFiltersValid", true);
+          self
+            .getModel()
+            .metadataLoaded()
+            .then(function () {
+              oDataModel.read("/" + SON_SET, {
+                urlParameters: obj,
+                filters: headerObject.filters,
+                success: function (data, oResponse) {
+                  console.log("data", data.results);
+                  if (getKey) {
+                    var counter = JSON.parse(oResponse.headers["sap-message"]);
+                    listSONModel.setProperty("/total", counter.message);
+                    self.counterRecords(counter.message);
+                  }
+                  var res = data.results;
+                  if (getAll) {
+                    listSONModel.setProperty("/checkList", res);
+                    self.fillActionModel(res);
+                  }
+
+                  var oModelJson = new sap.ui.model.json.JSONModel();
+                  oModelJson.setData(res);
+                  oView.setModel(oModelJson, nameModel);
+                  oView.setBusy(false);
+                  var oTable = self.getView().byId(TABLE_LISTSON);
+
+                  var isSelectedAll =
+                    listSONModel.getProperty("/isSelectedAll");
+                  if (isSelectedAll) {
+                    oTable.selectAll();
+                  } else {
+                    var list = listSONModel.getProperty("/checkList");
+
+                    for (let y = 0; y < res.length; y++) {
+                      for (let i = 0; i < list.length; i++) {
+                        if (
+                          res[y]["Bukrs"] === list[i]["Bukrs"] &&
+                          res[y]["Gjahr"] === list[i]["Gjahr"] &&
+                          res[y]["Zchiavesop"] === list[i]["Zchiavesop"] &&
+                          res[y]["Zstep"] === list[i]["Zstep"] &&
+                          res[y]["Ztipososp"] === list[i]["Ztipososp"]
+                        ) {
+                          oTable.setSelectedItem(oTable.getItems()[y]);
+                        }
+                      }
+                    }
+                  }
+                },
+                error: function (error) {
+                  oView.setBusy(false);
+                },
+              });
+            });
+        },
+
+        onChangeFilterZstatoSop: function (oEvent) {
+          var self = this;
+          var oBundle = self.getResourceBundle();
+          var value = oEvent.getParameter("value"),
+              key = oEvent.getSource().getSelectedKey(),
+            listSONModel = self.getModel(LISTSON_MODEL);
+
+          if(value === oBundle.getText("defaultZstatoSop") || key === '10' || key === '16')  
+            listSONModel.setProperty("/filterRequestEnable", true);
+          else
+          listSONModel.setProperty("/filterRequestEnable", false);  
+        },
+        onUpdateFinished: function (oEvent) {
+          console.log("update");
+          var sTitle,
+            oTable = oEvent.getSource(),
+            listSONModel = this.getModel(LISTSON_MODEL),
+            iTotalItems = listSONModel.getProperty("/total"),
+            areFiltersValid = listSONModel.getProperty("/areFiltersValid");
+
+          if (
+            iTotalItems &&
+            oTable.getBinding("items").isLengthFinal() &&
+            areFiltersValid
+          ) {
+            sTitle = this.getResourceBundle().getText("listSONPageTitleCount", [
+              iTotalItems,
+            ]);
+          } else {
+            sTitle = this.getResourceBundle().getText("listSONPageTitle");
+          }
+          listSONModel.setProperty("/listSONTableTitle", sTitle);
+          this.getView().setBusy(false);
+        },
+        // ----------------------------- END INITIALIZATION -----------------------------  //
+
+        // ----------------------------- START ON CLICK BUTTONS -----------------------------  //
+
+        onDetail: function () {
+          var self = this,
+            listSONModel = self.getModel(LISTSON_MODEL),
+            checkList = listSONModel.getProperty("/checkList");
+
+          var oModelJson = new sap.ui.model.json.JSONModel();
+          oModelJson.setData(checkList);
+          this.setModelGlobal(oModelJson, "checkList");
+
+          console.log(checkList);
+          self.getRouter().navTo("detailSON", {
+            action: "Detail",
+          });
+          // {
+          //   check: JSON.stringify(checkList),
+          // }
+        },
+        // onCancelSON_old: function () {
+        //   var self = this,
+        //     listSONModel = self.getModel(LISTSON_MODEL),
+        //     checkList = listSONModel.getProperty("/checkList");
+
+        //   var oModelJson = new sap.ui.model.json.JSONModel();
+        //   oModelJson.setData(checkList);
+        //   this.setModelGlobal(oModelJson, "checkList");
+
+        //   self.resetPage();
+
+        //   console.log(checkList);
+        //   self.getRouter().navTo("detailSON", {
+        //     action: "CancelSON",
+        //   });
+        // },
+        onCancelSON: function () {
+          var self =this,
+              listSONModel = self.getModel(LISTSON_MODEL),
+              checkList = listSONModel.getProperty("/checkList");
+
+          var oModelJson = new sap.ui.model.json.JSONModel();
+          oModelJson.setData(checkList);
+          self.setModelGlobal(oModelJson, "checkList");
+
+          console.log(checkList);  
+          self.getRouter().navTo("cancelSON", {});
+        },
+
+        // onSendSignSON_old: function () {
+        //   var self = this,
+        //     listSONModel = self.getModel(LISTSON_MODEL),
+        //     checkList = listSONModel.getProperty("/checkList");
+
+        //   var oModelJson = new sap.ui.model.json.JSONModel();
+        //   oModelJson.setData(checkList);
+        //   this.setModelGlobal(oModelJson, "checkList");
+
+        //   self.resetPage();
+        //   console.log(checkList);
+        //   self.getRouter().navTo("detailSON", {
+        //     action: "SendSign",
+        //   });
+        // },
+        onSendSignSON: function () {
+          var self =this,
+          listSONModel = self.getModel(LISTSON_MODEL),
+          checkList = listSONModel.getProperty("/checkList");
+
+          var oModelJson = new sap.ui.model.json.JSONModel();
+          oModelJson.setData(checkList);
+          self.setModelGlobal(oModelJson, "checkList");
+
+          console.log(checkList);  
+          self.getRouter().navTo("sendSignSON", {});
+        },
+        
+        onDeleteSendSignSON: function () {
+          var self =this,
+          listSONModel = self.getModel(LISTSON_MODEL),
+          checkList = listSONModel.getProperty("/checkList");
+
+          var oModelJson = new sap.ui.model.json.JSONModel();
+          oModelJson.setData(checkList);
+          self.setModelGlobal(oModelJson, "checkList");
+
+          console.log(checkList);  
+          self.getRouter().navTo("deleteSendSignSON", {});          
+        },
+        // onDeleteSendSignSON: function () {
+        //   var self = this,
+        //     listSONModel = self.getModel(LISTSON_MODEL),
+        //     checkList = listSONModel.getProperty("/checkList");
+
+        //   var oModelJson = new sap.ui.model.json.JSONModel();
+        //   oModelJson.setData(checkList);
+        //   this.setModelGlobal(oModelJson, "checkList");
+
+        //   self.resetPage();
+        //   console.log(checkList);
+        //   self.getRouter().navTo("detailSON", {
+        //     action: "DeleteSendSign",
+        //   });
+        // },
+        onSignSON: function () {
+          var self =this,
+          listSONModel = self.getModel(LISTSON_MODEL),
+          checkList = listSONModel.getProperty("/checkList");
+
+          var oModelJson = new sap.ui.model.json.JSONModel();
+          oModelJson.setData(checkList);
+          self.setModelGlobal(oModelJson, "checkList");
+
+          console.log(checkList);  
+          self.getRouter().navTo("signSON", {});
+        },
+        // onSignSON_old: function () {
+        //   var self = this,
+        //     listSONModel = self.getModel(LISTSON_MODEL),
+        //     checkList = listSONModel.getProperty("/checkList");
+
+        //   var oModelJson = new sap.ui.model.json.JSONModel();
+        //   oModelJson.setData(checkList);
+        //   this.setModelGlobal(oModelJson, "checkList");
+
+        //   self.resetPage();
+        //   console.log(checkList);
+        //   self.getRouter().navTo("detailSON", {
+        //     action: "Sign",
+        //   });
+        // },
+        onDeleteSignSON: function () {
+          var self =this,
+          listSONModel = self.getModel(LISTSON_MODEL),
+          checkList = listSONModel.getProperty("/checkList");
+
+          var oModelJson = new sap.ui.model.json.JSONModel();
+          oModelJson.setData(checkList);
+          self.setModelGlobal(oModelJson, "checkList");
+
+          console.log(checkList);  
+          self.getRouter().navTo("deleteSignSON", {});  
+        },
+        // onDeleteSignSON_old: function () {
+        //   var self = this,
+        //     listSONModel = self.getModel(LISTSON_MODEL),
+        //     checkList = listSONModel.getProperty("/checkList");
+
+        //   var oModelJson = new sap.ui.model.json.JSONModel();
+        //   oModelJson.setData(checkList);
+        //   this.setModelGlobal(oModelJson, "checkList");
+        //   self.resetPage();
+        //   console.log(checkList);
+        //   self.getRouter().navTo("detailSON", {
+        //     action: "DeleteSign",
+        //   });
+        // },
+        onRegisterCancelSON: function () {
+          var self =this,
+          listSONModel = self.getModel(LISTSON_MODEL),
+          checkList = listSONModel.getProperty("/checkList");
+
+          var oModelJson = new sap.ui.model.json.JSONModel();
+          oModelJson.setData(checkList);
+          self.setModelGlobal(oModelJson, "checkList");
+
+          console.log(checkList);  
+          self.getRouter().navTo("registerCancelSON", {});  
+        },
+        // onRegisterCancelSON_OLD: function () {
+        //   var self = this,
+        //     listSONModel = self.getModel(LISTSON_MODEL),
+        //     checkList = listSONModel.getProperty("/checkList");
+        //   self.resetPage();
+        //   var oModelJson = new sap.ui.model.json.JSONModel();
+        //   oModelJson.setData(checkList);
+        //   this.setModelGlobal(oModelJson, "checkList");
+
+        //   console.log(checkList);
+        //   self.getRouter().navTo("detailSON", {
+        //     action: "RegisterCancel",
+        //   });
+        // },
+        onDeleteCancelSON_old: function () {
+          var self = this,
+            listSONModel = self.getModel(LISTSON_MODEL),
+            checkList = listSONModel.getProperty("/checkList");
+          self.resetPage();
+          var oModelJson = new sap.ui.model.json.JSONModel();
+          oModelJson.setData(checkList);
+          this.setModelGlobal(oModelJson, "checkList");
+
+          console.log(checkList);
+          self.getRouter().navTo("detailSON", {
+            action: "DeleteCancel",
+          });
+        },
+
+        onDeleteCancelSON:function(){
+          var self =this,
+          listSONModel = self.getModel(LISTSON_MODEL),
+          checkList = listSONModel.getProperty("/checkList");
+
+          var oModelJson = new sap.ui.model.json.JSONModel();
+          oModelJson.setData(checkList);
+          self.setModelGlobal(oModelJson, "checkList");
+
+          console.log(checkList);  
+          self.getRouter().navTo("deleteCancelSON", {});
+        },
+
+        onNavBack: function () {
+          // eslint-disable-next-line sap-no-history-manipulation
+          var self = this;
+          self.resetPage();
+          self.getRouter().navTo("startPage");
+        },
+        onToggle: function () {
+          var self = this,
+            oView = self.getView(),
+            oBundle = self.getResourceBundle();
+
+          var btnArrow = oView.byId("btnToggle");
+          var panelFilter = oView.byId("_idVBoxGridToolBar");
+          if (btnArrow.getIcon() === "sap-icon://slim-arrow-up") {
+            btnArrow.setIcon("sap-icon://slim-arrow-down");
+            btnArrow.setTooltip(oBundle.getText("tooltipArrowShow"));
+            panelFilter.setVisible(false);
+          } else {
+            btnArrow.setIcon("sap-icon://slim-arrow-up");
+            btnArrow.setTooltip(oBundle.getText("tooltipArrowHide"));
+            panelFilter.setVisible(true);
+          }
+        },
+
+        onBlockToggle: function () {
+          var self = this,
+            oView = self.getView();
+
+          var btnArrow = oView.byId("btnToggle");
+          btnArrow.getEnabled()
+            ? btnArrow.setEnabled(false)
+            : btnArrow.setEnabled(true);
+        },
+        onStart: function () {
+          var self = this;
+          self.resetList();
+          self.resetPaginator(PAGINATOR_MODEL);
+          self._setEntityProperties();
+        },
+
+        resetList:function(){
+          var self = this,
+              oTable = self.getView().byId(TABLE_LISTSON);
+              self.getView().getModel(LISTSON_MODEL).setProperty("/checkList", []);
+              self.getView().getModel(LISTSON_MODEL).setProperty("/isSelectedAll", false);
+              oTable.removeSelections(true);
+          
+          var oModel = new JSONModel();
+          var obj = {
+            DetailEnabled: false,
+            CancelSONEnabled: false,
+            SendSignSONEnabled: false,
+            DeleteSendSignSONEnabled: false,
+            SignSONEnabled: false,
+            DeleteSignSONEnabled: false,
+            RegisterCancelSONEnabled: false,
+            DeleteCancelSONEnabled: false,
+            ChangeSONEnabled: false,
+          };
+          oModel.setData(obj);
+          self.setModelGlobal(oModel, ACTION_MODEL);
+        },
+
+        onCheck: function (oEvent) {
+          var self = this,
+            oTable = self.getView().byId(TABLE_LISTSON);
+          var isChecked = oEvent.getParameter("selected"),
+            listSONModel = self.getModel(LISTSON_MODEL);
+          if (isChecked) {
+            self._getEntity(true, false);
+            listSONModel.setProperty("/isSelectedAll", true);
+            oTable.selectAll();
+          } else {
+            listSONModel.setProperty("/checkList", []);
+            oTable.removeSelections(true);
+            listSONModel.setProperty("/isSelectedAll", false);
+            self.fillActionModel([]);
+          }
+        },
+        onSelectedItem: function (oEvent) {
+          var self = this,
+            oTable = self.getView().byId(TABLE_LISTSON),
+            listSONModel = self.getModel(LISTSON_MODEL),
+            isSelectedRow = oEvent.getParameter("selected"),
+            oTableModel = oTable.getModel(SON_SET),
+            list = listSONModel.getProperty("/checkList"),
+            actionModel = self.getModel(ACTION_MODEL),
+            tableItems = oTable.getItems(),
+            selectedItems = oTable.getSelectedItems();
+
+          var checkBox = self.getView().byId(CHECK_ALL);
+          checkBox.setSelected(false);
+          listSONModel.setProperty("/isSelectedAll", false);
+
+          if (isSelectedRow) {
+            for (let i = 0; i < selectedItems.length; i++) {
+              var p = selectedItems[i].getBindingContextPath();
+              var oItem = oTableModel.getObject(p);
+              var gg = list.includes(oItem);
+              gg ? "" : list.push(oItem);
+            }
+            listSONModel.setProperty("/checkList", list);
+          } else {
+            var temp = [];
+
+            for (let i = 0; i < tableItems.length; i++) {
+              var t = selectedItems.includes(tableItems[i], 0);
+              t ? "" : temp.push(tableItems[i]);
+            }
+            for (let i = 0; i < temp.length; i++) {
+              var p = temp[i].getBindingContextPath();
+              var oItem = oTableModel.getObject(p);
+
+              list = list.filter(function (value) {
+                return !(
+                  value.Bukrs === oItem.Bukrs &&
+                  value.Gjahr === oItem.Gjahr &&
+                  value.Zchiavesop === oItem.Zchiavesop &&
+                  value.Zstep === oItem.Zstep &&
+                  value.Ztipososp === oItem.Ztipososp
+                );
+              });
+            }
+          }
+          self.fillActionModel(list);
+          listSONModel.setProperty("/checkList", list);
+        },
+
+        fillActionModel: function (list) {
+          var self = this,
+              oModel = new JSONModel(),
+              obj,
+              oBundle = self.getResourceBundle();
+          
+          if(list.length===0){
+            obj = {
+              DetailEnabled: false,
+              CancelSONEnabled: false,
+              SendSignSONEnabled: false,
+              DeleteSendSignSONEnabled: false,
+              SignSONEnabled: false,
+              DeleteSignSONEnabled: false,
+              RegisterCancelSONEnabled: false,
+              DeleteCancelSONEnabled: false,
+              ChangeSONEnabled: false,
+            };
+            oModel.setData(obj);
+            self.setModelGlobal(oModel, ACTION_MODEL);
+            return;
+          }
+
+          if(list.length===1){
+            var first = list[0];
+            obj = {
+              DetailEnabled: true,
+              CancelSONEnabled: self.checkStatusEnabled(oBundle.getText("btnCancelSON"),first),
+              SendSignSONEnabled: self.checkStatusEnabled(oBundle.getText("btnSendSign"),first),
+              DeleteSendSignSONEnabled: self.checkStatusEnabled(oBundle.getText("btnDeleteSendSign"),first),
+              SignSONEnabled: self.checkStatusEnabled(oBundle.getText("btnSign"),first),
+              DeleteSignSONEnabled: self.checkStatusEnabled(oBundle.getText("btnDeleteSign"),first),
+              RegisterCancelSONEnabled: self.checkStatusEnabled(oBundle.getText("btnRegisterCancel"),first),
+              DeleteCancelSONEnabled: self.checkStatusEnabled(oBundle.getText("btnDeleteCancel"),first),
+              ChangeSONEnabled: self.checkStatusEnabled(oBundle.getText("btnChangeSON"),first)
+            };
+            oModel.setData(obj);
+            self.setModelGlobal(oModel, ACTION_MODEL);
+            return;
+          }
+
+          if(list.length>1){
+            var first = list[0];
+            var found = list.find(x=>x.ZstatoSop !== first.ZstatoSop);
+            if(found){
+              // situazione di diversità NON VEDO NULLA
+              obj = {
+                    DetailEnabled: false,
+                    CancelSONEnabled: false,
+                    SendSignSONEnabled: false,
+                    DeleteSendSignSONEnabled: false,
+                    SignSONEnabled: false,
+                    DeleteSignSONEnabled: false,
+                    RegisterCancelSONEnabled: false,
+                    DeleteCancelSONEnabled: false,
+                    ChangeSONEnabled: false,
+                  };
+              oModel.setData(obj);
+              self.setModelGlobal(oModel, ACTION_MODEL);
+              return;
+            }
+
+            obj = {
+              DetailEnabled: false,
+              CancelSONEnabled: self.checkStatusEnabled(oBundle.getText("btnCancelSON"),first),
+              SendSignSONEnabled: self.checkStatusEnabled(oBundle.getText("btnSendSign"),first),
+              DeleteSendSignSONEnabled: self.checkStatusEnabled(oBundle.getText("btnDeleteSendSign"),first),
+              SignSONEnabled: self.checkStatusEnabled(oBundle.getText("btnSign"),first),
+              DeleteSignSONEnabled: self.checkStatusEnabled(oBundle.getText("btnDeleteSign"),first),
+              RegisterCancelSONEnabled: self.checkStatusEnabled(oBundle.getText("btnRegisterCancel"),first),
+              DeleteCancelSONEnabled: self.checkStatusEnabled(oBundle.getText("btnDeleteCancel"),first),
+              ChangeSONEnabled: self.checkStatusEnabled(oBundle.getText("btnChangeSON"),first)
+            };
+            oModel.setData(obj);
+            self.setModelGlobal(oModel, ACTION_MODEL);
+            return;
+          }
+        },
+
+        checkStatusEnabled:function(state, item){
+          var self =this,
+              oBundle = self.getResourceBundle(),
+              enabled = false;
+              
+          switch(state){
+            case oBundle.getText("btnCancelSON"):
+                enabled = item.ZstatoSop === '00' ? true : false;
+              break;
+            case oBundle.getText("btnSendSign"):
+                enabled = item.ZstatoSop === '00' ? true : false;
+              break;
+            case oBundle.getText("btnDeleteSendSign"):
+              enabled = item.ZstatoSop === '01' ? true : false;
+              break;
+            case oBundle.getText("btnSign"):
+              enabled = item.ZstatoSop === '01' ? true : false;
+              break;
+            case oBundle.getText("btnDeleteSign"):
+              enabled = item.ZstatoSop === '02' ? true : false;
+              break;
+            case oBundle.getText("btnRegisterCancel"):
+              enabled = (item.ZstatoSop === '10' || item.ZstatoSop === '16') && item.Zricann ==="0000000"  ? true : false;
+              break;
+            case oBundle.getText("btnDeleteCancel"):
+              enabled = (item.ZstatoSop === '10' || item.ZstatoSop === '16' ) && item.Zricann !=="0000000"  ? true : false;
+              break;
+            case oBundle.getText("btnChangeSON"):
+              enabled = item.ZstatoSop === '00' ? true : false;
+              break;
+            default:
+              console.log("default");
+          }    
+          return enabled;    
+        },
+
+
+        // fillActionModel_old: function (list) {
+        //   var blstato00 = false;
+        //   var blstato01 = false;
+        //   var blstato02 = false;
+        //   var blstato10 = false;
+        //   var oModel = new JSONModel(),
+        //     obj = {},
+        //     bldetail = list.length === 1 ? true : false;
+
+        //   list.forEach((el) => {
+        //     console.log(el.ZstatoSop === "00");
+        //     if (el.ZstatoSop === "00") blstato00 = true;
+        //     else if (el.ZstatoSop === "01") blstato01 = true;
+        //     else if (el.ZstatoSop === "02") blstato02 = true;
+        //     else if (el.ZstatoSop === "10") blstato10 = true;
+        //   });
+
+        //   console.log(
+        //     "00",
+        //     blstato00,
+        //     "01",
+        //     blstato01,
+        //     "02",
+        //     blstato02,
+        //     "10",
+        //     blstato10,
+        //     "detail",
+        //     bldetail
+        //   );
+
+        //   if (blstato00 && !blstato01 && !blstato02 && !blstato10) {
+        //     obj = {
+        //       DetailEnabled: bldetail,
+        //       CancelSONEnabled: true,
+        //       SendSignSONEnabled: true,
+        //       DeleteSendSignSONEnabled: false,
+        //       SignSONEnabled: false,
+        //       DeleteSignSONEnabled: false,
+        //       RegisterCancelSONEnabled: false,
+        //       DeleteCancelSONEnabled: false,
+        //       ChangeSONEnabled: true,
+        //     };
+        //   } else if (!blstato00 && blstato01 && !blstato02 && !blstato10) {
+        //     obj = {
+        //       DetailEnabled: bldetail,
+        //       CancelSONEnabled: false,
+        //       SendSignSONEnabled: false,
+        //       DeleteSendSignSONEnabled: true,
+        //       SignSONEnabled: true,
+        //       DeleteSignSONEnabled: false,
+        //       RegisterCancelSONEnabled: false,
+        //       DeleteCancelSONEnabled: false,
+        //       ChangeSONEnabled: false,
+        //     };
+        //   } else if (!blstato00 && !blstato01 && blstato02 && !blstato10) {
+        //     obj = {
+        //       DetailEnabled: bldetail,
+        //       CancelSONEnabled: false,
+        //       SendSignSONEnabled: false,
+        //       DeleteSendSignSONEnabled: false,
+        //       SignSONEnabled: false,
+        //       DeleteSignSONEnabled: true,
+        //       RegisterCancelSONEnabled: false,
+        //       DeleteCancelSONEnabled: false,
+        //       ChangeSONEnabled: false,
+        //     };
+        //   } else if (!blstato00 && !blstato01 && !blstato02 && blstato10) {
+        //     obj = {
+        //       DetailEnabled: bldetail,
+        //       CancelSONEnabled: false,
+        //       SendSignSONEnabled: false,
+        //       DeleteSendSignSONEnabled: false,
+        //       SignSONEnabled: false,
+        //       DeleteSignSONEnabled: false,
+        //       RegisterCancelSONEnabled: false,
+        //       DeleteCancelSONEnabled: false,
+        //       ChangeSONEnabled: false,
+        //     };
+        //     //in base filyto ri
+        //     // actionModel.setProperty("/RegisterCancelSONEnabled", true);
+        //     // actionModel.setProperty("/DeleteCancelSONEnabled", true);
+        //   } else {
+        //     obj = {
+        //       DetailEnabled: bldetail,
+        //       CancelSONEnabled: false,
+        //       SendSignSONEnabled: false,
+        //       DeleteSendSignSONEnabled: false,
+        //       SignSONEnabled: false,
+        //       DeleteSignSONEnabled: false,
+        //       RegisterCancelSONEnabled: false,
+        //       DeleteCancelSONEnabled: false,
+        //       ChangeSONEnabled: false,
+        //     };
+        //   }
+
+        //   oModel.setData(obj);
+        //   this.setModelGlobal(oModel, ACTION_MODEL);
+        // },
+
+        onRegisterMax: function () {
+          var self = this;
+        },
+        onRegisterSON: function () {
+          var self = this;
+          self.getRouter().navTo("registerSON");
+        },
+
+        onExport: function (oEvent) {
+          var self = this;
+          self._configExport();
+        },
+        // ----------------------------- END ON CLICK BUTTONS -----------------------------  //
+
+        // ----------------------------- START FORMATTING -----------------------------  //
+
+        handleChangeDatePicker: function (oEvent) {
+          var bValid = oEvent.getParameter("valid");
+
+          if (!bValid) {
+            oEvent.getSource().setValue("");
+            return;
+          }
+          var newValue = oEvent.getParameter("newValue");
+          oEvent.getSource().setValue(newValue);
+        },
+        // ----------------------------- END FORMATTING -----------------------------  //
+
+        // ----------------------------- START PAGINATION -----------------------------  //
+
+        counterRecords: function (data) {
+          var self = this,
+            paginatorModel = self.getModel(PAGINATOR_MODEL),
+            numRecordsForPage = paginatorModel.getProperty("/stepInputDefault");
+
+          if (data > numRecordsForPage) {
+            paginatorModel.setProperty("/btnLastEnabled", true);
+            self.paginatorTotalPage = data / numRecordsForPage;
+            var moduleN = Number.isInteger(self.paginatorTotalPage);
+            if (!moduleN) {
+              self.paginatorTotalPage = Math.trunc(self.paginatorTotalPage) + 1;
+            }
+            paginatorModel.setProperty("/maxPage", self.paginatorTotalPage);
+          } else {
+            paginatorModel.setProperty("/maxPage", 1);
+            paginatorModel.setProperty("/btnLastEnabled", false);
+          }
+        },
+        onFirstPaginator: function (oEvent) {
+          var self = this;
+          self.getFirstPaginator(PAGINATOR_MODEL);
+
+          self._getEntity();
+        },
+
+        onLastPaginator: function (oEvent) {
+          var self = this;
+          self.getLastPaginator(PAGINATOR_MODEL);
+          self._getEntity();
+        },
+
+        onChangePage: function (oEvent) {
+          var self = this,
+            paginatorModel = self.getModel(PAGINATOR_MODEL),
+            maxPage = paginatorModel.getProperty("/maxPage");
+          self.getChangePage(PAGINATOR_MODEL, maxPage);
+
+          self._getEntity();
+        },
+        // ----------------------------- END PAGINATION -----------------------------  //
+        // ----------------------------- START EXPORT -----------------------------  //
+        _configExport: function () {
+          var oSheet;
+          var self = this;
+          var oDataModel = self.getModel(),
+            oView = self.getView();
+          var oBundle = self.getResourceBundle();
+          var oTable = self.getView().byId(TABLE_LISTSON),
+            listSONModel = this.getModel(LISTSON_MODEL);
+
+          oView.setBusy(true);
+          var headerObject = self.getHeaderFilterSON();
+
+          if (!headerObject.isValidate) {
+            oView.setBusy(false);
+            MessageBox.warning(
+              oBundle.getText(headerObject.validationMessage),
+              {
+                title: oBundle.getText("titleDialogWarning"),
+                onClose: function (oAction) {},
+              }
+            );
+            listSONModel.setProperty("/areFiltersValid", false);
+            oView.setBusy(false);
+            return false;
+          }
+          listSONModel.setProperty("/areFiltersValid", true);
+
+          self
+            .getModel()
+            .metadataLoaded()
+            .then(function () {
+              oDataModel.read("/" + SON_SET, {
+                urlParameters: {},
+                filters: headerObject.filters,
+                success: async function (data, oResponse) {
+                  oView.setBusy(false);
+                  var oModelJson = new sap.ui.model.json.JSONModel();
+                  oModelJson.setData(data.results);
+                  await oView.setModel(oModelJson, SON_MODEL_EXPORT);
+                  var oTableModel = oTable.getModel(SON_MODEL_EXPORT);
+
+                  var aCols = self._createColumnConfig();
+                  var oSettings = {
+                    workbook: {
+                      columns: aCols,
+                    },
+                    dataSource: oTableModel.getData(),
+                    fileName: oBundle.getText("listSONPageTitle"),
+                  };
+
+                  oSheet = new Spreadsheet(oSettings);
+                  oSheet.build().finally(function () {
+                    oSheet.destroy();
+                  });
+                },
+                error: function (error) {
+                  oView.setBusy(false);
+                },
+              });
+            });
+        },
+        _createColumnConfig: function () {
+          var self = this;
+          var sColLabel = "columnName";
+          var oBundle = self.getResourceBundle();
+          var aCols = [
+            {
+              label: oBundle.getText(sColLabel + "Zchiavesop"),
+              property: "Zchiavesop",
+              type: EDM_TYPE.String,
+            },
+            {
+              label: oBundle.getText(sColLabel + "Zdatasop"),
+              property: "Zdatasop",
+              type: EDM_TYPE.Date,
+              format: "dd.MM.yyyy",
+            },
+            {
+              label: oBundle.getText(sColLabel + "Lifnr"),
+              property: "Lifnr",
+              type: EDM_TYPE.String,
+            },
+            {
+              label: oBundle.getText(sColLabel + "Fipos"),
+              property: "Fipos",
+              type: EDM_TYPE.String,
+            },
+            {
+              label: oBundle.getText(sColLabel + "Fistl"),
+              property: "Fistl",
+              type: EDM_TYPE.String,
+            },
+            {
+              label: oBundle.getText(sColLabel + "Zimptot"),
+              property: "Zimptot",
+              type: EDM_TYPE.String,
+            },
+            {
+              label: oBundle.getText(sColLabel + "Ztipodisp3"),
+              property: "Zdesctipodisp3",
+              type: EDM_TYPE.String,
+            },
+            {
+              label: oBundle.getText(sColLabel + "ZstatoSop"),
+              property: "ZstatoSop",
+              type: EDM_TYPE.Enumeration,
+              valueMap: {
+                "00": oBundle.getText("ZstatoSop00"),
+                "01": oBundle.getText("ZstatoSop01"),
+                "02": oBundle.getText("ZstatoSop02"),
+                "03": oBundle.getText("ZstatoSop03"),
+                "04": oBundle.getText("ZstatoSop04"),
+                "05": oBundle.getText("ZstatoSop05"),
+                "06": oBundle.getText("ZstatoSop06"),
+                "07": oBundle.getText("ZstatoSop07"),
+                "08": oBundle.getText("ZstatoSop08"),
+                "09": oBundle.getText("ZstatoSop09"),
+                10: oBundle.getText("ZstatoSop10"),
+                11: oBundle.getText("ZstatoSop11"),
+              },
+            },
+          ];
+
+          return aCols;
+        },
+
+        // ----------------------------- END EXPORT -----------------------------  //
+      }
+    );
+  }
+);

@@ -1,0 +1,40 @@
+<mvc:View
+	controllerName="gestioneabilitazioneeson.controller.ListSON"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core" 
+
+>
+	<Page showHeader="false" > 
+		<content>
+				<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.listSON.HeaderPanel" type="XML"/>
+				<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.listSON.TableListSON" type="XML"/>
+		</content>
+			<footer>
+				<OverflowToolbar>
+					<Button type="Emphasized" text="{i18n>btnBack}" press="onNavBack" >
+						<layoutData>
+							<OverflowToolbarLayoutData priority="NeverOverflow" />
+						</layoutData>
+					</Button>
+					<!-- <Button
+				    icon="{ path: 'logModel>/', formatter: '.buttonIconFormatter' }"
+					type="{ path: 'logModel>/', formatter: '.buttonTypeFormatter' }"
+					text= "{path: 'logModel>/', formatter: '.highestSeverityMessages' }"
+			        press="handleDialogPress"/> -->
+					<ToolbarSpacer />
+					<!-- <Button type="Emphasized" text="{i18n>btnRegisterMax}" press="onRegisterMax" >
+						<layoutData>
+							<OverflowToolbarLayoutData priority="NeverOverflow" />
+						</layoutData>
+					</Button> -->
+					<Button type="Emphasized" text="{i18n>btnRegisterSON}" press="onRegisterSON" >
+						<layoutData>
+							<OverflowToolbarLayoutData priority="NeverOverflow" />
+						</layoutData>
+					</Button>
+				</OverflowToolbar>
+			</footer>
+    </Page>
+
+</mvc:View>

@@ -1,0 +1,79 @@
+<mvc:View
+    controllerName="gestioneabilitazioneeson.controller.SignSON"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+    xmlns:l="sap.ui.layout">
+
+    <Page>
+        <Panel class="bgBlue margin0" visible="{detailModel>/headerVisible}">
+            <core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.HeaderPanel" type="XML"/>
+            <FlexBox justifyContent="End">
+            <!-- <Button text="Rettifica" type="Emphasized" press="onChangeSON"></Button> -->
+            </FlexBox>
+        </Panel>
+        <IconTabBar select="onSelectTab" id ="idIconTabBar" selectedKey="{detailModel>/tabSelectedKey}">
+            <items>
+                <IconTabFilter 
+                    icon="sap-icon://list" 
+                    text="{i18n>btnSign}"
+                    key="{i18n>btnSign}"	
+                    visible="{iconTabModel>/SignSONEnabled}" >
+                    <core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.actions.signSON.TableSignSON" type="XML"/>
+                </IconTabFilter>
+                <IconTabFilter 
+                    icon="{detailModel>/iconTab}" 
+                    text="{detailModel>/text}"
+                    key="{detailModel>/key}"	 >
+                    <Panel visible="{detailModel>/showSelection}">
+                        <core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.actions.signSON.tableDetail" type="XML"/>
+                    </Panel>
+                    <Panel visible="{= !${detailModel>/showSelection}}" >
+                        <core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.detail.wizard" type="XML"/>
+                    </Panel>
+                    
+                </IconTabFilter>
+                <IconTabFilter
+                    icon="sap-icon://history"
+                    text="{i18n>btnWorkflow}"
+                    key="{i18n>btnWorkflow}"	
+        
+                    >
+                    <Panel visible="{detailModel>/showSelection}" >
+                        <core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.actions.signSON.workflow.table" type="XML"/>
+                    </Panel>
+                    <Panel visible="{= !${detailModel>/showSelection}}" >
+                        <core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.actions.signSON.workflow.Workflow" type="XML"/>
+                    </Panel>
+                </IconTabFilter>
+                <IconTabFilter
+                    icon="sap-icon://documents"
+                    text="{i18n>btnDocument}"
+                    key="{i18n>btnDocument}"	 >
+                    <Text text="Notes go here ..." />
+                </IconTabFilter>
+            </items>
+        </IconTabBar>    
+
+        <footer>
+                <OverflowToolbar>
+                    <Button type="Emphasized" text="{i18n>btnBack}" press="onNavBack" >
+                        <layoutData>
+                            <OverflowToolbarLayoutData priority="NeverOverflow" />
+                        </layoutData>
+                    </Button>
+                    <Button
+                        icon="{ path: 'logModel>/', formatter: '.buttonIconFormatter' }"
+                        type="{ path: 'logModel>/', formatter: '.buttonTypeFormatter' }"
+                        text= "{path: 'logModel>/', formatter: '.highestSeverityMessages' }"
+                        press="handleDialogPress"/>
+                    <ToolbarSpacer />
+                    <Button type="Emphasized" text="{detailModel>/buttonText}" visible="{detailModel>/buttonVisible}" press="onAction">
+                        <layoutData>
+                            <OverflowToolbarLayoutData priority="NeverOverflow" />
+                        </layoutData>
+                    </Button>
+                </OverflowToolbar>
+		</footer>
+    </Page>
+</mvc:View>    

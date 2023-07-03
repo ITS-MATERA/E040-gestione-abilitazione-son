@@ -1,0 +1,133 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+    xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+
+    <Panel expandable="true"  headerText="{i18n>wizardStep1SubTitle1}" width="auto" class="margin0 padding0 expanded">
+		<content >
+			<VBox id="idStep1Form2">
+                <items>
+                    <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0" class="paddingLeft">
+                        <VBox >
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom " >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0" class="paddingLeft">	
+                                            <Label required="true" design="Bold" width="100%" text="{i18n>wizardFieldFipos}" class="sapUiTinyMarginTop sapUiLargeMarginEnd ">
+                                                <layoutData><l:GridData span="XL4 L9 M12 S12" /></layoutData>
+                                            </Label>
+                                            <ComboBox
+                                                id="idWizardFipos"
+                                                width="100%"
+                                                 editable="{wizardModel>/isInChange}"
+                                                app:property="Fipos"
+                                                change="onLiveChange"
+                                                items="{wizardModel>/FiposList}"
+                                                selectedKey="{wizardModel>/Fipos}"
+                                                value="{wizardModel>/Fipos}"
+                                                >
+                                                <core:Item  key="{wizardModel>Fipos}" text="{wizardModel>Fipos}" />
+                                                <layoutData>
+                                                    <l:GridData span="XL8 L8 M7 S12"  />
+                                                </layoutData>
+                                            </ComboBox>	                       
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL6 L6 M12 S12" /></layoutData>
+                        </VBox>                     		
+                        <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0" class="paddingLeft">	
+                                            <Label  required="true" design="Bold" width="100%" text="{i18n>wizardFieldFistl}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData><l:GridData span="XL5 L9 M12 S12" /></layoutData>
+                                            </Label>
+                                            <Input   editable="{wizardModel>/isInChange}" id="idWizardFistl"  app:property="Fistl" width="100%" value="{wizardModel>/Fistl}" liveChange="onLiveChange" >
+                                                <layoutData><l:GridData span="XL7 L9 M7 S12"/></layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL6 L6 M12 S12" /></layoutData>
+                        </VBox> 
+                         <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0" class="paddingLeft">	
+                                            <Label  design="Bold" width="100%" text="{i18n>wizardFieldKostl}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData><l:GridData span="XL5 L9 M12 S12" /></layoutData>
+                                            </Label>
+                                            <Input  editable="{wizardModel>/isInChange}" id="idWizardKostl"  app:property="Kostl" width="100%" value="{wizardModel>/Kostl}"  submit="onSubmitKostl" liveChange="onLiveChange">
+                                                <layoutData><l:GridData span="XL7 L9 M12 S12"/></layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL3 L4 M4 S12" linebreak="true"/></layoutData>
+                        </VBox>   
+                           <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0" class="paddingLeft">	
+                                            <Label  design="Bold" width="100%" text="{i18n>wizardFieldLtext}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData><l:GridData span="XL4 L9 M12 S12" /></layoutData>
+                                            </Label>
+                                            <Input width="100%" value="{wizardModel>/Ltext}" editable="false"> 
+                                                <layoutData><l:GridData span="XL8 L9 M12 S12"/></layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL4 L5 M4 S12" /></layoutData>
+                        </VBox>    
+                            <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0" class="paddingLeft">	
+                                            <Label  design="Bold" width="100%" text="{i18n>wizardFieldSakrn}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData><l:GridData span="XL5 L9 M12 S12" /></layoutData>
+                                            </Label>
+                                            <Input  editable="{wizardModel>/isInChange}" id="idWizardSaknr"  app:property="Saknr" width="100%" value="{wizardModel>/Saknr}"  submit="onSubmitSakrn"  liveChange="onLiveChange">
+                                                <layoutData><l:GridData span="XL7 L9 M12 S12"/></layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL3 L4 M4 S12" linebreak="true"/></layoutData>
+                        </VBox>  
+                             <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0" class="paddingLeft">	
+                                            <Label  design="Bold" width="100%" text="{i18n>wizardFieldSkat}" class="sapUiTinyMarginTop sapUiLargeMarginEnd" >
+                                                <layoutData><l:GridData span="XL4 L9 M12 S12" /></layoutData>
+                                            </Label>
+                                            <Input width="100%" value="{wizardModel>/Skat}" editable="false">
+                                                <layoutData><l:GridData span="XL8 L9 M12 S12"/></layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL4 L5 M4 S12" /></layoutData>
+                        </VBox>                                                                                                                                          
+                    </l:Grid>
+                </items>
+                <layoutData><l:GridData  span="XL3 L4 M6 S12"/></layoutData>
+            </VBox>	
+		</content>
+	</Panel>
+</core:FragmentDefinition>

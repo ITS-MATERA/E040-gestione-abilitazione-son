@@ -1,0 +1,119 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+     xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+     height="100%"
+>
+            <VBox >
+                <items>
+                    <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                        <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                            <Label  design="Bold" width="100%" text="{i18n>fieldNameZuffcontFirm}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData><l:GridData span="XL6 L8 M4 S12" /></layoutData>
+                                            </Label> 
+                                            <Input width="100%" id="idFieldZuffcontFirm" app:property="ZufficioCont"  editable="false" value="{headerActionModel>/ZufficioCont}" liveChange="onLiveChange" >
+                                                <layoutData><l:GridData span="XL4 L4 M7 S12"/></layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL5 L6 M12 S12"/></layoutData>
+                        </VBox>                     	 
+
+                            <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                            <Label  design="Bold" width="100%" text="{i18n>fieldNameZvimDescrufficio}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData><l:GridData span="XL4 L4 M4 S12" /></layoutData>
+                                            </Label>
+                                            <Input width="100%"  editable="false" value="{headerActionModel>/ZvimDescrufficio}">
+                                                <layoutData><l:GridData span="XL8 L8 M7 S12"/></layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL7 L6 M12 S12"/></layoutData>
+                        </VBox>    
+                        <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                            <Label  design="Bold" width="100%" text="{i18n>fieldNameZcodord}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData><l:GridData span="XL6 L8 M4 S12" /></layoutData>
+                                            </Label>
+                                            <Input width="100%" editable="false" value="{headerActionModel>/Zcodord}">
+                                                <layoutData><l:GridData span="XL6 L4 M7 S12"/></layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL5 L6 M12 S12"/></layoutData>
+                        </VBox>                     	 
+                            <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                            <Label  design="Bold" width="100%" text="{i18n>fieldNameZcodordDesc}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData><l:GridData span="XL4 L4 M4 S12" /></layoutData>
+                                            </Label>
+                                            <Input width="100%"  editable="false" value="{headerActionModel>/ZcodordDesc}">
+                                                <layoutData><l:GridData span="XL8 L8 M7 S12"/></layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL7 L6 M12 S12"/></layoutData>
+                        </VBox>
+                     <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                            <Label  design="Bold" width="100%" text="{i18n>fieldNameZcdr}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData><l:GridData span="XL6 L8 M4 S12" /></layoutData>
+                                            </Label>
+                                            <Input width="100%" id="idFieldZcdr" app:property="Zcdr" value="{headerActionModel>/Zcdr}" liveChange="onLiveChange">
+                                                <layoutData><l:GridData span="XL5 L4 M7 S12"/></layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL5 L6 M12 S12"/></layoutData>
+                        </VBox>                     	 
+                            <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                            <Label   required="true" design="Bold" width="100%" text="{i18n>fieldNameZdirigenteAmm}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData><l:GridData span="XL4 L4 M4 S12" /></layoutData>
+                                            </Label>
+                                            <ComboBox width="100%"  id="idFieldZdirigenteAmm" app:property="ZdirigenteAmm" value="{headerActionModel>/ZdirigenteAmm}" change="onLiveChange">
+                                                <layoutData><l:GridData span="XL4 L4 M7 S12"/></layoutData>
+                                            </ComboBox>
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL7 L6 M12 S12"/></layoutData>
+                        </VBox>                                                                       
+                    </l:Grid>
+                </items>
+                <layoutData><l:GridData  span="XL3 L4 M6 S12"/></layoutData>
+            </VBox>	
+
+</core:FragmentDefinition>

@@ -1,0 +1,99 @@
+.bgWhite {
+  background-color: white;
+}
+.bgGray {
+  background-color: #f7f7f7;
+}
+.bgBlue {
+  background-color: rgba(235, 249, 255, 255);
+}
+div.panelListAuth > div {
+  padding: 0;
+}
+
+.radioBcenter {
+  display: flex;
+  direction: row;
+}
+.paddingLeft {
+  padding-left: 0 !important;
+}
+
+.margin0 {
+  padding: 0 !important;
+}
+.padding0 {
+  padding: 0 !important;
+}
+
+.titleSize {
+  font-size: 1.5rem !important;
+}
+.titleWizard {
+  font-size: 18px !important;
+}
+
+.textBlack {
+  color: black !important;
+}
+
+/*#~~~ Hides title form in wizard ~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.formHiddenTitle .sapUiFormContainerTitle .sapUiFormTitle {
+  display: none !important;
+}
+/* .formHiddenTitleL .sapUiFormContainerTitle .sapUiFormTitle {
+  display: none !important;
+} */
+
+@media all and (max-width: 1024px) {
+  .formHiddenTitleL .sapUiFormContainerTitle .sapUiFormTitle {
+    display: none !important;
+  }
+}
+/*#~~~ Hides title step wizard ~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.sapMWizardStepTitle {
+  display: none !important;
+}
+div.pageStart > header > div > div > div > div > span {
+  font-size: 1.5rem !important;
+}
+div.pageAdd > header > div {
+  box-shadow: none !important;
+}
+div.pageAdd > header {
+  position: initial !important;
+}
+div.pageAdd > header > div > div > div > div > span {
+  font-size: 1.5rem !important;
+}
+
+div.pageListAuth > header > div {
+  box-shadow: none !important;
+}
+div.pageListAuth > header > div > div > div > div > span {
+  font-size: 1.5rem !important;
+}
+
+/*#~~~ Alignment text label start ~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.sapUiForm .sapUiFormElementLbl > .sapMLabel {
+  text-align: start !important;
+  width: auto;
+}
+.sapUiFormCL.sapUiFormCLWideColumns
+  .sapUiFormElementLbl:not(.sapUiFormCLCellsL12)
+  > .sapMLabel {
+  text-align: start !important;
+}
+/*#~~~ Alignment text label end ~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+div.lastFormAdd > div > div > section {
+  padding-top: 0;
+}
+div.middleFormAdd > div > div > section {
+  padding-bottom: 0;
+}
+
+.labelWidth > div {
+  width: 100% !important;
+}
