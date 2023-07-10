@@ -3,9 +3,31 @@ sap.ui.define(
     "./BaseController",
     "sap/ui/model/json/JSONModel",
     "../model/formatter",
+    "sap/ui/export/library",
+    "sap/ui/export/Spreadsheet",
+    "sap/m/MessageItem",
+    "sap/m/MessageView",
+    "sap/m/Button",
+    "sap/m/Dialog",
+    "sap/m/Bar",
+    "sap/m/Input",
+    "sap/ui/core/library",
     "sap/m/MessageBox",
   ],
-  function (BaseController, JSONModel, formatter) {
+  function (
+    BaseController,
+    JSONModel,
+    formatter,
+    library,
+    Spreadsheet,
+    MessageItem,
+    MessageView,
+    Button,
+    Dialog,
+    Bar,
+    Input,
+    coreLibrary
+  ) {
     "use strict";
 
     const ADD_AUTH_MODEL = "addAuhModel";
@@ -13,6 +35,12 @@ sap.ui.define(
     const Ztipodisp3_SET = "TipoDispSet";
     const OPTION_ADD = "INS";
     const URL_DEEP = "DeepAbilitazioneSet";
+    const URL_VALIDATION = "ValidazioneAbilitazione";
+    const FistlMc_SET = "TvarvcParameterSet";
+    const LOG_MODEL = "logModel";
+    const MESSAGE_MODEL = "messageModel";
+
+    const EDM_TYPE = library.EdmType;
     return BaseController.extend(
       "gestioneabilitazioneeson.controller.AddAuth",
       {
@@ -32,6 +60,108 @@ sap.ui.define(
             Datbi: null,
           });
           this.setModel(oAddAuthModel, ADD_AUTH_MODEL);
+
+          this.configLog();
+
+          this.getRouter()
+            .getRoute("addAuth")
+            .attachPatternMatched(this._onObjectMatched, this);
+        },
+
+        _onObjectMatched: function () {
+          var self = this;
+          self.getFistl();
+        },
+
+        
+        getFistl:function(){
+          var self= this,
+                oDataModel = self.getModel();
+
+            var path = self.getModel().createKey(FistlMc_SET, {
+                Name: "COSPR3FIORIE040_FISTL",
+            });
+
+            self.getModel().metadataLoaded().then(function () {
+                oDataModel.read("/" + path, {
+                    success: function (data, oResponse) {  
+                        if(data && data.Value !== null && data.Value !== ""){
+                          self.getView().getModel("addAuhModel").setProperty("/Fistl",data.Value);
+                        }
+                        else
+                          self.getView().getModel("addAuhModel").setProperty("/Fistl","");
+                      },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                });
+            });
+        },
+
+
+        configLog: function () {
+          var self = this;
+          var oMessageTemplate = new MessageItem({
+            type: "{logModel>type}",
+            title: "{logModel>title}",
+            description: "{logModel>description}",
+            subtitle: "{logModel>subtitle}",
+            counter: "{logModel>counter}",
+          });
+
+          var aMockMessages = [];
+
+          var oModel = new JSONModel();
+
+          oModel.setData(aMockMessages);
+
+          self.oMessageView = new MessageView({
+            showDetailsPageHeader: false,
+            items: {
+              path: "logModel>/",
+              template: oMessageTemplate,
+            },
+          });
+
+          var oExportButton = new Button({
+            text: self.getResourceBundle().getText("btnExport"),
+            type: "Emphasized",
+            visible: true,
+            press: function () {
+              self.configExportMessage();
+            },
+          });
+
+          var oInputFilter = new Input({
+            placeholder: self.getResourceBundle().getText("msgSearch"),
+            visible: true,
+            liveChange: function (oEvent) {
+              self.filterMessage(oEvent);
+            },
+          });
+
+          self.oMessageView.setModel(oModel, "logModel");
+          self.setModel(oModel, LOG_MODEL);
+          self.setModel(oModel, MESSAGE_MODEL);
+
+          self.oLogDialog = new Dialog({
+            resizable: true,
+            content: self.oMessageView,
+            state: "Error",
+            beginButton: new Button({
+              press: function () {
+                self.oLogDialog.close();
+              },
+              text: self.getResourceBundle().getText("btnClose"),
+            }),
+            customHeader: new Bar({
+              contentMiddle: [oInputFilter],
+              contentRight: [oExportButton],
+            }),
+            contentHeight: "50%",
+            contentWidth: "50%",
+            verticalScrolling: false,
+          });
         },
 
         resetModelPage: function () {
@@ -107,7 +237,6 @@ sap.ui.define(
           } else {
             sNewValue = oInput.getSelectedKey();
           }
-          console.log(sNewValue);
 
           addAuthModel.setProperty("/" + sProperty, sNewValue);
         },
@@ -116,7 +245,7 @@ sap.ui.define(
             addAuthModel = self.getModel(ADD_AUTH_MODEL);
           var sNewValue = oEvent.getSource().getSelectedKey();
           var sNewDesc = oEvent.getSource().getValue();
-          addAuthModel.setProperty("/Ztipodisp3", sNewValue);
+          addAuthModel.setProperty("/Ztipodisp3", sNewValue ? sNewValue : "");
           addAuthModel.setProperty("/Zdesctipodisp3", sNewDesc);
         },
 
@@ -134,6 +263,8 @@ sap.ui.define(
           var sProperty = oInput.data("property");
           var sNewValue = oEvent.getParameter("newValue");
           oEvent.getSource().setValue(sNewValue);
+
+          sNewValue = formatter.formatStringForDate(sNewValue);
 
           addAuthModel.setProperty("/" + sProperty, sNewValue);
         },
@@ -190,7 +321,6 @@ sap.ui.define(
                   urlParameters: { ZufficioCont: ZufficioCont },
                   success: function (data, oResponse) {
                     oView.setBusy(false);
-                    console.log("List tipo ", data.results);
                     addAuthModel.setProperty("/Ztipodisp3List", data.results);
                   },
                   error: function (error) {
@@ -202,24 +332,71 @@ sap.ui.define(
         },
 
         onNavBack: function () {
-          // eslint-disable-next-line sap-no-history-manipulation
-          history.go(-1);
+          var self = this;
+          self.resetLog();
+          self.resetModelPage();
+          self.getRouter().navTo("listAuth");
         },
 
-        _stringtoTimestamp: function (dateString, formatDelimiter) {
-          var dateTimeParts = dateString.split(formatDelimiter);
-          console.log(dateTimeParts);
-          var date = new Date(
-            dateTimeParts[2],
-            parseInt(dateTimeParts[1], 10) - 1,
-            dateTimeParts[0]
-          );
-          return date;
+        resetLog: function () {
+          var self = this;
+          var oModelJson = new sap.ui.model.json.JSONModel();
+          oModelJson.setData([]);
+          self.setModel(oModelJson, LOG_MODEL);
+          self.setModel(oModelJson, MESSAGE_MODEL);
         },
+
         onSave: function () {
           var self = this,
             oDataModel = self.getModel(),
             oView = self.getView(),
+            addAuthModel = self.getModel(ADD_AUTH_MODEL),
+            Gjahr = addAuthModel.getProperty("/Gjahr"),
+            Fipos = addAuthModel.getProperty("/Fipos"),
+            Fistl = addAuthModel.getProperty("/Fistl"),
+            Fikrs = self.getModelGlobal(self.AUTHORITY_CHECK_ABILITAZIONE).getData().FIKRS,
+            AgrName = self.getModelGlobal(self.AUTHORITY_CHECK_ABILITAZIONE).getData().AGR_NAME,
+            Prctr = self.getModelGlobal(self.AUTHORITY_CHECK_ABILITAZIONE).getData().PRCTR;
+
+          if (Fipos !== null && Fistl !== null) {
+            var oParam = {
+              Fipex: !Fipos || Fipos === null ? "" : Fipos,
+              Fistl: !Fistl || Fistl === null ? "" : Fistl,
+              Gjahr: !Gjahr || Gjahr === null ? "" : Gjahr,
+              Prctr: !Prctr || Prctr === null ? "" : Prctr,
+              AgrName: !AgrName || AgrName === null ? "" : AgrName,
+              Fikrs: !Fikrs || Fikrs === null ? "" : Fikrs,
+            };
+            self.getView().setBusy(true);
+            oDataModel.callFunction("/" + URL_VALIDATION, {
+              method: "GET",
+              urlParameters: oParam,
+              success: function (oData, response) {
+                self.getView().setBusy(false);
+                var arrayMessage = oData.results;
+                var isSuccess = self.isErrorInLog(arrayMessage);
+                if (isSuccess) {
+                  self._insertMethod();
+                }
+              },
+              error: function (oError) {
+                self.getView().setBusy(false);
+              },
+            });
+          } else {
+            self._setMessage("titleDialogError", "msgNoRequiredField", "error");
+            return false;
+          }
+        },
+        handleDialogPress: function (oEvent) {
+          var self = this;
+          self.oMessageView.navigateBack();
+          self.oLogDialog.open();
+        },
+
+        _insertMethod: function () {
+          var self = this,
+            oDataModel = self.getModel(),
             addAuthModel = self.getModel(ADD_AUTH_MODEL),
             ZufficioCont = addAuthModel.getProperty("/ZufficioCont"),
             Gjahr = addAuthModel.getProperty("/Gjahr"),
@@ -242,28 +419,29 @@ sap.ui.define(
             return null;
           }
 
-          var DatabTs = self._stringtoTimestamp(Datab, "-");
-          var DatbiTs = self._stringtoTimestamp(Datbi, "-");
+          var DatabTs = formatter.formateDateForDeep(Datab);
+          var DatbiTs = formatter.formateDateForDeep(Datbi);
 
           var entity = [
             {
-              Gjahr: "" + Gjahr + "",
-              ZufficioCont: "" + ZufficioCont + "",
-              Fipos: "" + Fipos + "",
-              Fistl: "" + Fistl + "",
-              Ztipodisp3: "" + Ztipodisp3 + "",
-              Datab: DatabTs,
-              Datbi: DatbiTs,
-              Zchiaveabi: "" + "AA",
-              ZstepAbi: "" + 1 + "",
-              Bukrs: "" + "ssa",
+              Gjahr: !Gjahr || Gjahr === null ? "" : Gjahr,
+              ZufficioCont:
+                !ZufficioCont || ZufficioCont === null ? "" : ZufficioCont,
+              Fipos: !Fipos || Fipos === null ? "" : Fipos,
+              Fistl: !Fistl || Fistl === null ? "" : Fistl,
+              Ztipodisp3: !Ztipodisp3 || Ztipodisp3 === null ? "" : Ztipodisp3,
+              Datab: !DatabTs || DatabTs === null ? "" : DatabTs,
+              Datbi: !DatbiTs || DatbiTs === null ? "" : DatbiTs,
+              Zchiaveabi: "Zchiaveabi",
+              ZstepAbi: "1",
+              Bukrs: "S001",
             },
           ];
 
           var entityRequestBody = {
-            Bukrs: "" + "",
-            Gjahr: "" + "",
-            Zchiaveabi: "" + "AA",
+            Bukrs: "",
+            Gjahr: "",
+            Zchiaveabi: "Zchiaveabi",
             OperationType: OPTION_ADD,
             AbilitazioneSet: entity,
             AbilitazioneMessageSet: [],
@@ -275,21 +453,15 @@ sap.ui.define(
               self.getView().setBusy(false);
 
               var arrayMessage = result.AbilitazioneMessageSet.results;
-              var arrayError = arrayMessage.filter((el) => el.Msgty === "E");
-              console.log(result);
-              if (arrayError.length > 0) {
-                self._setMessage("titleDialogError", "msgError", "error");
-                return false;
-              }
-              self.resetModelPage();
-              self.getRouter().navTo("listAuth");
 
-              console.log(result.AbilitazioneMessageSet.results);
+              var isSuccess = self.isErrorInLog(arrayMessage);
+              if (isSuccess) {
+                self.setPropertyGlobal(self.RELOAD_MODEL, "canRefresh", true);
+                self.onNavBack();
+              }
             },
             error: function (err) {
               self.getView().setBusy(false);
-
-              console.log(err);
             },
             async: true,
             urlParameters: {},

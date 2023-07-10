@@ -10,7 +10,11 @@ sap.ui.define(["./BaseController"], function (BaseController) {
           headerVisible:false
         });
 
-        self.getView().setModel(oSonSectionModelJson,SON_SECTION); 
+        self.getAuthorityCheck(self.FILTER_AUTH_OBJ, function(callback){
+            self.getAuthorityCheck(self.FILTER_SON_OBJ, function(callbackSON){
+              self.getView().setModel(oSonSectionModelJson,SON_SECTION);
+            })
+        });
       },
       onNavBack: function () {
         // eslint-disable-next-line sap-no-history-manipulation

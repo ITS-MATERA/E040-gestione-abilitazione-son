@@ -10,7 +10,7 @@
         placement="Auto"
         contentHeight="80%"
 		initialFocus="close">
-        <VBox width="100%">
+        <!-- <VBox width="100%">
             <items>
                 <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
                     <VBox>
@@ -152,7 +152,7 @@
                 </l:Grid>
             </items>
             <layoutData><l:GridData  span="XL3 L4 M6 S12"/></layoutData>
-        </VBox>	      
+        </VBox>	       -->
 		<footer>
 			<Toolbar>
 				<ToolbarSpacer/>

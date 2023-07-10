@@ -1,7 +1,6 @@
 <core:FragmentDefinition
     xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
     xmlns="sap.m"
-    xmlns:plugins="sap.m.plugins"
 	xmlns:core="sap.ui.core"
 		xmlns:l="sap.ui.layout"
 >    
@@ -30,9 +29,7 @@
 				path: 'step3List>/'
 			}"
 		>
-		<dependents>
-			<plugins:ColumnResizer/>
-		</dependents>
+		
 		<headerToolbar>
 			<OverflowToolbar >
 				<!-- <FlexBox >

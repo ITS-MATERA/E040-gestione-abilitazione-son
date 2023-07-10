@@ -6,77 +6,138 @@
     xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 >
 
-	<Panel expandable="true" width="auto"   class="margin0 padding0 expanded">
-		<headerToolbar>
-			<OverflowToolbar style="Clear">
-				<Title text="{i18n>wizardStep2SubTitle2}" />
-                  <!-- <Input  editable="{wizardModel>/isInChange}" id="idWizardPayMode"  app:property="PayMode" value="{wizardModel>/PayMode}" submit="onSubmitPayMode" liveChange="onLiveChange" >
-                       <layoutData>
-                            <l:GridData span="XL10 L10 M12 S12"  />
-                        </layoutData>
-                    </Input> -->
-			</OverflowToolbar>
-		</headerToolbar>
-		<content>
-            <f:SimpleForm id="idStep2Form2"
-                        editable="true"
-                        class="formHiddenTitle"
-                        layout="ResponsiveGridLayout"
-                        labelSpanXL="4"
-                        labelSpanL="3"
-                        labelSpanM="4"
-                        adjustLabelSpan="false"
-                        emptySpanXL="0"
-                        emptySpanL="4"
-                        columnsXL="4"
-                        columnsL="2"
-                        singleContainerFullSize="false">
+    <Panel expandable="true"  headerText="{i18n>wizardStep2SubTitle2}" width="auto" class="margin0 padding0 expanded">
+		<content >           
+            <VBox id="idStep2Form2"> 
+                <items>
+                    <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">
+                        <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                            <Label  design="Bold" width="100%" text="{i18n>wizardStep2SubTitle2}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData><l:GridData span="XL5 L5 M4 S12" /></layoutData>
+                                            </Label>
+                                                <Input  editable="{wizardModel>/isInChange}" id="idWizardPayMode"  app:property="PayMode" value="{wizardModel>/PayMode}" submit="onSubmitPayMode" liveChange="onLiveChangePayMode">
+                                                    <layoutData>
+                                                        <l:GridData span="XL5 L5 M6 S12"  />
+                                                    </layoutData>
+                                                </Input>
+	
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL5 L4 M8 S12" /></layoutData>
+                        </VBox>                     		
+                        <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                            <Label  design="Bold" width="100%" text="{i18n>wizardFieldBanks}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData><l:GridData span="XL6 L6 M4 S12" /></layoutData>
+                                            </Label>
+                                            <Input  editable="{wizardModel>/isInChange}" id="idWizardBanks"  app:property="Banks" value="{wizardModel>/Banks}" liveChange="onLiveChange">
+                                                <layoutData>
+                                                    <l:GridData span="XL5 L5 M6 S12" />
+                                                </layoutData>
+                                            </Input>       
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL3 L4 M8 S12" linebreak="true" /></layoutData>
+                        </VBox> 
+                           <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                            <Label  design="Bold" width="100%" text="{i18n>wizardFieldZZcausaleval}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData><l:GridData span="XL5 L5 M4 S12" /></layoutData>
+                                            </Label>
+                                             <Input id="idWizardZZcausaleval"  app:property="ZZcausaleval" value="{wizardModel>/ZZcausaleval}"   liveChange="onLiveChange" editable="{wizardModel>/isZZcausalevalEditable}">
+                                                <layoutData>
+                                                    <l:GridData span="XL7 L7 M6 S12"  />
+                                                </layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL3 L4 M8 S12" /></layoutData>
+                        </VBox>  
+                        <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                            <Label  design="Bold" width="100%" text="{i18n>wizardFieldIban}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData><l:GridData span="XL5 L5 M4 S12" /></layoutData>
+                                            </Label>
+                                          <Input  editable="{wizardModel>/isInChange}" id="idWizardIban"  app:property="Iban" value="{wizardModel>/Iban}" liveChange="onLiveChange" submit="onSubmitIban" >
+                                            <layoutData>
+                                                <l:GridData span="XL7 L7 M6 S12"  />
+                                            </layoutData>
+                                        </Input>   
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL3 L4 M8 S12" /></layoutData>
+                        </VBox>  
+                         <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                            <Label  design="Bold" width="100%" text="{i18n>wizardFieldSwift}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData><l:GridData span="XL6 L6 M4 S12" /></layoutData>
+                                            </Label>
+                                           <Input  value="{wizardModel>/Swift}"  editable="false">
+                                                <layoutData>
+                                                    <l:GridData span="XL5 L5 M6 S12"  />
+                                                </layoutData>
+                                            </Input>  
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL3 L4 M8 S12" /></layoutData>
+                        </VBox>                          
 
-                        <f:content>
-                            <Label design="Bold" text="{i18n>wizardStep2SubTitle2}" class="sapUiSmallMarginBottom"/>
-                            <Input  editable="{wizardModel>/isInChange}" id="idWizardPayMode"  app:property="PayMode" value="{wizardModel>/PayMode}" submit="onSubmitPayMode" liveChange="onLiveChange">
-                                <layoutData>
-                                    <l:GridData span="XL4 L5 M6 S12"  />
-                                </layoutData>
-                            </Input>
+                         <VBox>
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                            <Label  design="Bold" width="100%" text="{i18n>wizardFieldZcoordest}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData><l:GridData span="XL6 L6 M4 S12" /></layoutData>
+                                            </Label>
+                                            <Input id="idWizardZcoordest"  app:property="Zcoordest" value="{wizardModel>/Zcoordest}" liveChange="onLiveChange" submit="onSubmitZcoordest" editable="{wizardModel>/isZcoordestEditable}">
+                                                <layoutData>
+                                                    <l:GridData span="XL6 L6 M6 S12"  />
+                                                </layoutData>
+                                            </Input>      
+                                        </l:Grid>
+                                    </items>     
+                                </FlexBox>                                
+                            </items>
+                            <layoutData><l:GridData span="XL3 L4 M6 S12" /></layoutData>
+                        </VBox>   
+ 
+                           
+  
 
-                            <Label design="Bold" text="{i18n>wizardFieldBanks}" class="sapUiSmallMarginBottom"/>
-                            <Input  editable="{wizardModel>/isInChange}" id="idWizardBanks"  app:property="Banks" value="{wizardModel>/Banks}" liveChange="onLiveChange">
-                                <layoutData>
-                                    <l:GridData span="XL4 L5 M6 S12" linebreak="true"  />
-                                </layoutData>
-                            </Input>
-                            <Label design="Bold" text="{i18n>wizardFieldZcoordest}" class="sapUiSmallMarginBottom"/>
-                            <Input id="idWizardZcoordest"  app:property="Zcoordest" value="{wizardModel>/Zcoordest}" liveChange="onLiveChange" submit="onSubmitZcoordest" editable="{wizardModel>/isZcoordestEditable}">
-                                <layoutData>
-                                    <l:GridData span="XL8 L9 M6 S12"  />
-                                </layoutData>
-                            </Input>            
-                            <core:Title text="" />
-                            <Label design="Bold" text="{i18n>wizardFieldZZcausaleval}" class="sapUiSmallMarginBottom"/>
-                            <Input id="idWizardZZcausaleval"  app:property="ZZcausaleval" value="{wizardModel>/ZZcausaleval}" editable="false">
-                                <layoutData>
-                                    <l:GridData span="XL7 L8 M6 S12"  />
-                                </layoutData>
-                            </Input>
-                            <core:Title text="" />
-                            <Label design="Bold" text="{i18n>wizardFieldIban}" class="sapUiSmallMarginBottom"/>
-                            <Input  editable="{wizardModel>/isInChange}" id="idWizardIban"  app:property="Iban" value="{wizardModel>/Iban}" liveChange="onLiveChange" submit="onSubmitIban" >
-                                <layoutData>
-                                    <l:GridData span="XL8 L9 M6 S12"  />
-                                </layoutData>
-                            </Input>   
-                            <core:Title text="" /> 
-                            <Label design="Bold" text="{i18n>wizardFieldSwift}" class="sapUiSmallMarginBottom"/>
-                            <Input  value="{wizardModel>/Swift}"  editable="false">
-                                <layoutData>
-                                    <l:GridData span="XL7 L8 M6 S12"  />
-                                </layoutData>
-                            </Input>                          
-                        </f:content>
-                    </f:SimpleForm>
+                    </l:Grid>
+                </items>
+                <layoutData><l:GridData  span="XL3 L4 M6 S12"/></layoutData>
+            </VBox>	
 	    </content>
 	</Panel>
+
 
 
 	

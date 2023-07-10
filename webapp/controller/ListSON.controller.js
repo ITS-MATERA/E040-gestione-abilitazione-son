@@ -41,6 +41,7 @@ sap.ui.define(
     const SON_MODEL_EXPORT = "SONModelExport";
     const TABLE_LISTSON = "idListSonTable";
     const CHECK_ALL = "idCheckSelectAll";
+    const Zzamministr_SET = "UserParametersSet";
 
     return BaseController.extend(
       "gestioneabilitazioneeson.controller.ListSON",
@@ -64,7 +65,7 @@ sap.ui.define(
             btnLastEnabled: false,
             recordForPageEnabled: false,
             currentPageEnabled: true,
-            stepInputDefault: 3,
+            stepInputDefault: 50,
             currentPage: 1,
             maxPage: 1,
             paginatorSkip: 0,
@@ -79,13 +80,14 @@ sap.ui.define(
             DeleteSignSONEnabled: false,
             RegisterCancelSONEnabled: false,
             DeleteCancelSONEnabled: false,
-            ChangeSONEnabled: false            
+            ChangeSONEnabled: false,
           });
 
           var oReloadModel = new JSONModel({
-            canRefresh:false
+            canRefresh: false,
+            isClickStart: false,
           });
-          
+
           this.setModel(oListSonModel, LISTSON_MODEL);
           this.setModel(oPaginatorModel, PAGINATOR_MODEL);
           this.setModelGlobal(oActionDisabled, ACTION_MODEL);
@@ -161,12 +163,46 @@ sap.ui.define(
 
         _onObjectMatched: function (oEvent) {
           var self = this,
-              reloadModel = self.getModelGlobal(self.RELOAD_MODEL).getData();
-          
-          if(reloadModel && reloadModel !== null && reloadModel.canRefresh){
-            self.setPropertyGlobal(self.RELOAD_MODEL,"canRefresh",false);
-            location.reload();
-          }
+            reloadModel = self.getModelGlobal(self.RELOAD_MODEL).getData();
+
+            self.getAuthorityCheck(self.FILTER_SON_OBJ, function(callback){
+              if(callback){
+                self.getAmministrazione();
+                if (reloadModel && reloadModel !== null && reloadModel.canRefresh) {
+                  self.setPropertyGlobal(self.RELOAD_MODEL, "canRefresh", false);
+                  location.reload();
+                }
+              }
+              else{
+                self.getRouter().navTo("notAuth", {mex: self.getResourceBundle().getText("notAuthText")});
+              }
+            });
+        },
+
+        getAmministrazione:function(){
+          var self =this,
+            oDataModel = self.getModel();
+          var path = self.getModel().createKey(Zzamministr_SET, {
+            Name: "PRC",
+          });
+          self
+            .getModel()
+            .metadataLoaded()
+            .then(function () {
+              oDataModel.read("/" + path, {
+                success: function (data, oResponse) {
+                  console.log(data);
+                  if(data && data.Value!== null && data.Value !== "")
+                    self.getView().byId("fZzamministr").setValue(data.Value);
+                  
+                  // self.getView().getModel(DataSON_MODEL).setProperty("/Zzamministr",);
+                },
+                error: function (error) {
+                  console.log(error);
+                  oView.setBusy(false);
+                },
+              });
+            });
         },
 
         handleDialogPress: function (oEvent) {
@@ -207,10 +243,56 @@ sap.ui.define(
           checkBox.setSelected(false);
         },
 
+        resetFilter: function () {
+          var self = this,
+            oView = self.getView(),
+            listSONModel = self.getModel(LISTSON_MODEL),
+            sGjahr = oView.byId("fGjahr"),
+            sZzamministr = oView.byId("fZzamministr"),
+            sCapitolo = oView.byId("fCapitolo"),
+            sZufficioCont = oView.byId("fZufficioCont"),
+            sZnumsopFrom = oView.byId("fZnumsopFrom"),
+            sZnumsopTo = oView.byId("fZnumsopTo"),
+            sZstatoSop = oView.byId("fZstatoSop"),
+            sZdesctipodisp3 = oView.byId("fZdesctipodisp3"),
+            sZricann = oView.byId("fZricann"),
+            sZdatasopFrom = oView.byId("fZdatasopFrom"),
+            sZdatasopTo = oView.byId("fZdatasopTo"),
+            sZdataprot = oView.byId("fZdataprot"),
+            sZnumprot = oView.byId("fZnumprot"),
+            sBeneficiario = oView.byId("fBeneficiario"),
+            sFiposFrom = oView.byId("fFiposFrom"),
+            sFiposTo = oView.byId("fFiposTo"),
+            sFistl = oView.byId("fFistl");
+
+          sGjahr.setValue("");
+          sZzamministr.setValue("");
+          sCapitolo.setValue("");
+          sZufficioCont.setValue("");
+          sZnumsopFrom.setValue("");
+          sZnumsopTo.setValue("");
+          sZstatoSop.setSelectedKey("");
+          sZstatoSop.setValue(
+            self.getResourceBundle().getText("defaultZstatoSop")
+          );
+          sZdesctipodisp3.setSelectedKey("");
+          sZdesctipodisp3.setValue(
+            self.getResourceBundle().getText("defaultZtipodisp3")
+          );
+          sZricann.setSelectedKey(self.getResourceBundle().getText("ItemNO"));
+          listSONModel.setProperty("/filterRequestEnable", true);
+          sZdatasopFrom.setValue(null),
+            sZdatasopTo.setValue(null),
+            sZdataprot.setValue(null),
+            sZnumprot.setValue(""),
+            sBeneficiario.setValue(""),
+            sFiposFrom.setValue(""),
+            sFiposTo.setValue(""),
+            sFistl.setValue("");
+        },
+
         onBeforeRendering: function () {
           var self = this;
-          self.resetPaginator(PAGINATOR_MODEL);
-          self._setEntityProperties();
 
           var oTable = self.getView().byId(TABLE_LISTSON);
           oTable._getSelectAllCheckbox().setVisible(false);
@@ -240,14 +322,18 @@ sap.ui.define(
 
           if (getAll) {
             obj = {
-              // AgrName: sAgrName,
+              AgrName: self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().AGR_NAME,
+              Fikrs:self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().FIKRS,
+              Prctr:self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().PRCTR
             };
             nameModel = SON_MODEL_EXPORT;
           } else {
             obj = {
               $top: numRecordsForPage,
               $skip: paginatorModel.getProperty("/paginatorSkip"),
-              // AgrName: sAgrName,
+              AgrName: self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().AGR_NAME,
+              Fikrs:self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().FIKRS,
+              Prctr:self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().PRCTR
             };
             nameModel = SON_SET;
           }
@@ -278,7 +364,11 @@ sap.ui.define(
                 success: function (data, oResponse) {
                   console.log("data", data.results);
                   if (getKey) {
-                    var counter = JSON.parse(oResponse.headers["sap-message"]);
+                    var response = oResponse.headers["sap-message"];
+                    var mess = !response ? 0 : response;
+                    var counter = JSON.parse(mess);
+
+                    console.log("counter", counter.message);
                     listSONModel.setProperty("/total", counter.message);
                     self.counterRecords(counter.message);
                   }
@@ -327,19 +417,23 @@ sap.ui.define(
           var self = this;
           var oBundle = self.getResourceBundle();
           var value = oEvent.getParameter("value"),
-              key = oEvent.getSource().getSelectedKey(),
+            key = oEvent.getSource().getSelectedKey(),
             listSONModel = self.getModel(LISTSON_MODEL);
 
-          if(value === oBundle.getText("defaultZstatoSop") || key === '10' || key === '16')  
+          if (
+            value === oBundle.getText("defaultZstatoSop") ||
+            key === "10" ||
+            key === "16"
+          )
             listSONModel.setProperty("/filterRequestEnable", true);
-          else
-          listSONModel.setProperty("/filterRequestEnable", false);  
+          else listSONModel.setProperty("/filterRequestEnable", false);
         },
         onUpdateFinished: function (oEvent) {
           console.log("update");
           var sTitle,
             oTable = oEvent.getSource(),
             listSONModel = this.getModel(LISTSON_MODEL),
+            oPaginatorPanel = this.getView().byId("paginatorPanel"),
             iTotalItems = listSONModel.getProperty("/total"),
             areFiltersValid = listSONModel.getProperty("/areFiltersValid");
 
@@ -355,6 +449,11 @@ sap.ui.define(
             sTitle = this.getResourceBundle().getText("listSONPageTitle");
           }
           listSONModel.setProperty("/listSONTableTitle", sTitle);
+          var idText = this.getView().byId("idTextTableSON");
+          idText.setVisible(true);
+          oPaginatorPanel.setVisible(true);
+          oTable.setVisible(true);
+
           this.getView().setBusy(false);
         },
         // ----------------------------- END INITIALIZATION -----------------------------  //
@@ -395,15 +494,15 @@ sap.ui.define(
         //   });
         // },
         onCancelSON: function () {
-          var self =this,
-              listSONModel = self.getModel(LISTSON_MODEL),
-              checkList = listSONModel.getProperty("/checkList");
+          var self = this,
+            listSONModel = self.getModel(LISTSON_MODEL),
+            checkList = listSONModel.getProperty("/checkList");
 
           var oModelJson = new sap.ui.model.json.JSONModel();
           oModelJson.setData(checkList);
           self.setModelGlobal(oModelJson, "checkList");
 
-          console.log(checkList);  
+          console.log(checkList);
           self.getRouter().navTo("cancelSON", {});
         },
 
@@ -423,29 +522,29 @@ sap.ui.define(
         //   });
         // },
         onSendSignSON: function () {
-          var self =this,
-          listSONModel = self.getModel(LISTSON_MODEL),
-          checkList = listSONModel.getProperty("/checkList");
+          var self = this,
+            listSONModel = self.getModel(LISTSON_MODEL),
+            checkList = listSONModel.getProperty("/checkList");
 
           var oModelJson = new sap.ui.model.json.JSONModel();
           oModelJson.setData(checkList);
           self.setModelGlobal(oModelJson, "checkList");
 
-          console.log(checkList);  
+          console.log(checkList);
           self.getRouter().navTo("sendSignSON", {});
         },
-        
+
         onDeleteSendSignSON: function () {
-          var self =this,
-          listSONModel = self.getModel(LISTSON_MODEL),
-          checkList = listSONModel.getProperty("/checkList");
+          var self = this,
+            listSONModel = self.getModel(LISTSON_MODEL),
+            checkList = listSONModel.getProperty("/checkList");
 
           var oModelJson = new sap.ui.model.json.JSONModel();
           oModelJson.setData(checkList);
           self.setModelGlobal(oModelJson, "checkList");
 
-          console.log(checkList);  
-          self.getRouter().navTo("deleteSendSignSON", {});          
+          console.log(checkList);
+          self.getRouter().navTo("deleteSendSignSON", {});
         },
         // onDeleteSendSignSON: function () {
         //   var self = this,
@@ -463,15 +562,15 @@ sap.ui.define(
         //   });
         // },
         onSignSON: function () {
-          var self =this,
-          listSONModel = self.getModel(LISTSON_MODEL),
-          checkList = listSONModel.getProperty("/checkList");
+          var self = this,
+            listSONModel = self.getModel(LISTSON_MODEL),
+            checkList = listSONModel.getProperty("/checkList");
 
           var oModelJson = new sap.ui.model.json.JSONModel();
           oModelJson.setData(checkList);
           self.setModelGlobal(oModelJson, "checkList");
 
-          console.log(checkList);  
+          console.log(checkList);
           self.getRouter().navTo("signSON", {});
         },
         // onSignSON_old: function () {
@@ -490,16 +589,16 @@ sap.ui.define(
         //   });
         // },
         onDeleteSignSON: function () {
-          var self =this,
-          listSONModel = self.getModel(LISTSON_MODEL),
-          checkList = listSONModel.getProperty("/checkList");
+          var self = this,
+            listSONModel = self.getModel(LISTSON_MODEL),
+            checkList = listSONModel.getProperty("/checkList");
 
           var oModelJson = new sap.ui.model.json.JSONModel();
           oModelJson.setData(checkList);
           self.setModelGlobal(oModelJson, "checkList");
 
-          console.log(checkList);  
-          self.getRouter().navTo("deleteSignSON", {});  
+          console.log(checkList);
+          self.getRouter().navTo("deleteSignSON", {});
         },
         // onDeleteSignSON_old: function () {
         //   var self = this,
@@ -516,16 +615,16 @@ sap.ui.define(
         //   });
         // },
         onRegisterCancelSON: function () {
-          var self =this,
-          listSONModel = self.getModel(LISTSON_MODEL),
-          checkList = listSONModel.getProperty("/checkList");
+          var self = this,
+            listSONModel = self.getModel(LISTSON_MODEL),
+            checkList = listSONModel.getProperty("/checkList");
 
           var oModelJson = new sap.ui.model.json.JSONModel();
           oModelJson.setData(checkList);
           self.setModelGlobal(oModelJson, "checkList");
 
-          console.log(checkList);  
-          self.getRouter().navTo("registerCancelSON", {});  
+          console.log(checkList);
+          self.getRouter().navTo("registerCancelSON", {});
         },
         // onRegisterCancelSON_OLD: function () {
         //   var self = this,
@@ -556,23 +655,31 @@ sap.ui.define(
           });
         },
 
-        onDeleteCancelSON:function(){
-          var self =this,
-          listSONModel = self.getModel(LISTSON_MODEL),
-          checkList = listSONModel.getProperty("/checkList");
+        onDeleteCancelSON: function () {
+          var self = this,
+            listSONModel = self.getModel(LISTSON_MODEL),
+            checkList = listSONModel.getProperty("/checkList");
 
           var oModelJson = new sap.ui.model.json.JSONModel();
           oModelJson.setData(checkList);
           self.setModelGlobal(oModelJson, "checkList");
 
-          console.log(checkList);  
+          console.log(checkList);
           self.getRouter().navTo("deleteCancelSON", {});
         },
 
         onNavBack: function () {
           // eslint-disable-next-line sap-no-history-manipulation
-          var self = this;
+          var self = this,
+            oTable = this.getView().byId(TABLE_LISTSON),
+            oPaginatorPanel = this.getView().byId("paginatorPanel");
+
+          var idText = this.getView().byId("idTextTableSON");
+          idText.setVisible(false);
+          oPaginatorPanel.setVisible(false);
+          oTable.setVisible(false);
           self.resetPage();
+          self.resetFilter();
           self.getRouter().navTo("startPage");
         },
         onToggle: function () {
@@ -603,19 +710,22 @@ sap.ui.define(
             : btnArrow.setEnabled(true);
         },
         onStart: function () {
-          var self = this;
-          self.resetList();
-          self.resetPaginator(PAGINATOR_MODEL);
+          var self = this,
+            reloadModel = self.getModelGlobal(self.RELOAD_MODEL);
+          
           self._setEntityProperties();
         },
 
-        resetList:function(){
+        resetList: function () {
           var self = this,
-              oTable = self.getView().byId(TABLE_LISTSON);
-              self.getView().getModel(LISTSON_MODEL).setProperty("/checkList", []);
-              self.getView().getModel(LISTSON_MODEL).setProperty("/isSelectedAll", false);
-              oTable.removeSelections(true);
-          
+            oTable = self.getView().byId(TABLE_LISTSON);
+          self.getView().getModel(LISTSON_MODEL).setProperty("/checkList", []);
+          self
+            .getView()
+            .getModel(LISTSON_MODEL)
+            .setProperty("/isSelectedAll", false);
+          oTable.removeSelections(true);
+
           var oModel = new JSONModel();
           var obj = {
             DetailEnabled: false,
@@ -648,62 +758,102 @@ sap.ui.define(
             self.fillActionModel([]);
           }
         },
-        onSelectedItem: function (oEvent) {
-          var self = this,
-            oTable = self.getView().byId(TABLE_LISTSON),
-            listSONModel = self.getModel(LISTSON_MODEL),
-            isSelectedRow = oEvent.getParameter("selected"),
-            oTableModel = oTable.getModel(SON_SET),
-            list = listSONModel.getProperty("/checkList"),
-            actionModel = self.getModel(ACTION_MODEL),
-            tableItems = oTable.getItems(),
-            selectedItems = oTable.getSelectedItems();
 
+        onSelectedItem: function (oEvent) {
+          var self =this,
+              isSelectedRow = oEvent.getParameter("selected"),
+              listSONModel = self.getModel(LISTSON_MODEL),
+              oTable = self.getView().byId(TABLE_LISTSON),
+              oTableModel = oTable.getModel(SON_SET),
+              list = listSONModel.getProperty("/checkList");
+          
           var checkBox = self.getView().byId(CHECK_ALL);
           checkBox.setSelected(false);
-          listSONModel.setProperty("/isSelectedAll", false);
-
+          listSONModel.setProperty("/isSelectedAll", false);    
+          
+          var itemPath = oEvent.getParameters().listItem.getBindingContextPath();   
+          var oItem = oTableModel.getObject(itemPath); 
           if (isSelectedRow) {
-            for (let i = 0; i < selectedItems.length; i++) {
-              var p = selectedItems[i].getBindingContextPath();
-              var oItem = oTableModel.getObject(p);
-              var gg = list.includes(oItem);
-              gg ? "" : list.push(oItem);
-            }
+            // è stata selezionata
+            list.push(oItem);
             listSONModel.setProperty("/checkList", list);
-          } else {
-            var temp = [];
-
-            for (let i = 0; i < tableItems.length; i++) {
-              var t = selectedItems.includes(tableItems[i], 0);
-              t ? "" : temp.push(tableItems[i]);
-            }
-            for (let i = 0; i < temp.length; i++) {
-              var p = temp[i].getBindingContextPath();
-              var oItem = oTableModel.getObject(p);
-
-              list = list.filter(function (value) {
-                return !(
-                  value.Bukrs === oItem.Bukrs &&
-                  value.Gjahr === oItem.Gjahr &&
-                  value.Zchiavesop === oItem.Zchiavesop &&
-                  value.Zstep === oItem.Zstep &&
-                  value.Ztipososp === oItem.Ztipososp
-                );
-              });
-            }
           }
-          self.fillActionModel(list);
-          listSONModel.setProperty("/checkList", list);
+          else{
+            // è stata DESELEZIONATA
+            var index = list.findIndex(
+              (x) =>  x.Bukrs === oItem.Bukrs &&
+                      x.Gjahr === oItem.Gjahr &&
+                      x.Zchiavesop === oItem.Zchiavesop &&
+                      x.Zstep === oItem.Zstep &&
+                      x.Ztipososp === oItem.Ztipososp
+            );
+           if(index > -1){
+            list.splice(index, 1);
+           }
+           listSONModel.setProperty("/checkList", list);
+          }
+          self.fillActionModel(list);    
         },
+
+
+
+
+        // onSelectedItem_old: function (oEvent) {
+        //   var self = this,
+        //     oTable = self.getView().byId(TABLE_LISTSON),
+        //     listSONModel = self.getModel(LISTSON_MODEL),
+        //     isSelectedRow = oEvent.getParameter("selected"),
+        //     oTableModel = oTable.getModel(SON_SET),
+        //     list = listSONModel.getProperty("/checkList"),
+        //     actionModel = self.getModel(ACTION_MODEL),
+        //     tableItems = oTable.getItems(),
+        //     selectedItems = oTable.getSelectedItems();
+
+        //   var checkBox = self.getView().byId(CHECK_ALL);
+        //   checkBox.setSelected(false);
+        //   listSONModel.setProperty("/isSelectedAll", false);
+
+        //   if (isSelectedRow) {
+        //     for (let i = 0; i < selectedItems.length; i++) {
+        //       var p = selectedItems[i].getBindingContextPath();
+        //       var oItem = oTableModel.getObject(p);
+        //       var gg = list.includes(oItem);
+        //       gg ? "" : list.push(oItem);
+        //     }
+        //     listSONModel.setProperty("/checkList", list);
+        //   } else {
+        //     var temp = [];
+
+        //     for (let i = 0; i < tableItems.length; i++) {
+        //       var t = selectedItems.includes(tableItems[i], 0);
+        //       t ? "" : temp.push(tableItems[i]);
+        //     }
+        //     for (let i = 0; i < temp.length; i++) {
+        //       var p = temp[i].getBindingContextPath();
+        //       var oItem = oTableModel.getObject(p);
+
+        //       list = list.filter(function (value) {
+        //         return !(
+        //           value.Bukrs === oItem.Bukrs &&
+        //           value.Gjahr === oItem.Gjahr &&
+        //           value.Zchiavesop === oItem.Zchiavesop &&
+        //           value.Zstep === oItem.Zstep &&
+        //           value.Ztipososp === oItem.Ztipososp
+        //         );
+        //       });
+        //     }
+        //   }
+        //   self.fillActionModel(list);
+        //   listSONModel.setProperty("/checkList", list);
+        // },
 
         fillActionModel: function (list) {
           var self = this,
-              oModel = new JSONModel(),
-              obj,
-              oBundle = self.getResourceBundle();
-          
-          if(list.length===0){
+            oModel = new JSONModel(),
+            obj,
+            oBundle = self.getResourceBundle();
+
+          if (list.length === 0) {
             obj = {
               DetailEnabled: false,
               CancelSONEnabled: false,
@@ -720,40 +870,64 @@ sap.ui.define(
             return;
           }
 
-          if(list.length===1){
+          if (list.length === 1) {
             var first = list[0];
             obj = {
-              DetailEnabled: true,
-              CancelSONEnabled: self.checkStatusEnabled(oBundle.getText("btnCancelSON"),first),
-              SendSignSONEnabled: self.checkStatusEnabled(oBundle.getText("btnSendSign"),first),
-              DeleteSendSignSONEnabled: self.checkStatusEnabled(oBundle.getText("btnDeleteSendSign"),first),
-              SignSONEnabled: self.checkStatusEnabled(oBundle.getText("btnSign"),first),
-              DeleteSignSONEnabled: self.checkStatusEnabled(oBundle.getText("btnDeleteSign"),first),
-              RegisterCancelSONEnabled: self.checkStatusEnabled(oBundle.getText("btnRegisterCancel"),first),
-              DeleteCancelSONEnabled: self.checkStatusEnabled(oBundle.getText("btnDeleteCancel"),first),
-              ChangeSONEnabled: self.checkStatusEnabled(oBundle.getText("btnChangeSON"),first)
+              DetailEnabled: self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z03Enabled ? true : false,
+              CancelSONEnabled: self.checkStatusEnabled(
+                oBundle.getText("btnCancelSON"),
+                first
+              ),
+              SendSignSONEnabled: self.checkStatusEnabled(
+                oBundle.getText("btnSendSign"),
+                first
+              ),
+              DeleteSendSignSONEnabled: self.checkStatusEnabled(
+                oBundle.getText("btnDeleteSendSign"),
+                first
+              ),
+              SignSONEnabled: self.checkStatusEnabled(
+                oBundle.getText("btnSign"),
+                first
+              ),
+              DeleteSignSONEnabled: self.checkStatusEnabled(
+                oBundle.getText("btnDeleteSign"),
+                first
+              ),
+              RegisterCancelSONEnabled: self.checkStatusEnabled(
+                oBundle.getText("btnRegisterCancel"),
+                first
+              ),
+              DeleteCancelSONEnabled: self.checkStatusEnabled(
+                oBundle.getText("btnDeleteCancel"),
+                first
+              ),
+              ChangeSONEnabled: self.checkStatusEnabled(
+                oBundle.getText("btnChangeSON"),
+                first
+              ),
             };
             oModel.setData(obj);
             self.setModelGlobal(oModel, ACTION_MODEL);
             return;
           }
 
-          if(list.length>1){
+          if (list.length > 1) {
             var first = list[0];
-            var found = list.find(x=>x.ZstatoSop !== first.ZstatoSop);
-            if(found){
+            var found = list.find((x) => x.ZstatoSop !== first.ZstatoSop);
+            if (found) {
               // situazione di diversità NON VEDO NULLA
               obj = {
-                    DetailEnabled: false,
-                    CancelSONEnabled: false,
-                    SendSignSONEnabled: false,
-                    DeleteSendSignSONEnabled: false,
-                    SignSONEnabled: false,
-                    DeleteSignSONEnabled: false,
-                    RegisterCancelSONEnabled: false,
-                    DeleteCancelSONEnabled: false,
-                    ChangeSONEnabled: false,
-                  };
+                DetailEnabled: false,
+                CancelSONEnabled: false,
+                SendSignSONEnabled: false,
+                DeleteSendSignSONEnabled: false,
+                SignSONEnabled: false,
+                DeleteSignSONEnabled: false,
+                RegisterCancelSONEnabled: false,
+                DeleteCancelSONEnabled: false,
+                ChangeSONEnabled: false,
+              };
               oModel.setData(obj);
               self.setModelGlobal(oModel, ACTION_MODEL);
               return;
@@ -761,14 +935,38 @@ sap.ui.define(
 
             obj = {
               DetailEnabled: false,
-              CancelSONEnabled: self.checkStatusEnabled(oBundle.getText("btnCancelSON"),first),
-              SendSignSONEnabled: self.checkStatusEnabled(oBundle.getText("btnSendSign"),first),
-              DeleteSendSignSONEnabled: self.checkStatusEnabled(oBundle.getText("btnDeleteSendSign"),first),
-              SignSONEnabled: self.checkStatusEnabled(oBundle.getText("btnSign"),first),
-              DeleteSignSONEnabled: self.checkStatusEnabled(oBundle.getText("btnDeleteSign"),first),
-              RegisterCancelSONEnabled: self.checkStatusEnabled(oBundle.getText("btnRegisterCancel"),first),
-              DeleteCancelSONEnabled: self.checkStatusEnabled(oBundle.getText("btnDeleteCancel"),first),
-              ChangeSONEnabled: self.checkStatusEnabled(oBundle.getText("btnChangeSON"),first)
+              CancelSONEnabled: self.checkStatusEnabled(
+                oBundle.getText("btnCancelSON"),
+                first
+              ),
+              SendSignSONEnabled: self.checkStatusEnabled(
+                oBundle.getText("btnSendSign"),
+                first
+              ),
+              DeleteSendSignSONEnabled: self.checkStatusEnabled(
+                oBundle.getText("btnDeleteSendSign"),
+                first
+              ),
+              SignSONEnabled: self.checkStatusEnabled(
+                oBundle.getText("btnSign"),
+                first
+              ),
+              DeleteSignSONEnabled: self.checkStatusEnabled(
+                oBundle.getText("btnDeleteSign"),
+                first
+              ),
+              RegisterCancelSONEnabled: self.checkStatusEnabled(
+                oBundle.getText("btnRegisterCancel"),
+                first
+              ),
+              DeleteCancelSONEnabled: self.checkStatusEnabled(
+                oBundle.getText("btnDeleteCancel"),
+                first
+              ),
+              ChangeSONEnabled: self.checkStatusEnabled(
+                oBundle.getText("btnChangeSON"),
+                first
+              ),
             };
             oModel.setData(obj);
             self.setModelGlobal(oModel, ACTION_MODEL);
@@ -776,141 +974,51 @@ sap.ui.define(
           }
         },
 
-        checkStatusEnabled:function(state, item){
-          var self =this,
-              oBundle = self.getResourceBundle(),
-              enabled = false;
-              
-          switch(state){
+        checkStatusEnabled: function (state, item) {
+          var self = this,
+            oBundle = self.getResourceBundle(),
+            enabled = false;
+
+          switch (state) {
             case oBundle.getText("btnCancelSON"):
-                enabled = item.ZstatoSop === '00' ? true : false;
+              enabled = item.ZstatoSop === "00" && self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z07Enabled ? true : false;
               break;
             case oBundle.getText("btnSendSign"):
-                enabled = item.ZstatoSop === '00' ? true : false;
+              enabled = item.ZstatoSop === "00" && self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z04Enabled ? true : false;
               break;
             case oBundle.getText("btnDeleteSendSign"):
-              enabled = item.ZstatoSop === '01' ? true : false;
+              enabled = item.ZstatoSop === "01" && self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z05Enabled ? true : false;
               break;
             case oBundle.getText("btnSign"):
-              enabled = item.ZstatoSop === '01' ? true : false;
+              enabled = item.ZstatoSop === "01" && self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z06Enabled ? true : false;
               break;
             case oBundle.getText("btnDeleteSign"):
-              enabled = item.ZstatoSop === '02' ? true : false;
+              enabled = item.ZstatoSop === "02" && self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z27Enabled ? true : false;
               break;
             case oBundle.getText("btnRegisterCancel"):
-              enabled = (item.ZstatoSop === '10' || item.ZstatoSop === '16') && item.Zricann ==="0000000"  ? true : false;
+              enabled =
+                (item.ZstatoSop === "10" || item.ZstatoSop === "16") 
+                && self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z08Enabled
+                && item.Zricann === "0000000"
+                  ? true
+                  : false;
               break;
             case oBundle.getText("btnDeleteCancel"):
-              enabled = (item.ZstatoSop === '10' || item.ZstatoSop === '16' ) && item.Zricann !=="0000000"  ? true : false;
+              enabled =
+                (item.ZstatoSop === "10" || item.ZstatoSop === "16") 
+                && self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z09Enabled
+                && item.Zricann !== "0000000"
+                  ? true
+                  : false;
               break;
             case oBundle.getText("btnChangeSON"):
-              enabled = item.ZstatoSop === '00' ? true : false;
+              enabled = item.ZstatoSop === "00"  && self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z02Enabled ? true : false;
               break;
             default:
               console.log("default");
-          }    
-          return enabled;    
+          }
+          return enabled;
         },
-
-
-        // fillActionModel_old: function (list) {
-        //   var blstato00 = false;
-        //   var blstato01 = false;
-        //   var blstato02 = false;
-        //   var blstato10 = false;
-        //   var oModel = new JSONModel(),
-        //     obj = {},
-        //     bldetail = list.length === 1 ? true : false;
-
-        //   list.forEach((el) => {
-        //     console.log(el.ZstatoSop === "00");
-        //     if (el.ZstatoSop === "00") blstato00 = true;
-        //     else if (el.ZstatoSop === "01") blstato01 = true;
-        //     else if (el.ZstatoSop === "02") blstato02 = true;
-        //     else if (el.ZstatoSop === "10") blstato10 = true;
-        //   });
-
-        //   console.log(
-        //     "00",
-        //     blstato00,
-        //     "01",
-        //     blstato01,
-        //     "02",
-        //     blstato02,
-        //     "10",
-        //     blstato10,
-        //     "detail",
-        //     bldetail
-        //   );
-
-        //   if (blstato00 && !blstato01 && !blstato02 && !blstato10) {
-        //     obj = {
-        //       DetailEnabled: bldetail,
-        //       CancelSONEnabled: true,
-        //       SendSignSONEnabled: true,
-        //       DeleteSendSignSONEnabled: false,
-        //       SignSONEnabled: false,
-        //       DeleteSignSONEnabled: false,
-        //       RegisterCancelSONEnabled: false,
-        //       DeleteCancelSONEnabled: false,
-        //       ChangeSONEnabled: true,
-        //     };
-        //   } else if (!blstato00 && blstato01 && !blstato02 && !blstato10) {
-        //     obj = {
-        //       DetailEnabled: bldetail,
-        //       CancelSONEnabled: false,
-        //       SendSignSONEnabled: false,
-        //       DeleteSendSignSONEnabled: true,
-        //       SignSONEnabled: true,
-        //       DeleteSignSONEnabled: false,
-        //       RegisterCancelSONEnabled: false,
-        //       DeleteCancelSONEnabled: false,
-        //       ChangeSONEnabled: false,
-        //     };
-        //   } else if (!blstato00 && !blstato01 && blstato02 && !blstato10) {
-        //     obj = {
-        //       DetailEnabled: bldetail,
-        //       CancelSONEnabled: false,
-        //       SendSignSONEnabled: false,
-        //       DeleteSendSignSONEnabled: false,
-        //       SignSONEnabled: false,
-        //       DeleteSignSONEnabled: true,
-        //       RegisterCancelSONEnabled: false,
-        //       DeleteCancelSONEnabled: false,
-        //       ChangeSONEnabled: false,
-        //     };
-        //   } else if (!blstato00 && !blstato01 && !blstato02 && blstato10) {
-        //     obj = {
-        //       DetailEnabled: bldetail,
-        //       CancelSONEnabled: false,
-        //       SendSignSONEnabled: false,
-        //       DeleteSendSignSONEnabled: false,
-        //       SignSONEnabled: false,
-        //       DeleteSignSONEnabled: false,
-        //       RegisterCancelSONEnabled: false,
-        //       DeleteCancelSONEnabled: false,
-        //       ChangeSONEnabled: false,
-        //     };
-        //     //in base filyto ri
-        //     // actionModel.setProperty("/RegisterCancelSONEnabled", true);
-        //     // actionModel.setProperty("/DeleteCancelSONEnabled", true);
-        //   } else {
-        //     obj = {
-        //       DetailEnabled: bldetail,
-        //       CancelSONEnabled: false,
-        //       SendSignSONEnabled: false,
-        //       DeleteSendSignSONEnabled: false,
-        //       SignSONEnabled: false,
-        //       DeleteSignSONEnabled: false,
-        //       RegisterCancelSONEnabled: false,
-        //       DeleteCancelSONEnabled: false,
-        //       ChangeSONEnabled: false,
-        //     };
-        //   }
-
-        //   oModel.setData(obj);
-        //   this.setModelGlobal(oModel, ACTION_MODEL);
-        // },
 
         onRegisterMax: function () {
           var self = this;

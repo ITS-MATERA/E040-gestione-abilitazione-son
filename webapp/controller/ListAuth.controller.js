@@ -50,6 +50,13 @@ sap.ui.define(
     const OPTION_VALIDATE = "VAL";
     const OPTION_CHANGE = "RET";
 
+    const FILTER_SEM_OBJ = "ZS4_SOSPAUTPERMANENTE_SRV";
+    const FILTER_AUTH_OBJ = "Z_GEST_ABI";
+
+    const VISIBILITY_ENTITY = "ZES_CONIAUTH_SET";
+    const VISIBILITY_MODEL = "ZSS4_CA_CONI_VISIBILITA_SRV";
+    const ACTIVITY_CHECK_MODEL = "activityCheckModel";
+
     return BaseController.extend(
       "gestioneabilitazioneeson.controller.ListAuth",
       {
@@ -75,15 +82,20 @@ sap.ui.define(
             btnLastEnabled: false,
             recordForPageEnabled: false,
             currentPageEnabled: true,
-            stepInputDefault: 3,
+            stepInputDefault: 50,
             currentPage: 1,
             maxPage: 1,
             paginatorSkip: 0,
             paginatorClick: 0,
           });
 
+          var oReloadModel = new JSONModel({
+            canRefresh: false,
+          });
+
           this.setModel(oListAuthModel, LISTAUTH_MODEL);
           this.setModel(oPaginatorModel, PAGINATOR_MODEL);
+          this.setModelGlobal(oReloadModel, this.RELOAD_MODEL_AUTH);
 
           var oMessageTemplate = new MessageItem({
             type: "{logModel>type}",
@@ -147,10 +159,31 @@ sap.ui.define(
             contentWidth: "50%",
             verticalScrolling: false,
           });
+
+          this.getRouter()
+            .getRoute("listAuth")
+            .attachPatternMatched(this._onObjectMatched, this);
         },
         handleDialogPress: function (oEvent) {
           this.oMessageView.navigateBack();
           this.oDialog.open();
+        },
+
+        _onObjectMatched: function () {
+          var self = this,
+            reloadModel = self.getModelGlobal(self.RELOAD_MODEL_AUTH).getData();
+
+            self.getAuthorityCheck(self.FILTER_AUTH_OBJ, function(callback){
+              if(callback){
+                if (reloadModel && reloadModel !== null && reloadModel.canRefresh) {
+                  self.setPropertyGlobal(self.RELOAD_MODEL_AUTH, "canRefresh", false);
+                  location.reload();
+                }
+              }
+              else{
+                self.getRouter().navTo("notAuth", {mex: self.getResourceBundle().getText("notAuthText")});
+              }
+            });
         },
 
         // ----------------------------- START INITIALIZATION -----------------------------  //
@@ -216,15 +249,12 @@ sap.ui.define(
           oView.setBusy(true);
 
           if (getAll) {
-            obj = {
-              // AgrName: sAgrName,
-            };
+            obj = {};
             nameModel = AUTH_MODEL_EXPORT;
           } else {
             obj = {
               $top: numRecordsForPage,
               $skip: paginatorModel.getProperty("/paginatorSkip"),
-              // AgrName: sAgrName,
             };
             nameModel = AUTH_SET;
           }
@@ -257,6 +287,8 @@ sap.ui.define(
                     oTable.selectAll();
                   } else {
                     var list = listAuthModel.getProperty("/checkList");
+
+                    console.log(list);
 
                     for (let y = 0; y < res.length; y++) {
                       for (let i = 0; i < list.length; i++) {
@@ -342,6 +374,9 @@ sap.ui.define(
         },
         onNavBack: function () {
           var self = this;
+          self.resetPaginator(PAGINATOR_MODEL);
+
+          self._resetAfterAction();
           self.getRouter().navTo("startPage");
         },
 
@@ -353,7 +388,14 @@ sap.ui.define(
         onChange: function () {
           var self = this,
             listAuthModel = self.getModel(LISTAUTH_MODEL),
-            listCheck = listAuthModel.getProperty("/checkList");
+            listCheck = listAuthModel.getProperty("/checkList"),
+            oTable = self.getView().byId(TABLE_LISTAUTH),
+            selectedItems = oTable.getSelectedItems();
+
+          if (!selectedItems || selectedItems.length === 0) {
+            self.setMessage("titleDialogWarning", "msgNoSelection", "warning");
+            return;
+          }
 
           listAuthModel.setProperty("/isChange", true);
           listAuthModel.setProperty("/total", listCheck.length);
@@ -383,8 +425,15 @@ sap.ui.define(
           var self = this,
             listAuthModel = self.getModel(LISTAUTH_MODEL),
             oDataModel = self.getModel(),
-            checklist = listAuthModel.getProperty("/checkList");
+            checklist = listAuthModel.getProperty("/checkList"),
+            oTable = self.getView().byId(TABLE_LISTAUTH),
+            oTableModel = oTable.getModel(AUTH_SET),
+            selectedItems = oTable.getSelectedItems();
 
+          if (!selectedItems || selectedItems.length === 0) {
+            self.setMessage("titleDialogWarning", "msgNoSelection", "warning");
+            return;
+          }
           var entityRequestBody = {
             Bukrs: "",
             Gjahr: "",
@@ -431,14 +480,16 @@ sap.ui.define(
             listAuthModel = self.getModel(LISTAUTH_MODEL);
           listAuthModel.setProperty("/isChange", false);
           oPaginatorPanel.setVisible(true);
-          // var oTable = self.getView().byId(TABLE_LISTAUTH);
-          // var checkBox = self.getView().byId(CHECK_ALL);
-          // checkBox.setSelected(false);
-          // self.resetPaginator(PAGINATOR_MODEL);
-          // listAuthModel.setProperty("/isSelectedAll", false);
-          // oTable.removeSelections(true);
-          // listAuthModel.setProperty("/checkList", []);
+
+          var checklist = listAuthModel.getProperty("/checkList");
+          console.log("checklist BACK", checklist);
+
+          // //TO DO
+          // self._resetAfterAction();
           self._setEntityProperties();
+
+          //var checklist = listAuthModel.getProperty("/checkList");
+          console.log("checklist BACK _setEntityProperties", checklist);
         },
 
         onChangeUpdateDateAll: function (oEvent) {
@@ -480,51 +531,99 @@ sap.ui.define(
         // ----------------------------- START MANAGE ROW  -----------------------------  //
 
         onSelectedItem: function (oEvent) {
-          var self = this,
-            oTable = self.getView().byId(TABLE_LISTAUTH),
-            listAuthModel = self.getModel(LISTAUTH_MODEL),
-            isSelectedRow = oEvent.getParameter("selected"),
-            oTableModel = oTable.getModel(AUTH_SET),
-            list = listAuthModel.getProperty("/checkList"),
-            tableItems = oTable.getItems(),
-            selectedItems = oTable.getSelectedItems();
-
-          var checkBox = self.getView().byId(CHECK_ALL);
-          checkBox.setSelected(false);
-          listAuthModel.setProperty("/isSelectedAll", false);
-
+          var self =this,
+              isSelectedRow = oEvent.getParameter("selected"),
+              listAuthModel = self.getModel(LISTAUTH_MODEL),
+              oTable = self.getView().byId(TABLE_LISTAUTH),
+              oTableModel = oTable.getModel(AUTH_SET),
+              list = listAuthModel.getProperty("/checkList");
+          
+              var checkBox = self.getView().byId(CHECK_ALL);
+              checkBox.setSelected(false);
+              listAuthModel.setProperty("/isSelectedAll", false);    
+          
+          var itemPath = oEvent.getParameters().listItem.getBindingContextPath();   
+          var oItem = oTableModel.getObject(itemPath); 
           if (isSelectedRow) {
-            for (let i = 0; i < selectedItems.length; i++) {
-              var p = selectedItems[i].getBindingContextPath();
-              var oItem = oTableModel.getObject(p);
-              var gg = list.includes(oItem);
-              gg ? "" : list.push(oItem);
-            }
+            // è stata selezionata
+            list.push(oItem);
             listAuthModel.setProperty("/checkList", list);
-          } else {
-            var temp = [];
-
-            for (let i = 0; i < tableItems.length; i++) {
-              var t = selectedItems.includes(tableItems[i], 0);
-              t ? "" : temp.push(tableItems[i]);
-            }
-            for (let i = 0; i < temp.length; i++) {
-              var p = temp[i].getBindingContextPath();
-              var oItem = oTableModel.getObject(p);
-
-              list = list.filter(function (value) {
-                return !(
-                  value.Bukrs === oItem.Bukrs &&
-                  value.Gjahr === oItem.Gjahr &&
-                  value.Zchiaveabi === oItem.Zchiaveabi &&
-                  value.ZstepAbi === oItem.ZstepAbi
-                );
-              });
-            }
           }
-
-          listAuthModel.setProperty("/checkList", list);
+          else{
+            // è stata DESELEZIONATA
+            var index = list.findIndex(
+              (x) =>  x.Bukrs === oItem.Bukrs &&
+                      x.Gjahr === oItem.Gjahr &&
+                      x.Zchiaveabi === oItem.Zchiaveabi &&
+                      x.ZstepAbi === oItem.ZstepAbi
+            );
+           if(index > -1){
+            list.splice(index, 1);
+           }
+           listAuthModel.setProperty("/checkList", list);
+          }    
         },
+
+        // onSelectedItem_old: function (oEvent) {
+        //   var self = this,
+        //     oTable = self.getView().byId(TABLE_LISTAUTH),
+        //     listAuthModel = self.getModel(LISTAUTH_MODEL),
+        //     isSelectedRow = oEvent.getParameter("selected"),
+        //     oTableModel = oTable.getModel(AUTH_SET),
+        //     list = listAuthModel.getProperty("/checkList"),
+        //     tableItems = oTable.getItems(),
+        //     selectedItems = oTable.getSelectedItems();
+
+        //   var checkBox = self.getView().byId(CHECK_ALL);
+        //   checkBox.setSelected(false);
+        //   listAuthModel.setProperty("/isSelectedAll", false);
+
+        //   if (isSelectedRow) {
+        //     console.log("è già incluso list", list, selectedItems);
+        //     for (let i = 0; i < selectedItems.length; i++) {
+        //       var p = selectedItems[i].getBindingContextPath();
+        //       var oItem = oTableModel.getObject(p);
+        //       // var arr = [];
+        //       // list.forEach((value) => {
+        //       //   if (
+        //       //     value.Bukrs !== oItem.Bukrs ||
+        //       //     value.Gjahr !== oItem.Gjahr ||
+        //       //     value.Zchiaveabi !== oItem.Zchiaveabi ||
+        //       //     value.ZstepAbi !== oItem.ZstepAbi
+        //       //   )
+        //       //     arr.push(oItem);
+        //       // });
+        //       // if (list.length === 0) arr.push(oItem);
+        //       var gg = list.includes(oItem);
+        //       console.log("è già incluso", gg);
+        //       gg ? "" : list.push(oItem);
+        //     }
+        //     console.log("è già incluso list after", list, selectedItems);
+        //     listAuthModel.setProperty("/checkList", list);
+        //   } else {
+        //     var temp = [];
+
+        //     for (let i = 0; i < tableItems.length; i++) {
+        //       var t = selectedItems.includes(tableItems[i], 0);
+        //       t ? "" : temp.push(tableItems[i]);
+        //     }
+        //     for (let i = 0; i < temp.length; i++) {
+        //       var p = temp[i].getBindingContextPath();
+        //       var oItem = oTableModel.getObject(p);
+
+        //       list = list.filter(function (value) {
+        //         return !(
+        //           value.Bukrs === oItem.Bukrs &&
+        //           value.Gjahr === oItem.Gjahr &&
+        //           value.Zchiaveabi === oItem.Zchiaveabi &&
+        //           value.ZstepAbi === oItem.ZstepAbi
+        //         );
+        //       });
+        //     }
+        //   }
+
+        //   listAuthModel.setProperty("/checkList", list);
+        // },
 
         onChangeUpdateDateRow: function (oEvent) {
           var self = this,
@@ -594,7 +693,13 @@ sap.ui.define(
 
         // ----------------------------- END MANAGE ROW  -----------------------------  //
         // ----------------------------- START MANAGE METHOD  -----------------------------  //
-
+        resetLog: function () {
+          var self = this;
+          var oModelJson = new sap.ui.model.json.JSONModel();
+          oModelJson.setData([]);
+          self.setModel(oModelJson, LOG_MODEL);
+          self.setModel(oModelJson, MESSAGE_MODEL);
+        },
         _resetAfterAction: function () {
           var self = this;
           var oListAuthModel;
@@ -611,6 +716,7 @@ sap.ui.define(
           self.setModel(oListAuthModel, LISTAUTH_MODEL);
           self.resetPaginator(PAGINATOR_MODEL);
           self._setEntityProperties();
+          self.resetLog();
           var checkBox = self.getView().byId(CHECK_ALL);
           checkBox.setSelected(false);
         },
@@ -619,19 +725,34 @@ sap.ui.define(
           var self = this,
             listAuthModel = self.getModel(LISTAUTH_MODEL),
             oDataModel = self.getModel(),
+           checkList =  listAuthModel.getProperty("/checkList"),
             changeList = listAuthModel.getProperty("/changeList");
+
+            if(changeList.length === 0 ){
+              var entityRequestBody = {
+                Bukrs: "",
+                Gjahr: "",
+                Zchiaveabi: "key",
+                OperationType: OPTION_CHANGE,
+                AbilitazioneSet: checkList,
+                AbilitazioneMessageSet: [],
+              };
+
+            }else{
+              var entityRequestBody = {
+                Bukrs: "",
+                Gjahr: "",
+                Zchiaveabi: "key",
+                OperationType: OPTION_CHANGE,
+                AbilitazioneSet: changeList,
+                AbilitazioneMessageSet: [],
+              };
+            }
 
           console.log(flag);
           console.log("quello che mando", changeList);
 
-          var entityRequestBody = {
-            Bukrs: "",
-            Gjahr: "",
-            Zchiaveabi: "key",
-            OperationType: OPTION_CHANGE,
-            AbilitazioneSet: changeList,
-            AbilitazioneMessageSet: [],
-          };
+     
 
           self.getView().setBusy(true);
           oDataModel.create("/" + URL_DEEP, entityRequestBody, {
@@ -639,9 +760,8 @@ sap.ui.define(
               self.getView().setBusy(false);
               console.log("result", result);
               var arrayMessage = result.AbilitazioneMessageSet.results;
-
               var arrayInf = arrayMessage.filter((el) => el.Msgty === "I");
-              console.log(arrayInf);
+              
               if (arrayInf.length > 0) {
                 var oModel = new JSONModel();
 

@@ -31,7 +31,7 @@
                                     <Label  design="Bold" required="true" width="100%" text="{i18n>fieldNameGJAHR}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                         <layoutData><l:GridData span="XL7 L7 M4 S12" /></layoutData>
                                     </Label>
-                                    <Input width="100%" id="idInputGjahr" value="{addAuhModel>/Gjahr}" submit="onSubmitGjahr" liveChange="onLiveChange" app:property="Gjahr">
+                                    <Input type="Number" width="100%" id="idInputGjahr" value="{addAuhModel>/Gjahr}" submit="onSubmitGjahr" liveChange="onLiveChange" app:property="Gjahr">
                                         <layoutData><l:GridData span="XL5 L5 M7 S12"/></layoutData>
                                     </Input>
                                 </l:Grid>
@@ -49,7 +49,7 @@
                                     <Label  design="Bold" required="true" width="100%" text="{i18n>columnNameZufficioCont}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                         <layoutData><l:GridData span="XL4 L4 M4 S12" /></layoutData>
                                     </Label>
-                                    <Input width="100%" id="idInputZufficioCont" value="{addAuhModel>/ZufficioCont}" submit="onSubmitZufficioCont" liveChange="onLiveChange" app:property="ZufficioCont">
+                                    <Input type="Number" width="100%" id="idInputZufficioCont" value="{addAuhModel>/ZufficioCont}" submit="onSubmitZufficioCont" liveChange="onLiveChange" app:property="ZufficioCont">
                                         <layoutData><l:GridData span="XL4 L4 M7 S12"/></layoutData>
                                     </Input>
                                 </l:Grid>
@@ -83,7 +83,7 @@
                                     <Label  design="Bold" required="true" width="100%" text="{i18n>columnNameFipos}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                         <layoutData><l:GridData span="XL4 L4 M4 S12" /></layoutData>
                                     </Label>
-                                    <Input width="100%" id="idInputFipos" value="{addAuhModel>/Fipos}" liveChange="onLiveChange" app:property="Fipos" >
+                                    <Input type="Number" width="100%" id="idInputFipos" value="{addAuhModel>/Fipos}" liveChange="onLiveChange" app:property="Fipos" >
                                         <layoutData><l:GridData span="XL6 L8 M7 S12"/></layoutData>
                                     </Input>
                                 </l:Grid>
@@ -100,7 +100,7 @@
                                     <Label  design="Bold" required="true" width="100%" text="{i18n>columnNameFistl}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                         <layoutData><l:GridData span="XL5 L6 M6 S12" /></layoutData>
                                     </Label>
-                                    <Input width="100%" id="idInputFistl" value="{addAuhModel>/Fistl}" liveChange="onLiveChange" app:property="Fistl">
+                                    <Input  width="100%" id="idInputFistl" value="{addAuhModel>/Fistl}" liveChange="onLiveChange" app:property="Fistl">
                                         <layoutData><l:GridData span="XL5 L6 M5 S12"/></layoutData>
                                     </Input>
                                 </l:Grid>
@@ -120,6 +120,7 @@
 									<ComboBox
 										id="idInputZtipodisp3"
 										width="100%"
+								
 										change="onLiveChangeZtipodisp3List"
 										items="{addAuhModel>/Ztipodisp3List}"
 										>
@@ -147,6 +148,7 @@
 									app:property="Datab"
 									change="handleChangeDatePicker"										
 									valueFormat="dd-MM-yyyy"
+								
 									displayFormat="dd.MM.yyyy">
 										<layoutData><l:GridData span="XL4 L8 M7 S12"/></layoutData>
 									</DatePicker>
@@ -194,6 +196,11 @@
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>
                 </Button>
+				<Button
+					icon="{ path: 'logModel>/', formatter: '.buttonIconFormatter' }"
+					type="{ path: 'logModel>/', formatter: '.buttonTypeFormatter' }"
+					text= "{path: 'logModel>/', formatter: '.highestSeverityMessages' }"
+					press="handleDialogPress"/>
                 <ToolbarSpacer />
                 <Button type="Emphasized" text="{i18n>btnSave}" press="onSave" >
                     <layoutData>

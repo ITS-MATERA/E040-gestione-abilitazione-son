@@ -6,12 +6,12 @@
 		<CheckBox id="idCheckSelectAll" class="sapUiTinyMargin textBlack" select="onCheck" text="{i18n>checkBoxText}" />
     </FlexBox>
 	<FlexBox  class="bgGray" >
-		<Button class="sapUiTinyMargin" icon="sap-icon://edit"  text="{i18n>btnChange}" type="Emphasized"  press="onChange">
+		<Button class="sapUiTinyMargin" icon="sap-icon://edit"  text="{i18n>btnChange}" enabled="{AuthorityCheckAbilitazione>/Z02Enabled}" type="Emphasized"  press="onChange">
                 <layoutData>
                     <OverflowToolbarLayoutData priority="NeverOverflow" />
                 </layoutData>
         </Button>
-        <Button class="sapUiTinyMargin" text="{i18n>btnValidate}" type="Emphasized" press="onValidate">
+        <Button class="sapUiTinyMargin" text="{i18n>btnValidate}" type="Emphasized" press="onValidate" enabled="{AuthorityCheckAbilitazione>/Z14Enabled}">
             <layoutData>
                 <OverflowToolbarLayoutData priority="NeverOverflow" />
             </layoutData>

@@ -58,7 +58,7 @@
 			<!-- ZufficioCont -->				
 				<VBox >
 					<items>
-						<Label  design="Bold" text="{i18n>filterNameZufficioCont}"></Label>
+						<Label  design="Bold" text="{i18n>filterNameZufficioCont}" required="true"></Label>
 							<FlexBox  alignItems="Start">								
 								<Input
 									id="fZufficioCont"
@@ -154,6 +154,7 @@
 						<Label  design="Bold" text="{i18n>filterNameZricann}" required = "true" tooltip = "required" labelFor="fExercise"></Label>
 						<ComboBox
 							id="fZricann"
+							width="100%"
 							editable="{listSONModel>/filterRequestEnable}"
 							selectedKey="{i18n>ItemNO}"
 							app:searchPropertyModel="Zricann"	
@@ -162,7 +163,7 @@
 							<core:Item  key="{i18n>ItemNO}" text="{i18n>ItemNO}" />
 						</ComboBox>
 					</items>
-					<layoutData><l:GridData span="XL2 L4 M4 S12"/></layoutData>
+					<layoutData><l:GridData  span="XL2 L4 M4 S12" /></layoutData>
 				</VBox> 	
 			<!-- ZdatasopFrom-->					
 				<VBox >

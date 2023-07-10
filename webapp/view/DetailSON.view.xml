@@ -130,7 +130,7 @@
                         text= "{path: 'logModel>/', formatter: '.highestSeverityMessages' }"
                         press="handleDialogPress"/>
                 <ToolbarSpacer />
-                <Button type="Emphasized" text="{detailModel>/buttonText}" visible="{detailModel>/buttonVisible}" press="onAction">
+                <Button type="Emphasized" text="{detailModel>/buttonText}" visible="{detailModel>/buttonVisible}"  press="onAction">
                     <layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>

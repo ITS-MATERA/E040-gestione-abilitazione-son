@@ -71,6 +71,7 @@ sap.ui.define(
                 // dateForAll: null,
                 buttonText: null,
                 buttonVisible: false,
+                buttonEnabled:false,
                 // action: null,
                 iconTab: "sap-icon://detail-view",
                 text: this.getResourceBundle().getText("btnDetail"),
@@ -149,6 +150,7 @@ sap.ui.define(
                 Iban: null,
                 Zcoordest: null,
                 isZcoordestEditable: false,
+                isZZcausalevalEditable:false,
                 Swift: null,
                 PayMode: null,
                 ZZcausaleval: null,
@@ -237,14 +239,14 @@ sap.ui.define(
             self.setModel(Step3List, STEP3_LIST);
             self.setModel(oClassificazioneModel, CLASSIFICAZIONE_SON_DEEP);
             
-            self.getRouter().getRoute("sendSignSON").attachPatternMatched(self._onObjectMatched, self);
-            
+            self.getRouter().getRoute("sendSignSON").attachPatternMatched(self._onObjectMatched, self);            
         },
 
         _onObjectMatched: function (oEvent) {
             var self = this,
                 oBundle = self.getResourceBundle(),
                 detailModel = self.getView().getModel(DETAIL_MODEL);
+                self.getView().setBusy(true);    
             self.getUfficioAction();    
             self.getAmministrazioneHeader();
             
@@ -257,14 +259,22 @@ sap.ui.define(
             if(key===oBundle.getText("btnSendSign")){
                 self.getView().getModel(DETAIL_MODEL).setProperty("/buttonText",oBundle.getText("btnTextSendSign"));
                 self.getView().getModel(DETAIL_MODEL).setProperty("/buttonVisible",true);
+                self.getView().getModel(DETAIL_MODEL).setProperty("/buttonEnabled",self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z04Enabled);
             }
+            else
+                self.getView().getModel(DETAIL_MODEL).setProperty("/buttonEnabled",true);
 
             var checkList = self.getModelGlobal(CHECKLIST_MODEL).getData();
             setTimeout(() => {                
                 detailModel.setProperty("/checkList", checkList);
                 detailModel.setProperty("/changeList", checkList);
                 detailModel.setProperty("/total", checkList.length);
-            },1500);
+                if(checkList.length === 1){
+                    self.getView().getModel(HEADER_ACTION_MODEL).setProperty("/Zcdr",checkList[0].Fistl);
+                }else  
+                    self.getView().getModel(HEADER_ACTION_MODEL).setProperty("/Zcdr","");      
+                self.getView().setBusy(false);           
+            },2000);
         },
 
         getUfficioAction:function(){
@@ -300,10 +310,12 @@ sap.ui.define(
             
             self.getView().getModel(DETAIL_MODEL).setProperty("/showSelection",totalRows > 1 ? true : false);
             self.getView().getModel(DETAIL_MODEL).setProperty("/headerVisible",false);
+            self.getView().getModel(DETAIL_MODEL).setProperty("/buttonEnabled",true);
             switch (key) {
                 case oBundle.getText("btnSendSign"):
                     self.getView().getModel(DETAIL_MODEL).setProperty("/buttonText",oBundle.getText("btnTextSendSign"));
                     self.getView().getModel(DETAIL_MODEL).setProperty("/buttonVisible",true);
+                    self.getView().getModel(DETAIL_MODEL).setProperty("/buttonEnabled",self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z04Enabled);
                     break;
                 case oBundle.getText("btnWorkflow"):
                     self.getView().getModel(DETAIL_MODEL).setProperty("/buttonText",oBundle.getText("btnStart"));
@@ -552,6 +564,7 @@ sap.ui.define(
                 Iban: data.Iban,
                 Zcoordest: data.Zcoordest,
                 isZcoordestEditable: false,
+                isZZcausalevalEditable:false,
                 Swift: data.Swift,
                 PayMode: data.Zwels,
                 ZZcausaleval: data.ZCausaleval,
@@ -782,6 +795,7 @@ sap.ui.define(
             self.getView().getModel(WIZARD_MODEL).setProperty("/Iban", null);
             self.getView().getModel(WIZARD_MODEL).setProperty("/Zcoordest", null);
             self.getView().getModel(WIZARD_MODEL).setProperty("/isZcoordestEditable", false);
+            self.getView().getModel(WIZARD_MODEL).setProperty("/isZZcausalevalEditable", false);
             self.getView().getModel(WIZARD_MODEL).setProperty("/Swift", null);
             self.getView().getModel(WIZARD_MODEL).setProperty("/PayMode", null);
             self.getView().getModel(WIZARD_MODEL).setProperty("/ZZcausaleval", null);

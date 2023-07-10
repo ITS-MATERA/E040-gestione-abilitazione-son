@@ -2,7 +2,6 @@
 	xmlns="sap.m"
 	xmlns:c="sap.ui.core"
     xmlns:l="sap.ui.layout"
-    	xmlns:plugins="sap.m.plugins"
 >
 
 
@@ -17,9 +16,7 @@
 				path: 'listTable>/'
 			}"
 		>
-		<dependents>
-			<plugins:ColumnResizer/>
-		</dependents>
+		
 		<headerToolbar>
 			<OverflowToolbar >
 			 	<Title text="{detailModel>/detailTableTitle}"  class="sapUiTinyMargin titleSize"></Title>

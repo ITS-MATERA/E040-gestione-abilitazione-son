@@ -9,7 +9,6 @@
         <Panel class="bgBlue margin0" visible="{detailModel>/headerVisible}">
             <core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.HeaderPanel" type="XML"/>
             <FlexBox justifyContent="End">
-            <!-- <Button text="Rettifica" type="Emphasized" press="onChangeSON"></Button> -->
             </FlexBox>
         </Panel>
         <IconTabBar select="onSelectTab" id ="idIconTabBar" selectedKey="{detailModel>/tabSelectedKey}">
@@ -25,7 +24,8 @@
                 <IconTabFilter 
                     icon="{detailModel>/iconTab}" 
                     text="{detailModel>/text}"
-                    key="{detailModel>/key}"	 >
+                    key="{detailModel>/key}"	
+                    visible="{AuthorityCheckSON>/Z03Enabled}" >
                     <Panel visible="{detailModel>/showSelection}">
                         <core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.actions.deleteCancelSON.tableDetail" type="XML"/>
                     </Panel>
@@ -69,7 +69,7 @@
                         text= "{path: 'logModel>/', formatter: '.highestSeverityMessages' }"
                         press="handleDialogPress"/>
                     <ToolbarSpacer />
-                    <Button type="Emphasized" text="{detailModel>/buttonText}" visible="{detailModel>/buttonVisible}" press="onAction">
+                    <Button type="Emphasized" text="{detailModel>/buttonText}" visible="{detailModel>/buttonVisible}" enabled="{detailModel>/buttonEnabled}" press="onAction">
                         <layoutData>
                             <OverflowToolbarLayoutData priority="NeverOverflow" />
                         </layoutData>

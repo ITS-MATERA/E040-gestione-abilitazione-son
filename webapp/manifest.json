@@ -21,7 +21,16 @@
         "type": "OData",
         "settings": {
           "annotations": [],
-          "localUri": "localService/metadata.xml",
+          "localUri": "localService/mainService/metadata.xml",
+          "odataVersion": "2.0"
+        }
+      },
+      "ZSS4_CA_CONI_VISIBILITA_SRV": {
+        "uri": "/sap/opu/odata/sap/ZSS4_CA_CONI_VISIBILITA_SRV/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/ZSS4_CA_CONI_VISIBILITA_SRV/metadata.xml",
           "odataVersion": "2.0"
         }
       }
@@ -47,7 +56,7 @@
   "sap.ui5": {
     "flexEnabled": false,
     "dependencies": {
-      "minUI5Version": "1.113.0",
+      "minUI5Version": "1.71.47",
       "libs": {
         "sap.m": {},
         "sap.ui.core": {},
@@ -77,6 +86,18 @@
           "defaultBindingMode": "TwoWay",
           "defaultCountMode": "Inline",
           "refreshAfterChange": false
+        }
+      },
+      "ZSS4_CA_CONI_VISIBILITA_SRV": {
+        "dataSource": "ZSS4_CA_CONI_VISIBILITA_SRV",
+        "preload": true,
+        "settings": {
+          "defaultBindingMode": "TwoWay",
+          "defaultCountMode": "Inline",
+          "refreshAfterChange": false,
+          "metadataUrlParams": {
+            "sap-value-list": "none"
+          }
         }
       }
     },
@@ -141,8 +162,6 @@
           "name": "object",
           "target": ["object"]
         },
-        
-
         {
           "pattern": "CancelSON",
           "name": "cancelSON",
@@ -177,16 +196,12 @@
           "pattern": "DeleteCancelSON",
           "name": "deleteCancelSON",
           "target": ["deleteCancelSON"]
+        },
+        {
+          "pattern": "NotAuth/{mex}",
+          "name": "notAuth",
+          "target": ["notAuth"]
         }
-
-
-        
-
-        
-
-
-        
-
       ],
       "targets": {
         "startPage": {
@@ -245,8 +260,6 @@
           "viewName": "NotFound",
           "viewId": "notFound"
         },
-
-
         "cancelSON": {
           "viewName": "CancelSON",
           "viewId": "cancelSON",
@@ -288,8 +301,12 @@
           "viewId": "deleteCancelSON",
           "viewLevel": 2,
           "title": "blablabla"
+        },
+        "notAuth": {
+          "viewName": "NotAuth",
+          "viewId": "notAuth",
+          "viewLevel": 2
         }
-
       }
     },
     "rootView": {

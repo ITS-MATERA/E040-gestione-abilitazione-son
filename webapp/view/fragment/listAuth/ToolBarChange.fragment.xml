@@ -5,16 +5,9 @@
 	<FlexBox width="100%" class="bgWhite" justifyContent="End">
         <DatePicker	
                     id="idDateAllChange"						     
-                    class="sapUiTinyMarginBottom"	
+               	    class="sapUiTinyMarginBottom"	
                     valueFormat="dd.MM.yyyy"
                     displayFormat="dd.MM.yyyy"
-                    value="{
-                            path: 'worklistView>/defaultDateTo',
-                            type: 'sap.ui.model.type.Date',
-                            formatOptions: {
-                                pattern: 'dd.MM.yyyy'
-                                }
-							}"
                     change="onChangeUpdateDate">	
                 <layoutData>
                     <OverflowToolbarLayoutData

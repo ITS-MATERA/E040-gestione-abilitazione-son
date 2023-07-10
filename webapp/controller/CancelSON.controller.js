@@ -68,6 +68,7 @@ function (BaseController, JSONModel, formatter, MessageBox, History,library,
                 // dateForAll: null,
                 buttonText: null,
                 buttonVisible: false,
+                buttonEnabled:false,
                 // action: null,
                 iconTab: "sap-icon://detail-view",
                 text: this.getResourceBundle().getText("btnDetail"),
@@ -240,7 +241,10 @@ function (BaseController, JSONModel, formatter, MessageBox, History,library,
             if(key===oBundle.getText("btnCancelSON")){
                 self.getView().getModel(DETAIL_MODEL).setProperty("/buttonText",oBundle.getText("btnTextCancelSON"));
                 self.getView().getModel(DETAIL_MODEL).setProperty("/buttonVisible",true);
+                self.getView().getModel(DETAIL_MODEL).setProperty("/buttonEnabled",self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z07Enabled);
             }
+            else
+                self.getView().getModel(DETAIL_MODEL).setProperty("/buttonEnabled",true);
 
             var checkList = self.getModelGlobal(CHECKLIST_MODEL).getData();
             setTimeout(() => {                
@@ -260,14 +264,16 @@ function (BaseController, JSONModel, formatter, MessageBox, History,library,
             
             self.getView().getModel(DETAIL_MODEL).setProperty("/showSelection",totalRows > 1 ? true : false);
             self.getView().getModel(DETAIL_MODEL).setProperty("/headerVisible",false);
+            self.getView().getModel(DETAIL_MODEL).setProperty("/buttonEnabled",true);
             switch (key) {
                 case oBundle.getText("btnCancelSON"):
                     self.getView().getModel(DETAIL_MODEL).setProperty("/buttonText",oBundle.getText("btnTextCancelSON"));
                     self.getView().getModel(DETAIL_MODEL).setProperty("/buttonVisible",true);
+                    self.getView().getModel(DETAIL_MODEL).setProperty("/buttonEnabled",self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z07Enabled);
                     break;
                 case oBundle.getText("btnWorkflow"):
                     self.getView().getModel(DETAIL_MODEL).setProperty("/buttonText",oBundle.getText("btnStart"));
-                    self.getView().getModel(DETAIL_MODEL).setProperty("/buttonVisible",totalRows > 1 ? true : false);
+                    self.getView().getModel(DETAIL_MODEL).setProperty("/buttonVisible",totalRows > 1 ? true : false);                    
                     if(totalRows === 1){                        
                         self.fillWorkflow(checkList[0]);
                     }

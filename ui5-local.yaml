@@ -30,6 +30,9 @@ server:
       configuration:
         ignoreCertError: false # If set to true, certificate errors will be ignored. E.g. self-signed certificates will be accepted
         backend:
+          - path: /sap/opu/odata/sap/ZS4_SOSPAUTPERMANENTE_SRV/
+            url: http://l2vs2slass01.mef.gov.it:8000
+            client: '100'
           - path: /sap
             url: http://l2vs2slass01.mef.gov.it:8000
             client: '100'

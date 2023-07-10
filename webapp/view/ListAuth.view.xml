@@ -57,8 +57,8 @@
 					text= "{path: 'logModel>/', formatter: '.highestSeverityMessages' }"
 			        press="handleDialogPress"/>
 				<ToolbarSpacer />
-				<Button visible="{= !${listAuthModel>/isChange}}" type="Emphasized"  press="onAdd" text="{i18n>btnAdd}" />
-				<Button visible="{listAuthModel>/isChange}" type="Emphasized"  press="onSaveChanges" text="{i18n>btnChanges}"/>
+				<Button visible="{= !${listAuthModel>/isChange}}" type="Emphasized" enabled="{AuthorityCheckAbilitazione>/Z01Enabled}" press="onAdd" text="{i18n>btnAdd}" />
+				<Button visible="{listAuthModel>/isChange}" type="Emphasized"  press="onSaveChanges" enabled="{AuthorityCheckAbilitazione>/Z02Enabled}" text="{i18n>btnChanges}"/>
 			</OverflowToolbar>
 		</footer>
 	</Page>

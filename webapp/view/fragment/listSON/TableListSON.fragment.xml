@@ -2,25 +2,23 @@
 	xmlns="sap.m"
 	xmlns:c="sap.ui.core"
 	xmlns:l="sap.ui.layout"
-	xmlns:plugins="sap.m.plugins"
 >
 <VBox  width="100%"  class="bgWhite">
-<Title text="{listSONModel>/listSONTableTitle}"  class="sapUiTinyMargin titleSize"></Title></VBox>
+<Title id="idTextTableSON" text="{listSONModel>/listSONTableTitle}" visible="false"   class="sapUiTinyMargin titleSize"></Title></VBox>
 
   <Table  	id="idListSonTable"
 			mode="MultiSelect"
 			fixedLayout="false"
 			contextualWidth="Auto"
 			growing="true"
+				visible="false"
 			selectionChange="onSelectedItem"
 			updateFinished="onUpdateFinished"
 				items="{
 				path: 'SonSet>/'
 			}"
 		>
-		<dependents>
-			<plugins:ColumnResizer/>
-		</dependents>
+		
 		<headerToolbar>
 			<OverflowToolbar >
 				<FlexBox >
@@ -106,7 +104,7 @@
 			</ColumnListItem>
 		</items>
 	</Table>
-	<Panel id="paginatorPanel" >
+	<Panel id="paginatorPanel" visible="false">
 		<c:Fragment
 			fragmentName="gestioneabilitazioneeson.view.fragment.Paginator"
 			type="XML"
