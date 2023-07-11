@@ -90,6 +90,9 @@ sap.ui.define(
             });
 
             var oWizardModel = new JSONModel({
+                btnBackVisible:false,
+                btnNextVisible:true,
+                btnFinishVisible:false,
                 isInChange: false,
                 Step3TableTitle: null,
                 Bukrs:null,
@@ -516,6 +519,9 @@ sap.ui.define(
           setWizardModel:function(data){
             var self = this;
             var oWizardModel = new JSONModel({
+                btnBackVisible:false,
+                btnNextVisible:true,
+                btnFinishVisible:false,
                 isInChange: false,
                 Step3TableTitle: null,
                 Bukrs:data.Bukrs,
@@ -866,8 +872,29 @@ sap.ui.define(
             if(!wizardModel.getProperty("/isInChange"))
               return;
 
-            self.validateStep4();
-            self._setDialogSaveAll("msgRettificaSon");
+            self.goToFinish("WizardForDetail", function(callback){
+              switch(callback){
+                case 'ValidationError':
+                    return false;
+                  break;
+                case 'ValidationSuccess':
+                  self._setDialogSaveAll("msgRettificaSon");
+                  break;
+                default:
+                  return false;
+                  break;     
+              }           
+            });
+        },
+
+        onWizardFinishButton:function(oEvent){
+          var self =this,
+              wizardType = oEvent.getSource().data("dataWizardType");
+
+          if(wizardType === "Fine")
+            return false;
+          
+          self.onSaveAll();
         },
 
         callDeep: function (operationType) {
@@ -1052,6 +1079,7 @@ sap.ui.define(
                 sap.m.MessageBox.success(text, {
                   title: oBundle.getText("operationOK"),
                   onClose: function (oAction) {
+                    self.setPropertyGlobal(self.RELOAD_MODEL,"canRefresh",true);
                     self.onNavBack();
                   },
                 });

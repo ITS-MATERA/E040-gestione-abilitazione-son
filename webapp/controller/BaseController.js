@@ -598,24 +598,24 @@ sap.ui.define(
           aMessages.forEach(function (sMessage) {
             switch (sMessage.type) {
               case "Error":
-                sHighestSeverityIcon = "Negative";
+                sHighestSeverityIcon = "Reject";
                 break;
               case "Warning":
                 sHighestSeverityIcon =
-                  sHighestSeverityIcon !== "Negative"
-                    ? "Critical"
+                  sHighestSeverityIcon !== "Reject"
+                    ? "Transparent"
                     : sHighestSeverityIcon;
                 break;
               case "Success":
                 sHighestSeverityIcon =
-                  sHighestSeverityIcon !== "Negative" &&
-                  sHighestSeverityIcon !== "Critical"
-                    ? "Success"
+                  sHighestSeverityIcon !== "Reject" &&
+                  sHighestSeverityIcon !== "Transparent"
+                    ? "Accept"
                     : sHighestSeverityIcon;
                 break;
               default:
                 sHighestSeverityIcon = !sHighestSeverityIcon
-                  ? "Neutral"
+                  ? "Unstyled"
                   : sHighestSeverityIcon;
                 break;
             }
@@ -631,13 +631,13 @@ sap.ui.define(
           var sHighestSeverityMessageType;
 
           switch (sHighestSeverityIconType) {
-            case "Negative":
+            case "Reject":
               sHighestSeverityMessageType = "Error";
               break;
-            case "Critical":
+            case "Transparent":
               sHighestSeverityMessageType = "Warning";
               break;
-            case "Success":
+            case "Accept":
               sHighestSeverityMessageType = "Success";
               break;
             default:
@@ -743,7 +743,7 @@ sap.ui.define(
             console.log("logModel UUUUUUU", logModel);
             oModel.setData(logModel);
 
-            self.setModel(oModel, LOG_MODEL);
+            self.getView().setModel(oModel, LOG_MODEL);
             self.oMessageView.setModel(oModel, LOG_MODEL);
 
             var arrayError = array.filter((el) => el.Msgty === "E");
@@ -756,7 +756,7 @@ sap.ui.define(
           } else {
             oModel.setData([]);
             console.log("oModel vuoto", oModel);
-            self.setModel(oModel, LOG_MODEL);
+            self.getView().setModel(oModel, LOG_MODEL);
             self.oMessageView.setModel(oModel, LOG_MODEL);
             return true;
           }
@@ -1071,8 +1071,10 @@ sap.ui.define(
                   console.log(oData);
                   self.getView().setBusy(false);
                   var arrayMessage = oData.results;
-                  if (!self.isErrorInLog(arrayMessage)) {                    
+                  if (!self.isErrorInLog(arrayMessage)) {      
+                    wizardModel.setProperty("/btnBackVisible", false);                
                     wizard.previousStep();
+                    self.handleButtonsVisibility(0);
                   } else {
                     var oModel = new JSONModel();
                     oModel.setData([]);
@@ -1093,16 +1095,18 @@ sap.ui.define(
                 },
                 error: function (oError) {
                   self.getView().setBusy(false);
+                  wizardModel.setProperty("/btnBackVisible", false); 
                   wizard.previousStep();
+                  self.handleButtonsVisibility(0);
                 },
               });
             } else {
               self._setMessage(
                 "titleDialogError",
                 "msgNoRequiredField",
-                "error"
+                "error",
+                "CreateProductWizard"
               );
-              wizard.previousStep();
               return false;
             }
           } else {
@@ -1121,7 +1125,7 @@ sap.ui.define(
           var self = this,
             wizardId = oEvent.getSource().getParent().getId(),
             wizard = self.getView().byId(wizardId),
-            wizardType = wizard.data("wizardType");
+            wizardType = wizard.data("wizardType");            
 
           var wizardModel = self.getModel(WIZARD_MODEL),
             Zimptot = wizardModel.getProperty("/Zimptot"),
@@ -1167,7 +1171,7 @@ sap.ui.define(
               console.log(oData);
               self.getView().setBusy(false);
               var arrayMessage = oData.results;
-              if (!self.isErrorInLog(arrayMessage)) {                
+              if (!self.isErrorInLog(arrayMessage)) {                               
                 wizard.previousStep();
               } else {
                 var oModel = new JSONModel();
@@ -1244,6 +1248,7 @@ sap.ui.define(
                         var oModelJson = new sap.ui.model.json.JSONModel();
                         oModelJson.setData([]);
                         self.getView().setModel(oModelJson, STEP3_LIST);
+                        wizard.previousStep();
                       },
                     });
                   });
@@ -1307,9 +1312,8 @@ sap.ui.define(
           });
         },
         
-        goToFinish:function(oEvent, callback){
+        goToFinish:function(wizardId, callback){
           var self = this,
-              wizardId = oEvent.getSource().getParent().getId(),
               wizard = self.getView().byId(wizardId),
               wizardType = wizard.data("wizardType");
           
@@ -1327,38 +1331,51 @@ sap.ui.define(
             return;
           }
 
-          var oParam = {
-            Zlocpag: !Zlocpag || Zlocpag === null ? "" : Zlocpag,
-            Zzonaint: !Zzonaint || Zzonaint === null ? "" : Zzonaint,
-          };
-          
-          var url = wizardType === WIZARD_TYPE_DETAIL ? URL_VALIDATION_D4 : URL_VALIDATION_4;
-          self.getView().setBusy(true);
-          oDataModel.callFunction("/" + url, {
-            method: "GET",
-            urlParameters: oParam,
-            success: function (oData, response) {
-              self.getView().setBusy(false);
-              var arrayMessage = oData.results;
-              if (!self.isErrorInLog(arrayMessage)){ 
+          if(wizardType !== WIZARD_TYPE_DETAIL){
+            var oParam = {
+              Zlocpag: !Zlocpag || Zlocpag === null ? "" : Zlocpag,
+              Zzonaint: !Zzonaint || Zzonaint === null ? "" : Zzonaint,
+            };
+            
+            var url = URL_VALIDATION_4;
+            self.getView().setBusy(true);
+            oDataModel.callFunction("/" + url, {
+              method: "GET",
+              urlParameters: oParam,
+              success: function (oData, response) {
+                self.getView().setBusy(false);
+                var arrayMessage = oData.results;
+                if (!self.isErrorInLog(arrayMessage)){ 
+                  callback("ValidationError");
+                  return;
+                }
+                callback("ValidationSuccess");
+              },
+              error: function (oError) {
+                self.getView().setBusy(false);
                 callback("ValidationError");
-                return;
               }
-              callback("ValidationSuccess");
-            },
-            error: function (oError) {
-              self.getView().setBusy(false);
-              callback("ValidationError");
-            }
-          });
+            });
+          }
+          else
+            callback("ValidationSuccess");
         },
 
-        _setMessage: function (sTitle, sText, sType) {
+        _setMessage: function (sTitle, sText, sType, callPrev = "") {
           var self = this;
           var oBundle = self.getResourceBundle();
           var obj = {
             title: oBundle.getText(sTitle),
-            onClose: function (oAction) {},
+            onClose: function (oAction) {
+              if(callPrev !== ""){
+                var wizard = self.getView().byId(callPrev);
+                if(wizard){
+                  wizard.previousStep();
+                  self.handleButtonsVisibility(0);
+                }
+              }
+
+            },
           };
           if (sType === "error")
             sap.m.MessageBox.error(oBundle.getText(sText), obj);
@@ -1677,6 +1694,77 @@ sap.ui.define(
             }
           }
           return checklist;
+        },
+
+        onWizardNextButton:function(oEvent){
+          var self =this,
+            wizardId = oEvent.getSource().data("dataWizardId"),
+            wizard = self.getView().byId(wizardId),
+            idStepName = wizard.getCurrentStep(),
+            currentStep = self.getView().byId(idStepName);
+
+            if(!currentStep || currentStep === null)
+              return false;
+
+            var stepIndex = currentStep.data("dataWizardStepIndex");
+            var oNextStep = wizard.getSteps()[parseInt(stepIndex) + 1];
+
+            if (currentStep && !currentStep.bLast) {
+              wizard.goToStep(oNextStep, true);
+            } else {
+              wizard.nextStep();
+            }  
+
+            self.handleButtonsVisibility(parseInt(stepIndex)+1);
+        },
+
+        onWizardBackButton:function(oEvent){
+          var self =this,
+              wizardId = oEvent.getSource().data("dataWizardId"),
+              wizard = self.getView().byId(wizardId),
+              idStepName = wizard.getCurrentStep(),
+              currentStep = self.getView().byId(idStepName);
+
+          if(!currentStep || currentStep === null)
+            return false;
+
+          var stepIndex = currentStep.data("dataWizardStepIndex");
+          var oPrevStep = wizard.getSteps()[parseInt(stepIndex) - 1];
+
+          if (oPrevStep) {
+            wizard.previousStep();
+          }  
+
+          self.handleButtonsVisibility(parseInt(stepIndex)-1);
+        },
+        
+
+        handleButtonsVisibility: function (index) {
+          var self = this,
+              oModel = self.getModel(WIZARD_MODEL);
+          switch (index){
+            case 0:
+              oModel.setProperty("/btnBackVisible", false);
+              oModel.setProperty("/btnNextVisible", true);
+              oModel.setProperty("/btnFinishVisible", false);
+              break;
+            case 1:
+              oModel.setProperty("/btnBackVisible", true);
+              oModel.setProperty("/btnNextVisible", true);
+              oModel.setProperty("/btnFinishVisible", false);
+              break;
+            case 2:
+              oModel.setProperty("/btnBackVisible", true);
+              oModel.setProperty("/btnNextVisible", true);
+              oModel.setProperty("/btnFinishVisible", false);
+              break;
+            case 3:
+              oModel.setProperty("/btnBackVisible", true);
+              oModel.setProperty("/btnNextVisible", false);
+              oModel.setProperty("/btnFinishVisible", true);
+              break;
+            default: break;
+          }    
         },
 
         downloadFile: function (key) {

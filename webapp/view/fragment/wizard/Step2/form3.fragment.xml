@@ -3,8 +3,9 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core"
     xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
->
-  <Panel expandable="true"  headerText="{i18n>wizardStep2SubTitle3}" width="auto" class="margin0 padding0 expanded">
+>   
+    <!-- expandable="true" -->
+  <Panel   headerText="{i18n>wizardStep2SubTitle3}" width="auto" class="margin0 padding0 expanded">
 		<content >
             <VBox id ="idStep2Form3">
                 <items>

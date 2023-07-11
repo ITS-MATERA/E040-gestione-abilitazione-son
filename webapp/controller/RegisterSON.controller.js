@@ -74,6 +74,9 @@ sap.ui.define(
         onInit: function () {
           var oWizardModel, oDataSONModel, Step3List;
           oWizardModel = new JSONModel({
+            btnBackVisible:false,
+            btnNextVisible:true,
+            btnFinishVisible:false,
             isInChange: true,
             Step3TableTitle: null,
             //step4
@@ -708,6 +711,12 @@ sap.ui.define(
 
         resetWizardModel: function () {
           var self = this;
+
+          self.getView().getModel(WIZARD_MODEL).setProperty("/btnBackVisible", false);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/btnNextVisible", true);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/btnFinishVisible", false);
+
+
           self
             .getView()
             .getModel(WIZARD_MODEL)

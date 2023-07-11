@@ -11,7 +11,7 @@
 			fixedLayout="false"
 			contextualWidth="Auto"
 			growing="true"
-				visible="false"
+			visible="true"
 			selectionChange="onSelectedItem"
 			updateFinished="onUpdateFinished"
 				items="{

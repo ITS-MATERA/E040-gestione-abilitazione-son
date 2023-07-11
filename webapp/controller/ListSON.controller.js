@@ -303,7 +303,7 @@ sap.ui.define(
 
           self.resetEntityModel(SON_MODEL_EXPORT);
           self.resetEntityModel(SON_SET);
-          oView.setBusy(true);
+          // oView.setBusy(true);
 
           self._getEntity(false, true);
         },
@@ -677,8 +677,10 @@ sap.ui.define(
           var idText = this.getView().byId("idTextTableSON");
           idText.setVisible(false);
           oPaginatorPanel.setVisible(false);
-          oTable.setVisible(false);
+          // oTable.setVisible(false);//giannilecci
           self.resetPage();
+          self.resetEntityModel(SON_MODEL_EXPORT);
+          self.resetEntityModel(SON_SET);
           self.resetFilter();
           self.getRouter().navTo("startPage");
         },
@@ -710,9 +712,10 @@ sap.ui.define(
             : btnArrow.setEnabled(true);
         },
         onStart: function () {
-          var self = this,
-            reloadModel = self.getModelGlobal(self.RELOAD_MODEL);
-          
+          var self = this;
+          self.getView().setBusy(true); 
+
+          //var reloadModel = self.getModelGlobal(self.RELOAD_MODEL);
           self._setEntityProperties();
         },
 

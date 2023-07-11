@@ -5,12 +5,13 @@
 >
     <VBox >
  
-	    <Wizard id="WizardForDetail"  finishButtonText="{= ${wizardModel>/isInChange} === true ? 'Rettifica SON' : 'Fine' }" 
+	    <Wizard id="WizardForDetail" showNextButton="false"  finishButtonText="{= ${wizardModel>/isInChange} === true ? 'Rettifica SON' : 'Fine' }" 
             class="sapUiResponsivePadding--header sapUiResponsivePadding--content" app:wizardType="Detail"
 								>
                 <WizardStep id="idWizardStep1"
                             title="{i18n>wizardStep1Title}"
-                            validated="true">
+                            validated="true"
+                            app:dataWizardStepIndex="0">
 
                     <VBox>	
                         <core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step1.form1" type="XML"/>
@@ -21,7 +22,8 @@
                 <WizardStep id="idWizardStep2"
                             title="{i18n>wizardStep2Title}"
                             activate="goToTwo"
-                            validated="true">
+                            validated="true"
+                            app:dataWizardStepIndex="1">
 
                     <VBox>	
                         <core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form1" type="XML"/>
@@ -35,7 +37,8 @@
                 <WizardStep id="idWizardStep3"
                             title="{i18n>wizardStep3Title}"
                             activate="goToThree"
-                            validated="true">
+                            validated="true"
+                            app:dataWizardStepIndex="2">
                     <VBox>	
                         <core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step3.table1" type="XML"/>
                     </VBox>		
@@ -44,10 +47,21 @@
                             activate="goToFour"
                             complete="onSaveAll"
                             title="{i18n>wizardStep4Title}"
-                            validated="true">
+                            validated="true"
+                            app:dataWizardStepIndex="3">
                 <core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step4.form1" type="XML"/>
                 </WizardStep>														
             </Wizard>
+            <OverflowToolbar>                
+                <Button text="Indietro" visible="{wizardModel>/btnBackVisible}" type="Emphasized"  press="onWizardBackButton" app:dataWizardId="WizardForDetail" />
+                <Button text="Avanti" visible="{wizardModel>/btnNextVisible}"  type="Emphasized"  press="onWizardNextButton" app:dataWizardId="WizardForDetail" />
+                <Button text="{= ${wizardModel>/isInChange} === true ? 'Rettifica SON' : 'Fine' }" visible="{wizardModel>/btnFinishVisible}" type="Emphasized" 
+                    press="onWizardFinishButton" 
+                    app:dataWizardId="WizardForDetail"
+                    app:dataWizardType="{= ${wizardModel>/isInChange} === true ? 'Rettifica SON' : 'Fine' }" />
+                <ToolbarSpacer/>               
+            </OverflowToolbar>
+
     
         </VBox>
 </core:FragmentDefinition>

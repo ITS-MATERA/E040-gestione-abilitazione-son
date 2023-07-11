@@ -6,8 +6,8 @@
      xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 >
 
-
-    <Panel expandable="true"  headerText="{i18n>wizardStep1SubTitle2}" width="auto" class="margin0 padding0 expanded">
+    <!-- expandable="true"  -->
+    <Panel  headerText="{i18n>wizardStep1SubTitle2}" width="auto" class="margin0 padding0 expanded">
 		<content >
             <f:SimpleForm id="idStep1Form3"
                     editable="true"
