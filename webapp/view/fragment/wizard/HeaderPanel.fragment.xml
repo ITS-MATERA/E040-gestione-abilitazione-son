@@ -2,6 +2,7 @@
 	xmlns="sap.m"
     xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core"
+    xmlns:zcontrolPosFin="zsap.com.r3.cobi.s4.custposfin.z_s4_zposfinlink.controls"
 >
     <VBox >
         <items>
@@ -22,7 +23,11 @@
                 <HBox >
                     <items>
                         <Label text="{i18n>wizardSONDataZimptot}" class="sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
-                        <Text  text="{DataModel>/Zimptot}" />
+                        <!-- <Text  text="{DataModel>/Zimptot}" /> -->
+                        <Text  text="{
+							path: 'DataModel>/Zimptot',
+							formatter: '.formatter.convertFormattedNumber'
+						}" />
                     </items>
                     <layoutData><l:GridData span="XL3 L4 M6 S12"/></layoutData>
                 </HBox> 
@@ -85,7 +90,10 @@
                 <HBox >
                     <items>
                         <Label text="{i18n>wizardSONDataFipos}" class="sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
-                        <Text  text="{DataModel>/Fipos}" />
+                        <!-- <Text  text="{DataModel>/Fipos}" /> -->
+                        <zcontrolPosFin:LinkPosizioneFinanziaria id="linkPosFinSpesa" anno="{DataModel>/Gjahr}" eos="S" fikrs="S001" fase="GEST" 
+                        reale="R" versione="D" fipex="{DataModel>/Fipos}" 
+                        datbis="99991231" text="{DataModel>/Fipos}" semanticObject="ESAMINAMODIFICA"/>
                     </items>
                     <layoutData><l:GridData span="XL3 L4 M6 S12"/></layoutData>
                 </HBox> 

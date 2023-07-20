@@ -175,6 +175,7 @@ function (BaseController, JSONModel, formatter, MessageBox, History,library,
                 ZimptotDivisa: null,
                 TaxnumCf: null,
                 Zzamministr: null,
+                PayMode:[]
             });  
 
             var Step3List = new JSONModel([
@@ -407,6 +408,7 @@ function (BaseController, JSONModel, formatter, MessageBox, History,library,
                 oWizardModel,
                 oDataModel=self.getModel();
             self.getView().setBusy(true);
+            self.payMode=[];
             console.log("hello", oItem);
             
             var path = self.getModel().createKey(SON_SET, {
@@ -421,6 +423,14 @@ function (BaseController, JSONModel, formatter, MessageBox, History,library,
                 oDataModel.read("/" + path, {
                     success: function (data, oResponse) {
                         self.getBeneficiarioHeader(data.Lifnr);
+                        self.getPayModeByLifnr(data.Lifnr,"",true,function(callback){
+                          if(!callback.error){
+                            self.payMode = callback.data;
+                          }
+                          else 
+                            self.payMode = [];
+                        });
+
                         self.getSedeBeneficiario(data.Lifnr, data.Zidsede);
                         oWizardModel = self.setWizardModel(data);
 
@@ -431,14 +441,14 @@ function (BaseController, JSONModel, formatter, MessageBox, History,library,
                             oWizardModel.getData().Regio= self._sedeBeneficiario ? self._sedeBeneficiario.Regio : "";
                             oWizardModel.getData().Pstlz= self._sedeBeneficiario ? self._sedeBeneficiario.Pstlz : "";
                             oWizardModel.getData().Land1= self._sedeBeneficiario ? self._sedeBeneficiario.Land1 : "";
-                            oWizardModel.getData().NameFirst= self._beneficiario.NameFirst;
-                            oWizardModel.getData().ZzragSoc= self._beneficiario.ZzragSoc;
-                            oWizardModel.getData().Zsede= self._beneficiario.Zsede;
-                            oWizardModel.getData().Type= self._beneficiario.Type === "1" ? true : false; //radio btn
-                            oWizardModel.getData().Taxnumxl= self._beneficiario.TaxnumCf;
-                            oWizardModel.getData().NameLast= self._beneficiario.NameLast;
-                            oWizardModel.getData().TaxnumPiva= self._beneficiario.TaxnumPiva;
-                            oWizardModel.getData().Zdenominazione= self._beneficiario.Zdenominazione;
+                            oWizardModel.getData().NameFirst= self._beneficiario ? self._beneficiario.NameFirst : "";
+                            oWizardModel.getData().ZzragSoc= self._beneficiario ? self._beneficiario.ZzragSoc :"";
+                            oWizardModel.getData().Zsede= self._beneficiario ? self._beneficiario.Zsede :"";
+                            oWizardModel.getData().Type= self._beneficiario && self._beneficiario.Type === "1" ? true : false; //radio btn
+                            oWizardModel.getData().Taxnumxl= self._beneficiario ? self._beneficiario.TaxnumCf :"";
+                            oWizardModel.getData().NameLast= self._beneficiario ? self._beneficiario.NameLast :"";
+                            oWizardModel.getData().TaxnumPiva= self._beneficiario ? self._beneficiario.TaxnumPiva :"";
+                            oWizardModel.getData().Zdenominazione= self._beneficiario ? self._beneficiario.Zdenominazione:"";
 
                             var oDataSONModel = new JSONModel({
                                 Gjahr: data.Gjahr,
@@ -449,15 +459,31 @@ function (BaseController, JSONModel, formatter, MessageBox, History,library,
                                 Kostl: data.Kostl,
                                 Saknr: data.Saknr,
                                 Lifnr: data.Lifnr,
-                                NameFirst: self._beneficiario.NameFirst,
-                                NameLast: self._beneficiario.NameLast,
+                                NameFirst: self._beneficiario ? self._beneficiario.NameFirst :"",
+                                NameLast: self._beneficiario ? self._beneficiario.NameLast :"",
                                 Zimptot: data.Zimptot,
-                                TaxnumPiva: self._beneficiario.TaxnumPiva,
-                                ZzragSoc: self._beneficiario.ZzragSoc,
+                                TaxnumPiva: self._beneficiario ? self._beneficiario.TaxnumPiva :"",
+                                ZzragSoc: self._beneficiario ? self._beneficiario.ZzragSoc : "",
                                 ZimptotDivisa: oItem.ZimptotDivisa,
-                                TaxnumCf: self._beneficiario.TaxnumCf,
+                                TaxnumCf: self._beneficiario ? self._beneficiario.TaxnumCf : "",
                                 Zzamministr: self._amministrazione.Value,
+                                PayMode: self.payMode,
+                                NewPayMode:[]
                             });    
+
+                            if(oWizardModel.getData() && oWizardModel.getData().PayMode !== null && oWizardModel.getData().PayMode !== "" && self.payMode.length>0){
+                              self.getPayModeByLifnr(data.Lifnr,oWizardModel.getData().PayMode,false, function(callback){
+                                if(!callback.error){
+                                  var record = callback.data[0];
+                                  if(record){
+                                    oWizardModel.getData().Banks = oWizardModel.getData().Banks === "" ? record.Banks : oWizardModel.getData().Banks;
+                                    oWizardModel.getData().Iban = oWizardModel.getData().Iban === "" ? record.Iban : oWizardModel.getData().Iban;
+                                    oWizardModel.getData().Swift = oWizardModel.getData().Swift === "" ? record.Swift : oWizardModel.getData().Swift;
+                                    oWizardModel.getData().Zcoordest = oWizardModel.getData().Zcoordest === "" ? record.ZcoordEst : oWizardModel.getData().Zcoordest;                                
+                                  }
+                                }
+                              });                              
+                            } 
 
                             self.setModel(oWizardModel, WIZARD_MODEL);
                             self.setModel(oDataSONModel, DataSON_MODEL);
@@ -607,6 +633,7 @@ function (BaseController, JSONModel, formatter, MessageBox, History,library,
             self.getView().getModel(DataSON_MODEL).setProperty("/ZimptotDivisa", null);
             self.getView().getModel(DataSON_MODEL).setProperty("/TaxnumCf", null);
             self.getView().getModel(DataSON_MODEL).setProperty("/Zzamministr", null);
+            self.getView().getModel(DataSON_MODEL).setProperty("/PayMode", []);
           },
 
         resetStep3:function(){

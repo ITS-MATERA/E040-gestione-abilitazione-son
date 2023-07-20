@@ -57,6 +57,7 @@ sap.ui.define(
             isSelectedAll: false,
             checkList: [],
             filterRequestEnable: true,
+            filterGjahr:null,
           });
           oPaginatorModel = new JSONModel({
             btnPrevEnabled: false,
@@ -263,7 +264,7 @@ sap.ui.define(
             sBeneficiario = oView.byId("fBeneficiario"),
             sFiposFrom = oView.byId("fFiposFrom"),
             sFiposTo = oView.byId("fFiposTo"),
-            sFistl = oView.byId("fFistl");
+            sFistl = oView.byId("idFilterStruttAmmResp");
 
           sGjahr.setValue("");
           sZzamministr.setValue("");
@@ -1211,8 +1212,8 @@ sap.ui.define(
                 "07": oBundle.getText("ZstatoSop07"),
                 "08": oBundle.getText("ZstatoSop08"),
                 "09": oBundle.getText("ZstatoSop09"),
-                10: oBundle.getText("ZstatoSop10"),
-                11: oBundle.getText("ZstatoSop11"),
+                "10": oBundle.getText("ZstatoSop10"),
+                "11": oBundle.getText("ZstatoSop11"),
               },
             },
           ];
@@ -1221,6 +1222,15 @@ sap.ui.define(
         },
 
         // ----------------------------- END EXPORT -----------------------------  //
+
+        onFilterGjahrChange:function(oEvent){
+          var self =this,
+            value = oEvent.getParameters().value;
+          
+          self.getView().getModel(LISTSON_MODEL).setProperty("/filterGjahr",value);
+        }
+
+
       }
     );
   }

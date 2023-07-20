@@ -67,7 +67,7 @@
 					<Text  text="{listTable>Fipos}" />
 					<Text  text="{listTable>Fistl}" />
 					<Text  text="{listTable>Zimptot}" />
-					<Text  text="{listTable>Ztipodisp3}" />
+					<Text  text="{listTable>Zdesctipodisp3}" />
 					<Text  text="{
 							path: 'listTable>ZstatoSop',
 							formatter: '.formatter.formatZstatoSop'

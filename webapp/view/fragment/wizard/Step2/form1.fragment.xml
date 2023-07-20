@@ -11,7 +11,7 @@
 			<OverflowToolbar style="Clear">
 				<Title text="{i18n>wizardStep2SubTitle1}" />
 				<ToolbarSpacer />
-				<Button   enabled="{wizardModel>/isInChange}"  text="{i18n>btnInsertPayMethod}" type="Emphasized" press="handlePopoverPress"></Button>
+				<Button   enabled="{wizardModel>/isInChange}"  text="{i18n>btnInsertPayMethod}" type="Emphasized" press="newModalitaPagamentoDialogPress"></Button>
 				<Button enabled="{wizardModel>/isInChange}"  text="{i18n>btnCreateDataBeneficary}" type="Emphasized"></Button>
 			</OverflowToolbar>
 		</headerToolbar>

@@ -66,8 +66,12 @@
 					<Text  text="{checkList>Beneficiario}" />
 					<Text  text="{checkList>Fipos}" />
 					<Text  text="{checkList>Fistl}" />
-					<Text  text="{checkList>Zimptot}" />
-					<Text  text="{checkList>Ztipodisp3}" />
+					<!-- <Text  text="{checkList>Zimptot}" /> -->
+					<Text  text="{
+							path: 'checkList>Zimptot',
+							formatter: '.formatter.convertFormattedNumber'
+						}" />
+					<Text  text="{checkList>Zdesctipodisp3}" />
 					<Text  text="{
 							path: 'checkList>ZstatoSop',
 							formatter: '.formatter.formatZstatoSop'

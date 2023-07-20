@@ -19,12 +19,29 @@
                                             <Label  design="Bold" width="100%" text="{i18n>wizardStep2SubTitle2}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData><l:GridData span="XL5 L5 M4 S12" /></layoutData>
                                             </Label>
-                                                <Input  editable="{wizardModel>/isInChange}" id="idWizardPayMode"  app:property="PayMode" value="{wizardModel>/PayMode}" submit="onSubmitPayMode" liveChange="onLiveChangePayMode">
-                                                    <layoutData>
-                                                        <l:GridData span="XL5 L5 M6 S12"  />
-                                                    </layoutData>
-                                                </Input>
-	
+
+                                            <!-- <Input  editable="{wizardModel>/isInChange}" id="idWizardPayMode"  app:property="PayMode" value="{wizardModel>/PayMode}" submit="onSubmitPayMode" liveChange="onLiveChangePayMode">
+                                                <layoutData>
+                                                    <l:GridData span="XL5 L5 M6 S12"  />
+                                                </layoutData>
+                                            </Input> -->
+                                            <ComboBox
+                                                id="idWizardPayMode"
+                                                width="100%"             
+                                                editable="{wizardModel>/isInChange}"                                     
+                                                change="onSubmitPayModeChange"
+                                                items="{
+                                                        path: 'DataModel>/PayMode'
+                                                        }"
+                                                selectedKey="{wizardModel>/PayMode}"
+                                                >
+                                                <!--TODO: forse ci vuole l'additional text -->
+                                                <core:Item  key="{DataModel>Zwels}" text="{DataModel>ZdescWels}" />
+                                                <layoutData>
+                                                    <l:GridData span="XL5 L5 M6 S12"  />
+                                                </layoutData>
+                                            </ComboBox>		
+                                            
                                         </l:Grid>
                                     </items>     
                                 </FlexBox>                                

@@ -205,6 +205,8 @@ sap.ui.define(
                 ZimptotDivisa: null,
                 TaxnumCf: null,
                 Zzamministr: null,
+                PayMode:[],
+                NewPayMode:[]
             });  
 
             var Step3List = new JSONModel([
@@ -272,16 +274,15 @@ sap.ui.define(
               },
           ]);
 
-
-            self.configLog();
-            self.setModel(oDetailModel, DETAIL_MODEL);    
-            self.setModel(oWizardModel, WIZARD_MODEL);
-            self.setModel(oDataSONModel, DataSON_MODEL);
-            self.setModel(Step3List, STEP3_LIST);
-            self.setModel(oClassificazioneModel, CLASSIFICAZIONE_SON_DEEP);
-            self.setModel(oIconTabModel, ICONTAB_MODEL);
-            self.setModel(oHeaderActionModel,HEADER_ACTION_MODEL);
-            self.getRouter().getRoute("detailSON").attachPatternMatched(self._onObjectMatched, self);
+          self.configLog();
+          self.setModel(oDetailModel, DETAIL_MODEL);    
+          self.setModel(oWizardModel, WIZARD_MODEL);
+          self.setModel(oDataSONModel, DataSON_MODEL);
+          self.setModel(Step3List, STEP3_LIST);
+          self.setModel(oClassificazioneModel, CLASSIFICAZIONE_SON_DEEP);
+          self.setModel(oIconTabModel, ICONTAB_MODEL);
+          self.setModel(oHeaderActionModel,HEADER_ACTION_MODEL);
+          self.getRouter().getRoute("detailSON").attachPatternMatched(self._onObjectMatched, self);
             
         },
 
@@ -445,7 +446,7 @@ sap.ui.define(
             var self = this,
                 oDataModel = self.getModel();
 
-            if(!lifnr || lifnr === null)
+            if(!lifnr || lifnr === null || lifnr === "")
                 return false;
 
             var path = self.getModel().createKey(Beneficiary_SET, {
@@ -464,11 +465,35 @@ sap.ui.define(
             });
         },
 
+        // getPayModeByLifnr:function(lifnr,callback){
+        //   var self =this,
+        //       oDataModel = self.getModel();
+        //   if(!lifnr || lifnr === null || lifnr === "")
+        //       return false;
+
+        //   var filter = [];
+        //   filter.push(new sap.ui.model.Filter("Lifnr",sap.ui.model.FilterOperator.EQ,lifnr));
+
+        //   self.getModel().metadataLoaded().then(function () {
+        //     oDataModel.read("/ZwelsListSet", {
+        //         filters: filter,
+        //         success: function (data, oResponse) {
+        //             console.log(data.results); //TODO:da canc
+        //             return callback({data:data.results, error: false});
+        //         },
+        //         error: function (error) {
+        //           console.log(error)
+        //           return callback({data:error, error: true});
+        //         },
+        //     });
+        //   });
+        // },
+
         getSedeBeneficiario:function(lifnr,idSede){
             var self = this,
                 oDataModel = self.getModel();
 
-            if(!lifnr || lifnr === null)
+            if(!lifnr || lifnr === null || lifnr === "")
                 return false;
 
             var path = self.getModel().createKey(SedeBeneficiario_SET, {
@@ -513,7 +538,8 @@ sap.ui.define(
                 oWizardModel,
                 oDataModel=self.getModel();
             self.getView().setBusy(true);
-            console.log("hello", oItem);
+            self.payMode=[];
+            console.log("hello", oItem);//TODO:da canc
             
             var path = self.getModel().createKey(SON_SET, {
                 Bukrs: oItem.Bukrs,
@@ -527,6 +553,14 @@ sap.ui.define(
                 oDataModel.read("/" + path, {
                     success: function (data, oResponse) {
                         self.getBeneficiarioHeader(data.Lifnr);
+                        self.getPayModeByLifnr(data.Lifnr,"",true,function(callback){
+                          if(!callback.error){
+                            self.payMode = callback.data;
+                          }
+                          else 
+                            self.payMode = [];
+                        });
+
                         self.getSedeBeneficiario(data.Lifnr, data.Zidsede);
                         oWizardModel = self.setWizardModel(data);
 
@@ -537,14 +571,14 @@ sap.ui.define(
                             oWizardModel.getData().Regio= self._sedeBeneficiario ? self._sedeBeneficiario.Regio : "";
                             oWizardModel.getData().Pstlz= self._sedeBeneficiario ? self._sedeBeneficiario.Pstlz : "";
                             oWizardModel.getData().Land1= self._sedeBeneficiario ? self._sedeBeneficiario.Land1 : "";
-                            oWizardModel.getData().NameFirst= self._beneficiario.NameFirst;
-                            oWizardModel.getData().ZzragSoc= self._beneficiario.ZzragSoc;
-                            oWizardModel.getData().Zsede= self._beneficiario.Zsede;
-                            oWizardModel.getData().Type= self._beneficiario.Type === "1" ? true : false; //radio btn
-                            oWizardModel.getData().Taxnumxl= self._beneficiario.TaxnumCf;
-                            oWizardModel.getData().NameLast= self._beneficiario.NameLast;
-                            oWizardModel.getData().TaxnumPiva= self._beneficiario.TaxnumPiva;
-                            oWizardModel.getData().Zdenominazione= self._beneficiario.Zdenominazione;
+                            oWizardModel.getData().NameFirst= self._beneficiario ? self._beneficiario.NameFirst : "";
+                            oWizardModel.getData().ZzragSoc= self._beneficiario ? self._beneficiario.ZzragSoc : "";
+                            oWizardModel.getData().Zsede= self._beneficiario ? self._beneficiario.Zsede : "";
+                            oWizardModel.getData().Type= self._beneficiario && self._beneficiario.Type === "1" ? true : false; //radio btn
+                            oWizardModel.getData().Taxnumxl= self._beneficiario ? self._beneficiario.TaxnumCf : "";
+                            oWizardModel.getData().NameLast= self._beneficiario ? self._beneficiario.NameLast : "";
+                            oWizardModel.getData().TaxnumPiva= self._beneficiario ? self._beneficiario.TaxnumPiva : "";
+                            oWizardModel.getData().Zdenominazione= self._beneficiario ? self._beneficiario.Zdenominazione : "";
 
                             var oDataSONModel = new JSONModel({
                                 Gjahr: data.Gjahr,
@@ -555,15 +589,31 @@ sap.ui.define(
                                 Kostl: data.Kostl,
                                 Saknr: data.Saknr,
                                 Lifnr: data.Lifnr,
-                                NameFirst: self._beneficiario.NameFirst,
-                                NameLast: self._beneficiario.NameLast,
+                                NameFirst: self._beneficiario ? self._beneficiario.NameFirst : "",
+                                NameLast: self._beneficiario ? self._beneficiario.NameLast : "",
                                 Zimptot: data.Zimptot,
-                                TaxnumPiva: self._beneficiario.TaxnumPiva,
-                                ZzragSoc: self._beneficiario.ZzragSoc,
+                                TaxnumPiva: self._beneficiario ? self._beneficiario.TaxnumPiva : "",
+                                ZzragSoc: self._beneficiario ? self._beneficiario.ZzragSoc : "",
                                 ZimptotDivisa: oItem.ZimptotDivisa,
-                                TaxnumCf: self._beneficiario.TaxnumCf,
+                                TaxnumCf: self._beneficiario ? self._beneficiario.TaxnumCf : "",
                                 Zzamministr: self._amministrazione.Value,
-                            });    
+                                PayMode: self.payMode,
+                                NewPayMode:[]
+                            });  
+                            
+                            if(oWizardModel.getData() && oWizardModel.getData().PayMode !== null && oWizardModel.getData().PayMode !== "" && self.payMode.length>0){
+                              self.getPayModeByLifnr(data.Lifnr,oWizardModel.getData().PayMode,false, function(callback){
+                                if(!callback.error){
+                                  var record = callback.data[0];
+                                  if(record){
+                                    oWizardModel.getData().Banks = oWizardModel.getData().Banks === "" ? record.Banks : oWizardModel.getData().Banks;
+                                    oWizardModel.getData().Iban = oWizardModel.getData().Iban === "" ? record.Iban : oWizardModel.getData().Iban;
+                                    oWizardModel.getData().Swift = oWizardModel.getData().Swift === "" ? record.Swift : oWizardModel.getData().Swift;
+                                    oWizardModel.getData().Zcoordest = oWizardModel.getData().Zcoordest === "" ? record.ZcoordEst : oWizardModel.getData().Zcoordest;                                
+                                  }
+                                }
+                              });                              
+                            } 
 
                             self.setModel(oWizardModel, WIZARD_MODEL);
                             self.setModel(oDataSONModel, DataSON_MODEL);
@@ -729,6 +779,8 @@ sap.ui.define(
             self.getView().getModel(DataSON_MODEL).setProperty("/ZimptotDivisa", null);
             self.getView().getModel(DataSON_MODEL).setProperty("/TaxnumCf", null);
             self.getView().getModel(DataSON_MODEL).setProperty("/Zzamministr", null);
+            self.getView().getModel(DataSON_MODEL).setProperty("/PayMode", []);
+            self.getView().getModel(DataSON_MODEL).setProperty("/NewPayMode", []);            
           },
 
         resetStep3:function(){

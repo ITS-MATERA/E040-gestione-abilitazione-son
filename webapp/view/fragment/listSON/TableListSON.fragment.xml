@@ -2,6 +2,7 @@
 	xmlns="sap.m"
 	xmlns:c="sap.ui.core"
 	xmlns:l="sap.ui.layout"
+	xmlns:zcontrolPosFin="zsap.com.r3.cobi.s4.custposfin.z_s4_zposfinlink.controls"
 >
 <VBox  width="100%"  class="bgWhite">
 <Title id="idTextTableSON" text="{listSONModel>/listSONTableTitle}" visible="false"   class="sapUiTinyMargin titleSize"></Title></VBox>
@@ -92,9 +93,14 @@
 									}
 							}"/>					
 					<Text  text="{SonSet>Beneficiario}" />
-					<Text  text="{SonSet>Fipos}" />
+					<zcontrolPosFin:LinkPosizioneFinanziaria id="linkPosFinSpesa" anno="{SonSet>Gjahr}" eos="S" fikrs="S001" fase="GEST" 
+						reale="R" versione="D" fipex="{SonSet>Fipos}" datbis="99991231" text="{SonSet>Fipos}" 
+						semanticObject="ESAMINAMODIFICA"/>
 					<Text  text="{SonSet>Fistl}" />
-					<Text  text="{SonSet>Zimptot}" />
+					<Text  text="{
+							path: 'SonSet>Zimptot',
+							formatter: '.formatter.convertFormattedNumber'
+						}" />
 					<Text  text="{SonSet>Zdesctipodisp3}" />
 					<Text  text="{
 							path: 'SonSet>ZstatoSop',

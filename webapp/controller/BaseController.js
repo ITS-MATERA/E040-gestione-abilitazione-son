@@ -71,6 +71,9 @@ sap.ui.define(
     const AUTHORITY_CHECK_ABILITAZIONE = "AuthorityCheckAbilitazione";
     const AUTHORITY_CHECK_SON ="AuthorityCheckSON";
 
+    const COSPR3E027_TIPOFIRMA = "COSPR3E027_TIPOFIRMA";
+    const S_TYPE_2 = "2";
+
     return Controller.extend(
       "gestioneabilitazioneeson.controller.BaseController",
       {
@@ -81,6 +84,7 @@ sap.ui.define(
         FILTER_SON_OBJ: "Z_GEST_SON",
         AUTHORITY_CHECK_ABILITAZIONE:"AuthorityCheckAbilitazione",
         AUTHORITY_CHECK_SON:"AuthorityCheckSON",
+        payMode:[],
 
         getRouter: function () {
           return UIComponent.getRouterFor(this);
@@ -888,7 +892,8 @@ sap.ui.define(
               });
           } else return false;
         },
-
+        
+        
         onLiveChange: function (oEvent) {
           var self = this,
             sNewValue,
@@ -900,7 +905,6 @@ sap.ui.define(
           var sProperty = oInput.data("property");
 
           sNewValue = oEvent.getSource().getValue();
-          console.log("passa", sProperty);
           wizardModel.setProperty("/" + sProperty, sNewValue);
         },
 
@@ -990,7 +994,8 @@ sap.ui.define(
             wizardModel = self.getModel(WIZARD_MODEL);
           var sNewValue = oEvent.getSource().getSelectedKey();
           var sNewDesc = oEvent.getSource().getValue();
-          wizardModel.setProperty("/Ztipodisp3", sNewValue);
+          // wizardModel.setProperty("/Ztipodisp3", sNewValue);//TODO:da verificare
+          wizardModel.setProperty("/Ztipodisp3", sNewDesc);
           wizardModel.setProperty("/Zdesctipodisp3", sNewDesc);
           if (sNewValue !== null) self.fillFipos();
         },
@@ -1484,6 +1489,49 @@ sap.ui.define(
               });
           } else return false;
         },
+
+        onSubmitPayModeChange:function(oEvent){
+          var self = this,
+              oDataModel = self.getModel(),
+              wizardModel = self.getModel(WIZARD_MODEL),
+              ocontroller = self.getView().byId(oEvent.getParameters().id),
+              selectedKey = ocontroller.getSelectedKey();
+
+          if(selectedKey === "" || wizardModel.getProperty("/Lifnr") === null || wizardModel.getProperty("/Lifnr") === "")
+            return false;    
+
+          var path = self.getModel().createKey("ZwelsListSet", {
+              Lifnr: wizardModel.getProperty("/Lifnr"),
+              Zwels: selectedKey
+          });
+          
+          self.getModel().metadataLoaded().then( function() {
+            oDataModel.read("/" + path, {
+              success: function(data, oResponse){
+                
+                wizardModel.setProperty("/PayMode", data.Zwels);
+                wizardModel.setProperty("/Banks", data.Banks);
+                wizardModel.setProperty("/Iban", data.Iban);
+                wizardModel.setProperty("/Swift", data.Swift);
+                wizardModel.setProperty("/Zcoordest", data.ZcoordEst);
+
+                if (data.Zwels.toUpperCase() === "ID6") {
+                  wizardModel.setProperty("/isZcoordestEditable", true);
+                  wizardModel.setProperty("/isZZcausalevalEditable", true);
+                } else {
+                  wizardModel.setProperty("/Zcoordest", "");
+                  wizardModel.setProperty("/isZcoordestEditable", false);
+                  wizardModel.setProperty("/ZZcausaleval", "");
+                  wizardModel.setProperty("/isZZcausalevalEditable", false);
+                }
+              },
+              error: function(error){
+                self.getView().setBusy(false);
+              }
+            });
+          });
+        },
+
         onSubmitPayMode: function (oEvent) {
           var self = this,
             wizardModel = self.getModel(WIZARD_MODEL),
@@ -1500,6 +1548,7 @@ sap.ui.define(
           }
           self.fillBanks();
         },
+
         onSubmitIban: function () {
           var self = this,
             wizardModel = self.getModel(WIZARD_MODEL);
@@ -1571,9 +1620,9 @@ sap.ui.define(
                       "/Zdenominazione",
                       data.Zdenominazione
                     );
-                    self.getIban(Lifnr);
+                    self.getModalitaPagamento(Lifnr);
                     self.fiilSedeBeneficiario(Lifnr);
-                    self.fillBanks();
+                    // self.fillBanks(); //TODO:da canc
                   },
                   error: function (error) {
                     oView.setBusy(false);
@@ -1583,6 +1632,51 @@ sap.ui.define(
           } else return false;
         },
 
+
+        getModalitaPagamento(lifnr){
+          var self = this,
+          wizardModel = self.getModel(WIZARD_MODEL),
+          oDataModel = self.getModel(),
+          oView = self.getView();
+          oView.setBusy(true);
+          var filter = [self.setFilterEQWithKey("Lifnr", lifnr)];       
+          self.getModel().metadataLoaded().then(function () {
+            oDataModel.read("/ZwelsListSet", {
+              //giannilecci
+              async: true,
+              urlParameters: {IsDistinct:"X"},
+              filters: filter,
+              success: function (data, oResponse) {
+                oView.setBusy(false);
+                if (data.results.length > 0) {
+                  self.getView().getModel(DataSON_MODEL).setProperty("/PayMode",data.results);
+                  wizardModel.setProperty("/PayMode", data.results[0].Zwels);
+                  wizardModel.setProperty("/Banks", data.results[0].Banks);
+                  wizardModel.setProperty("/Iban", data.results[0].Iban);
+                  wizardModel.setProperty("/Swift", data.results[0].Swift);
+                  wizardModel.setProperty("/Zcoordest", data.results[0].ZcoordEst);
+
+                  if(data.results[0].Banks.toUpperCase() !== 'IT'){
+                    wizardModel.setProperty("/isZZcausalevalEditable", true);
+                  }else{
+                    wizardModel.setProperty("/isZZcausalevalEditable", false);
+                  }
+                }
+                else{
+                  self.getView().getModel(DataSON_MODEL).setProperty("/PayMode",[]);
+                  wizardModel.setProperty("/Banks", "");
+                  wizardModel.setProperty("/Iban", "");
+                  wizardModel.setProperty("/Swift", "");
+                  wizardModel.setProperty("/Zcoordest", "");
+                  wizardModel.setProperty("/isZZcausalevalEditable", false);
+                }                
+              },
+              error: function (error) {
+                oView.setBusy(false);
+              },
+            });
+          });  
+        },
         
         getIban(lifnr){
           var self = this,
@@ -1778,12 +1872,505 @@ sap.ui.define(
           );
         },
 
-        digitalSign:function(){
-          var self =this;
+        downloadFileFromContent:function(doc) {
+          var self =this,
+              blob = self.Base64toBlob(doc.Content)
 
-        }
+          if (window.navigator && window.navigator.msSaveBlob) {
+            window.navigator.msSaveBlob(blob, doc.FileName);
+          }
+          else{
+            var linkSource = "data:application/pdf;base64," + doc.Content;
+            var downloadLink = document.createElement("a");
+            downloadLink.href = linkSource;
+            downloadLink.download = doc.FileName;
+            downloadLink.click();
+          }
+        },
+
+        Base64toBlob:function(
+            b64Data=null,
+            contentType = "application/pdf",
+            sliceSize = 512
+          ) {
+            const byteCharacters = atob(b64Data);
+            const byteArrays = [];
+        
+            for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+              const slice = byteCharacters.slice(offset, offset + sliceSize);
+        
+              const byteNumbers = new Array(slice.length);
+              for (let i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+              }
+        
+              const byteArray = new Uint8Array(byteNumbers);
+              byteArrays.push(byteArray);
+            }
+        
+            const blob = new Blob(byteArrays, { type: contentType });
+            return blob;        
+        },
 
         /*WIZARD - END*/
+
+        newModalitaPagamentoDialogPress:function(oEvent){
+          var self =this,
+              oDataModel = self.getModel(),
+              wizardModel = self.getView().getModel(WIZARD_MODEL).getData(),
+              dataSonModel = self.getView().getModel(DataSON_MODEL);
+
+          if(!wizardModel || wizardModel === null || wizardModel.Lifnr === "")  
+            return false;
+
+          self.getView().setBusy(false);
+          var filter = [
+            self.setFilterEQWithKey("Lifnr", wizardModel.Lifnr)
+          ];  
+
+          self.getModel().metadataLoaded().then(function () {
+                oDataModel.read("/NewModalitaPagamentoSet", {
+                  filters: filter,
+                  success: function (data, oResponse) {
+                    self.getView().setBusy(false);
+                    console.log(data.results);
+
+                    if(!data || data.results.length === 0)
+                      return;
+
+                    dataSonModel.setProperty("/NewPayMode",data.results);  
+                    dataSonModel.setProperty("/NewPayModeButton",self._resetNewModalitaPagamentoButtons());   
+                    self.setNewModalitaPagamentoModel(); 
+
+                    var oDialog = self.openDialog(
+                      "gestioneabilitazioneeson.view.fragment.modalitaPagamento.NewModalitaPagamento"
+                    );    
+                    oDialog.open();  
+                  },
+                  error: function (error) {
+                    self.getView().setBusy(false);
+                  },
+                });
+            });
+        },
+
+        onNewModalitaPagamentoChange:function(oEvent){
+          var self =this,
+            oDataModel=self.getModel(),
+            dataSonModel = self.getView().getModel(DataSON_MODEL),
+            oController = sap.ui.getCore().byId(oEvent.getParameters().id),
+            selectedItem = oController.getSelectedKey(),
+            payModeType = oController.getSelectedItem().data("payModeType");
+
+          if(selectedItem === ""){
+            //TODO azzera il modello della new modalita pagamento            
+            dataSonModel.setProperty("/NewPayModeButton",self._resetNewModalitaPagamentoButtons());
+            return false;    
+          }
+          dataSonModel.setProperty("/NewPayModeButton",self._resetNewModalitaPagamentoButtons());  
+          
+          self.getView().setBusy(true);
+          var filter = [
+            self.setFilterEQWithKey("Zwels", selectedItem),
+            self.setFilterEQWithKey("Lifnr", ""),
+          ];
+          self.getModel().metadataLoaded().then(function () {
+                oDataModel.read("/ZwelsListSet", {
+                  filters: filter,
+                  success: function (data, oResponse) {
+                    self.setNewModalitaPagamentoModel(payModeType);
+                    if (data.results.length>0){
+                      dataSonModel.setProperty("/NewModalitaPagamentoEntity/InizioValidita", data.results[0].ValidFromDats);
+                      dataSonModel.setProperty("/NewModalitaPagamentoEntity/FineValidita", data.results[0].ValidToDats);
+                      dataSonModel.setProperty("/NewModalitaPagamentoEntity/PaeseResidenza", data.results[0].Banks);
+                    }
+                    dataSonModel.setProperty("/NewModalitaPagamentoEntity/PayMode", selectedItem);
+
+                    switch(selectedItem){
+                      case 'ID1':
+                        self.getTipoFirma(COSPR3E027_TIPOFIRMA);
+                        dataSonModel.setProperty("/NewPayModeButton/IbanEnabled",true);
+                        dataSonModel.setProperty("/NewPayModeButton/TipoFirmaEnabled",true);
+                        dataSonModel.setProperty("/NewPayModeButton/btnQuietanzanteEnabled",true);
+                        break;
+                      case 'ID2':
+                        dataSonModel.setProperty("/NewPayModeButton/IbanEnabled",true);
+                        dataSonModel.setProperty("/NewPayModeButton/btnVagliaEnabled",true);
+                        break;
+                      case 'ID3':
+                        dataSonModel.setProperty("/NewPayModeButton/IbanEnabled",true);
+                        dataSonModel.setProperty("/NewPayModeButton/ContoTesoreriaEnabled",true);
+                        break; 
+                      case 'ID4':
+                        dataSonModel.setProperty("/NewPayModeButton/IbanEnabled",true);
+                        dataSonModel.setProperty("/NewPayModeButton/EsercizioEnabled",true);
+                        dataSonModel.setProperty("/NewPayModeButton/CapoEnabled",true);
+                        dataSonModel.setProperty("/NewPayModeButton/CapitoloEnabled",true);
+                        dataSonModel.setProperty("/NewPayModeButton/ArticoloEnabled",true);
+                        break; 
+                      case 'ID5':
+                        dataSonModel.setProperty("/NewPayModeButton/IbanEnabled",true);
+                        dataSonModel.setProperty("/NewPayModeButton/PaeseResidenzaEnabled",true);
+                        break;
+                      case 'ID6':
+                        dataSonModel.setProperty("/NewPayModeButton/PaeseResidenzaEnabled",true);
+                        dataSonModel.setProperty("/NewPayModeButton/BicEnabled",true);
+                        dataSonModel.setProperty("/NewPayModeButton/CoordinateEstereEnabled",true);
+                        break;       
+                      default:
+                        dataSonModel.setProperty("/NewPayModeButton",self._resetNewModalitaPagamentoButtons());
+                        console.log("default");
+                        break;
+                    }
+                    self.getView().setBusy(false);
+                  },
+                  error: function (error) {
+                    console.log(error);
+                    self.getView().setBusy(false);
+                  },
+                });
+            });
+        },
+
+        setNewModalitaPagamentoModel:function(type=null){
+          var self =this,
+              dataSonModel = self.getView().getModel(DataSON_MODEL);
+
+          var obj = {
+            PayMode:null,
+            PayModeType:type,
+            Iban:null,
+            PaeseResidenza:null,
+            TipoFirma:null,
+            Bic:null,
+            CoordinateEstere:null,
+            InizioValidita: null,
+            FineValidita: null,
+            Esercizio:null,
+            Capo:null,
+            Capitolo:null,
+            Articolo:null,
+            ContoTesoreria:null,
+            ContoTesoreriaDescrizione:null,
+            // Gestione Vaglia
+            VCognome:null,
+            VNome:null,
+            VCodiceFiscale:null,
+            VQualifica:null,
+            VDataNascita:null,
+            VLuogoNascita:null,
+            VProvinciaNascita:null,
+            VIndirizzo:null,
+            VCitta:null,
+            VCap:null,
+            VProvinciaResidenza:null,
+            VTelefono:null,
+            //Gestione quietanzante
+            QCognome:null,
+            QNome:null,
+            QCodiceFiscale:null,
+            QQualifica:null,
+            QDataNascita:null,
+            QLuogoNascita:null,
+            QProvinciaNascita:null,
+            QIndirizzo:null,
+            QCitta:null,
+            QCap:null,
+            QProvinciaResidenza:null,
+            QTelefono:null,
+          };
+
+          dataSonModel.setProperty("/NewModalitaPagamentoEntity", obj);
+        },
+
+        onNewTipoFirmaChange:function(oEvent){
+          var self = this,
+            dataSonModel = self.getView().getModel(DataSON_MODEL),
+            oController = sap.ui.getCore().byId(oEvent.getParameters().id),
+            selectedKey = oController.getSelectedKey();
+            dataSonModel.setProperty("/NewModalitaPagamentoEntity/TipoFirma",selectedKey);
+        },
+
+        getPayModeByLifnr:function(lifnr,zwels,IsDistinct=false,callback){
+          var self =this,
+              oDataModel = self.getModel();
+          if(!lifnr || lifnr === null || lifnr === "")
+              return false;
+
+          var filter = [];
+          filter.push(new sap.ui.model.Filter("Lifnr",sap.ui.model.FilterOperator.EQ,lifnr));
+          if(zwels !== ""){
+            filter.push(new sap.ui.model.Filter("Zwels",sap.ui.model.FilterOperator.EQ,zwels));
+          }
+
+          self.getModel().metadataLoaded().then(function () {
+            oDataModel.read("/ZwelsListSet", {
+                async: true,
+                urlParameters: {IsDistinct:IsDistinct ? 'X' : ""},
+                filters: filter,
+                success: function (data, oResponse) {
+                    console.log(data.results); //TODO:da canc
+                    return callback({data:data.results, error: false});
+                },
+                error: function (error) {
+                  console.log(error)
+                  return callback({data:error, error: true});
+                },
+            });
+          });
+        },
+
+        getTipoFirma: function(name){
+          var self = this,
+              oDataModel = self.getModel(),
+              dataSonModel = self.getView().getModel(DataSON_MODEL); 
+
+          self.getView().setBusy(true);
+          var filter = [self.setFilterEQWithKey("Name", name)];
+          self.getModel().metadataLoaded().then(function () {
+              oDataModel.read("/ZtipofirmaMcSet", {
+                filters: filter,
+                success: function (data, oResponse) {
+                  self.getView().setBusy(false);
+                  dataSonModel.setProperty("/NewPayModeTipoFirma",data.results); 
+                },
+                error: function (error) {
+                  console.log(error);
+                  self.getView().setBusy(false);
+                },
+              });
+          });
+        },
+
+        _resetNewModalitaPagamentoButtons:function(){
+          var self =this;
+          return {
+            MainMaskVisible:true,
+            VagliaMaskVisible:false,
+            QuietanzanteMaskVisible:false,
+            btnVagliaVisible:true,
+            btnQuietanzanteVisible:true,
+            IbanEnabled:false,
+            BicEnabled:false,
+            EsercizioEnabled:false,
+            ContoTesoreriaEnabled:false,
+            PaeseResidenzaEnabled:false,
+            CoordinateEstereEnabled:false,
+            CapoEnabled:false,
+            TipoFirmaEnabled:false,
+            CapitoloEnabled:false,
+            ArticoloEnabled:false,
+            btnVagliaEnabled:false,
+            btnQuietanzanteEnabled:false
+          };
+        },
+
+        onNewVaglia:function(){
+          var self = this,
+              dataSonModel = self.getView().getModel(DataSON_MODEL);  
+
+          dataSonModel.setProperty("/NewPayModeButton/VagliaMaskVisible",true);
+          dataSonModel.setProperty("/NewPayModeButton/MainMaskVisible",false); 
+          dataSonModel.setProperty("/NewPayModeButton/btnVagliaVisible",false);
+          dataSonModel.setProperty("/NewPayModeButton/btnQuietanzanteVisible",false); 
+          return;
+        },
+
+        onNewModalitaPagamentoSave:function(oEvent){
+          var self =this,
+            exit = false,
+            oDataModel = self.getModel(),
+            oBundle = self.getResourceBundle(),
+            dataSonModel = self.getView().getModel(DataSON_MODEL),
+            wizardModel = self.getView().getModel(WIZARD_MODEL),
+            entity = !dataSonModel.getProperty("/NewModalitaPagamentoEntity") ? null : dataSonModel.getProperty("/NewModalitaPagamentoEntity");
+          
+          if(!entity || entity === null){
+            return false;
+          }
+
+          if(!entity.PayMode || entity.PayMode === "")
+            return false;
+
+          var selectedItem = dataSonModel.getProperty("/NewModalitaPagamentoEntity/PayMode");
+
+          switch(selectedItem){
+            case 'ID1':
+              if(!entity.TipoFirma || entity.TipoFirma === null || entity.TipoFirma === ""){
+                exit = true;
+                sap.m.MessageBox.warning("Tipo firma obbligatorio", {
+                  title: oBundle.getText("titleDialogWarning"),
+                  onClose: function (oAction) {}
+                });             
+              }
+
+              if(entity.PayModeType === S_TYPE_2 && (entity.QNome === null || entity.QNome === "" || entity.QCognome === null || entity.QCognome === "") ){
+                exit = true;
+                sap.m.MessageBox.warning("Inserire almeno un quietanzante (Cognome e nome obbligatori)", {
+                  title: oBundle.getText("titleDialogWarning"),
+                  onClose: function (oAction) {}
+                });    
+              }
+              break;
+            case 'ID6':  
+              if(!entity.CoordinateEstere || entity.CoordinateEstere === null || entity.CoordinateEstere === ""){
+                exit = true;
+                sap.m.MessageBox.warning("Coordinate estere obbligatorio", {
+                  title: oBundle.getText("titleDialogWarning"),
+                  onClose: function (oAction) {}
+                });             
+              }
+              if(!entity.VCognome || entity.VCognome === null || entity.VCognome === "" ||
+                !entity.VNome || entity.VNome === null || entity.VNome === "" ||
+                !entity.VIndirizzo || entity.VIndirizzo === null || entity.VIndirizzo === "" ||
+                !entity.VCitta || entity.VCitta === null || entity.VCitta === "" ||
+                !entity.VCap || entity.VCap === null || entity.VCap === "" ||
+                !entity.VProvinciaResidenza || entity.VProvinciaResidenza === null || entity.VProvinciaResidenza === "" 
+              ){
+                exit = true;
+                sap.m.MessageBox.warning("Destinatario Vaglia: inserire i campi obbligatori", {
+                  title: oBundle.getText("titleDialogWarning"),
+                  onClose: function (oAction) {}
+                });             
+              }
+
+            default:
+              console.log("default");
+          }  
+
+          if(exit)
+            return;
+           
+          self.getView().setBusy(true);
+          var entityRequest = {
+            Beneficiario: wizardModel.getProperty("/Lifnr"),
+            ModPagamento:entity.PayMode,
+            TipoBeneficiario:entity.PayModeType, 
+            DatiPagamento:{
+              Iban: entity.Iban ? entity.Iban : null, 
+              PaeseResidenza: entity.PaeseResidenza ? entity.PaeseResidenza : null,
+              TipoFirma: entity.TipoFirma ? entity.TipoFirma : null,
+              Bic: entity.Bic ? entity.Bic : null,
+              CoordinateEstere: entity.CoordinateEstere ? entity.CoordinateEstere : null,
+              InizioValidita: entity.InizioValidita ? self.formatter.formateDateForDeep(entity.InizioValidita): null,
+              FineValidita: entity.FineValidita ? self.formatter.formateDateForDeep(entity.FineValidita): null,
+              Esercizio: entity.Esercizio ? entity.Esercizio : null,
+              Capo: entity.Capo ? entity.Capo : null,
+              Capitolo: entity.Capitolo ? entity.Capitolo : null,
+              Articolo: entity.Articolo ? entity.Articolo : null,
+            },
+            Quietanzante:{
+              Nome: entity.QNome ? entity.QNome : null,
+              Cognome: entity.QCognome ? entity.QCognome : null,
+              Qualifica: entity.QQualifica ? entity.QQualifica : null,
+              CodiceFiscale: entity.QCodiceFiscale ? entity.QCodiceFiscale : null,
+              DataNascita: entity.QDataNascita ? self.formatter.formateDateForDeep(entity.QDataNascita): null,
+              LuogoNascita: entity.QLuogoNascita ? entity.QLuogoNascita : null,
+              ProvinciaNascita: entity.QProvinciaNascita ? entity.QProvinciaNascita : null,
+              Indirizzo: entity.QIndirizzo ? entity.QIndirizzo : null,
+              Citta: entity.QCitta ? entity.QCitta : null,
+              Cap: entity.QCap ? entity.QCap : null,
+              ProvinciaResidenza: entity.QProvinciaResidenza ? entity.QProvinciaResidenza : null,
+              Telefono: entity.QTelefono ? entity.QTelefono : null
+            },
+            DestinatarioVaglia:{
+              Nome: entity.VNome ? entity.VNome : null,
+              Cognome: entity.VCognome ? entity.VCognome : null,
+              Qualifica: entity.VQualifica ? entity.VQualifica : null,
+              CodiceFiscale: entity.VCodiceFiscale ? entity.VCodiceFiscale : null,
+              DataNascita: entity.VDataNascita ? self.formatter.formateDateForDeep(entity.VDataNascita): null,
+              LuogoNascita: entity.VLuogoNascita ? entity.VLuogoNascita : null,
+              ProvinciaNascita: entity.VProvinciaNascita ? entity.VProvinciaNascita : null,
+              Indirizzo: entity.VIndirizzo ? entity.QIndirizzo : null,
+              Citta: entity.VCitta ? entity.VCitta : null,
+              Cap: entity.VCap ? entity.VCap : null,
+              ProvinciaResidenza: entity.VProvinciaResidenza ? entity.VProvinciaResidenza : null,
+              Telefono: entity.VTelefono ? entity.VTelefono : null
+            }
+          }
+          console.log(entityRequest);
+          oDataModel.create("/ModalitaPagamentoSet", entityRequest, {
+            success: function (data, oResponse) {
+              self.getView().setBusy(false);
+              var message = JSON.parse(oResponse.headers["sap-message"]);
+              if(message.severity === "error"){
+                sap.m.MessageBox.error(message.message, {
+                  title: oBundle.getText("titleDialogError"),
+                  onClose: function (oAction) {
+                    return;
+                  }
+                });  
+              }
+              else{
+                sap.m.MessageBox.success(message.message, {
+                  title: oBundle.getText("titleDialogSuccess"),
+                  onClose: function (oAction) {
+                    self.getModalitaPagamento(wizardModel.getProperty("/Lifnr"));
+                    setTimeout(() => {                
+                      self.fiilSedeBeneficiario(wizardModel.getProperty("/Lifnr"));
+                      wizardModel.setProperty("/PayMode",entity.PayMode);
+                      self.onCloseNewModalitaPagamento();
+                    },2000);
+                  }
+                });  
+
+              }
+
+              console.log(data);
+              console.log(oResponse);
+            },
+            error: function (err) {
+              console.log(err)
+              self.getView().setBusy(false);
+            },
+            async: true,
+            urlParameters: {},
+          });
+        },
+
+        onNewQuietanzante:function(){
+          var self = this,
+              dataSonModel = self.getView().getModel(DataSON_MODEL);  
+
+          dataSonModel.setProperty("/NewPayModeButton/QuietanzanteMaskVisible",true);
+          dataSonModel.setProperty("/NewPayModeButton/MainMaskVisible",false);
+          dataSonModel.setProperty("/NewPayModeButton/btnVagliaVisible",false);
+          dataSonModel.setProperty("/NewPayModeButton/btnQuietanzanteVisible",false);  
+          return;
+        },
+
+        onCloseNewModalitaPagamento: function () {
+          var self = this,      
+              dataSonModel = self.getView().getModel(DataSON_MODEL);     
+          
+          if(dataSonModel.getData().NewPayModeButton.VagliaMaskVisible){
+            dataSonModel.setProperty("/NewPayModeButton/VagliaMaskVisible",false);
+            dataSonModel.setProperty("/NewPayModeButton/MainMaskVisible",true); 
+            dataSonModel.setProperty("/NewPayModeButton/btnVagliaVisible",true);
+            dataSonModel.setProperty("/NewPayModeButton/btnQuietanzanteVisible",true); 
+            return;
+          }    
+
+          if(dataSonModel.getData().NewPayModeButton.QuietanzanteMaskVisible){
+            dataSonModel.setProperty("/NewPayModeButton/QuietanzanteMaskVisible",false);
+            dataSonModel.setProperty("/NewPayModeButton/MainMaskVisible",true); 
+            dataSonModel.setProperty("/NewPayModeButton/btnVagliaVisible",true);
+            dataSonModel.setProperty("/NewPayModeButton/btnQuietanzanteVisible",true); 
+            return;
+          } 
+
+          dataSonModel.setProperty("/NewModalitaPagamentoEntity", null);
+          dataSonModel.setProperty("/NewPayMode",[]);  
+          dataSonModel.setProperty("/NewPayModeTipoFirma",[]);  
+          dataSonModel.setProperty("/NewPayModeButton",null); 
+          var oDialgoNewModalitaPagamento = sap.ui.getCore().byId("dlgNewModalitaPagamento");
+          oDialgoNewModalitaPagamento.close();
+          self.getView().setBusy(false);
+          self.closeDialog();
+        },
+
+
+
       }
     );
   }

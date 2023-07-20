@@ -13,7 +13,8 @@ sap.ui.define(
         "sap/m/Dialog",
         "sap/m/Bar",
         "sap/m/Input",
-        "sap/ui/core/library"
+        "sap/ui/core/library",
+        "z_s4_crossfirma/crossfirma/controls/Firma",
     ],
     function (BaseController, JSONModel, formatter, MessageBox, History,library,
         Spreadsheet,
@@ -23,7 +24,8 @@ sap.ui.define(
         Dialog,
         Bar,
         Input,
-        coreLibrary) {
+        coreLibrary,
+        libFirma) {
         "use strict";
         
     const EDM_TYPE = library.EdmType;
@@ -60,6 +62,7 @@ sap.ui.define(
         _amministrazione:null,
         _indexClassificazioneSON:0,
         _detailShowed:false,
+        libFirma:libFirma,
         onInit: function () {
             var self = this;
 
@@ -179,6 +182,7 @@ sap.ui.define(
                 ZimptotDivisa: null,
                 TaxnumCf: null,
                 Zzamministr: null,
+                PayMode:[]
             });  
 
             var Step3List = new JSONModel([
@@ -411,6 +415,7 @@ sap.ui.define(
                 oWizardModel,
                 oDataModel=self.getModel();
             self.getView().setBusy(true);
+            self.payMode=[];
             console.log("hello", oItem);
             
             var path = self.getModel().createKey(SON_SET, {
@@ -425,6 +430,14 @@ sap.ui.define(
                 oDataModel.read("/" + path, {
                     success: function (data, oResponse) {
                         self.getBeneficiarioHeader(data.Lifnr);
+                        self.getPayModeByLifnr(data.Lifnr,"",true,function(callback){
+                          if(!callback.error){
+                            self.payMode = callback.data;
+                          }
+                          else 
+                            self.payMode = [];
+                        });
+  
                         self.getSedeBeneficiario(data.Lifnr, data.Zidsede);
                         oWizardModel = self.setWizardModel(data);
 
@@ -435,14 +448,14 @@ sap.ui.define(
                             oWizardModel.getData().Regio= self._sedeBeneficiario ? self._sedeBeneficiario.Regio : "";
                             oWizardModel.getData().Pstlz= self._sedeBeneficiario ? self._sedeBeneficiario.Pstlz : "";
                             oWizardModel.getData().Land1= self._sedeBeneficiario ? self._sedeBeneficiario.Land1 : "";
-                            oWizardModel.getData().NameFirst= self._beneficiario.NameFirst;
-                            oWizardModel.getData().ZzragSoc= self._beneficiario.ZzragSoc;
-                            oWizardModel.getData().Zsede= self._beneficiario.Zsede;
-                            oWizardModel.getData().Type= self._beneficiario.Type === "1" ? true : false; //radio btn
-                            oWizardModel.getData().Taxnumxl= self._beneficiario.TaxnumCf;
-                            oWizardModel.getData().NameLast= self._beneficiario.NameLast;
-                            oWizardModel.getData().TaxnumPiva= self._beneficiario.TaxnumPiva;
-                            oWizardModel.getData().Zdenominazione= self._beneficiario.Zdenominazione;
+                            oWizardModel.getData().NameFirst= self._beneficiario ? self._beneficiario.NameFirst : "";
+                            oWizardModel.getData().ZzragSoc= self._beneficiario ? self._beneficiario.ZzragSoc : "";
+                            oWizardModel.getData().Zsede= self._beneficiario ? self._beneficiario.Zsede : "";
+                            oWizardModel.getData().Type= self._beneficiario && self._beneficiario.Type === "1" ? true : false; //radio btn
+                            oWizardModel.getData().Taxnumxl= self._beneficiario ? self._beneficiario.TaxnumCf : "";
+                            oWizardModel.getData().NameLast= self._beneficiario ? self._beneficiario.NameLast : "";
+                            oWizardModel.getData().TaxnumPiva= self._beneficiario ? self._beneficiario.TaxnumPiva :"";
+                            oWizardModel.getData().Zdenominazione= self._beneficiario ? self._beneficiario.Zdenominazione :"";
 
                             var oDataSONModel = new JSONModel({
                                 Gjahr: data.Gjahr,
@@ -453,15 +466,31 @@ sap.ui.define(
                                 Kostl: data.Kostl,
                                 Saknr: data.Saknr,
                                 Lifnr: data.Lifnr,
-                                NameFirst: self._beneficiario.NameFirst,
-                                NameLast: self._beneficiario.NameLast,
+                                NameFirst: self._beneficiario ? self._beneficiario.NameFirst:"",
+                                NameLast: self._beneficiario ? self._beneficiario.NameLast:"",
                                 Zimptot: data.Zimptot,
-                                TaxnumPiva: self._beneficiario.TaxnumPiva,
-                                ZzragSoc: self._beneficiario.ZzragSoc,
+                                TaxnumPiva: self._beneficiario ? self._beneficiario.TaxnumPiva:"",
+                                ZzragSoc: self._beneficiario ? self._beneficiario.ZzragSoc:"",
                                 ZimptotDivisa: oItem.ZimptotDivisa,
-                                TaxnumCf: self._beneficiario.TaxnumCf,
+                                TaxnumCf: self._beneficiario ? self._beneficiario.TaxnumCf:"",
                                 Zzamministr: self._amministrazione.Value,
-                            });    
+                                PayMode: self.payMode,
+                                NewPayMode:[]
+                            });   
+
+                            if(oWizardModel.getData() && oWizardModel.getData().PayMode !== null && oWizardModel.getData().PayMode !== "" && self.payMode.length>0){
+                              self.getPayModeByLifnr(data.Lifnr,oWizardModel.getData().PayMode,false, function(callback){
+                                if(!callback.error){
+                                  var record = callback.data[0];
+                                  if(record){
+                                    oWizardModel.getData().Banks = oWizardModel.getData().Banks === "" ? record.Banks : oWizardModel.getData().Banks;
+                                    oWizardModel.getData().Iban = oWizardModel.getData().Iban === "" ? record.Iban : oWizardModel.getData().Iban;
+                                    oWizardModel.getData().Swift = oWizardModel.getData().Swift === "" ? record.Swift : oWizardModel.getData().Swift;
+                                    oWizardModel.getData().Zcoordest = oWizardModel.getData().Zcoordest === "" ? record.ZcoordEst : oWizardModel.getData().Zcoordest;                                
+                                  }
+                                }
+                              });                              
+                            } 
 
                             self.setModel(oWizardModel, WIZARD_MODEL);
                             self.setModel(oDataSONModel, DataSON_MODEL);
@@ -612,6 +641,7 @@ sap.ui.define(
             self.getView().getModel(DataSON_MODEL).setProperty("/ZimptotDivisa", null);
             self.getView().getModel(DataSON_MODEL).setProperty("/TaxnumCf", null);
             self.getView().getModel(DataSON_MODEL).setProperty("/Zzamministr", null);
+            self.getView().getModel(DataSON_MODEL).setProperty("/PayMode", []);
           },
 
         resetStep3:function(){
@@ -734,7 +764,18 @@ sap.ui.define(
                           press: function () {
                             self.resetLog();
                             oDialog.close();
-                            self.callDeep(OPERATION_TYPE_SIGN);
+                            //giannilecci
+                            //self.callDeep(OPERATION_TYPE_SIGN);
+                            self.checkSignSon();
+                            // self.checkSignSon(function(callback){
+                            //     if(callback){
+                            //         console.log(callback);
+                            //         // self.callDeep(OPERATION_TYPE_SIGN);
+                            //     }
+                            //     else{
+                            //         console.log("ktm");
+                            //     }
+                            // });
                           }
                         }),
                         endButton: new sap.m.Button({
@@ -843,6 +884,69 @@ sap.ui.define(
           self.onSaveAll();
         },
 
+        checkSignSon:function(callback){
+            var self = this,
+                oDataModel = self.getModel(),
+                detailModel = self.getModel(DETAIL_MODEL),
+                checklist = detailModel.getProperty("/checkList");      
+
+            
+            for(var i=0; i<checklist.length;i++){
+                var item = checklist[i];
+
+              var filter = [self.setFilterEQWithKey("Key", item.Zchiavesop)];
+              self.getModel().metadataLoaded().then(function () {
+                  oDataModel.read("/FileSet", {
+                    filters: filter,
+                    success: function (data, oResponse) {
+                      console.log(data);
+                      if(data.results.length>0)
+
+                      var oRecord = {
+                        Base64:data.results[0].Value,
+                        FileName: "Modello_Amministrativo_SON_" + item.Zchiavesop + ".pdf",
+                        IdDocumento:item.Zchiavesop, //Modello_Amministrativo_SON_
+                        Size:"",
+                        Type:"application/pdf"
+                      }
+                      self.getView().setBusy(false);
+                      var oConstructor = new self.libFirma();
+                      oConstructor.functionStartFirma(self, oRecord,"gestioneabilitazioneeson.view.SignSON" );
+                       
+                    },
+                    error: function (error) {
+                      self.getView().setBusy(false);
+                      console.log(error);
+                    },
+                  });
+              });
+            }                    
+        },
+
+        functionReturLibraryFirma:function(obj){
+            var self= this,
+                oBundle = self.getResourceBundle(),
+                detailModel = self.getModel(DETAIL_MODEL),
+                checklist = detailModel.getProperty("/checkList");
+            console.log(obj);//TODO:da canc
+            if(obj && obj[0].Esito !== "OK"){
+              sap.m.MessageBox.error(obj[0].Esito, {
+                title: oBundle.getText("btnSign"),
+                onClose: function (oAction) {  }
+              });   
+            }
+            else{
+              // self.callDeep(OPERATION_TYPE_SIGN);//TODO:da verificare
+              var list=[];
+              var item = checklist.find(x=>x.Zchiavesop === obj[0].IdDocumento);
+              console.log(item);
+              if(item){
+                list.push(item);
+                self.callSingleDeep(OPERATION_TYPE_SIGN, list, obj[0]);
+              }
+            }
+        },
+
         callDeep: function (operationType) {
             var self = this,
                 oBundle = self.getResourceBundle(),
@@ -874,10 +978,9 @@ sap.ui.define(
                     sap.m.MessageBox.success(oBundle.getText("operationOK"), {
                         title: oBundle.getText("btnSign"),
                         onClose: function (oAction) {
-                            // self.digitalSign();
-                            self.downloadSignFile();
-                            self.setPropertyGlobal(self.RELOAD_MODEL,"canRefresh",true);
-                            self.onNavBack();
+                          self.downloadSignedFile();
+                          self.setPropertyGlobal(self.RELOAD_MODEL,"canRefresh",true);
+                          self.onNavBack();
                         },
                       });   
                 }
@@ -892,7 +995,54 @@ sap.ui.define(
             });
         },
 
-        downloadSignFile:function(){
+        callSingleDeep: function (operationType, checklist, documentoFirmato) {
+          var self = this,
+              oBundle = self.getResourceBundle(),
+              oDataModel = self.getModel(),
+              detailModel = self.getModel(DETAIL_MODEL);
+          checklist = self.resolveChecklist(checklist);    
+ 
+          var entityRequestBody = {
+            Zchiavesop: "",
+            Bukrs: "",
+            Gjahr: "",
+            Ztipososp: "",
+            ClassificazioneSonSet: [],
+            OperationType: operationType,
+            SonSet: checklist,
+            SonMessageSet: [],
+          };
+
+          self.getView().setBusy(true);
+          oDataModel.create("/" + URL_DEEP, entityRequestBody, {
+            success: function (result) {
+              self.getView().setBusy(false);
+              var arrayMessage = result.SonMessageSet.results;
+              console.log(arrayMessage);
+              var isSuccess = self.isErrorInLog(arrayMessage);
+              console.log(isSuccess);
+              if (isSuccess) {        
+                  sap.m.MessageBox.success(oBundle.getText("operationOK"), {
+                      title: oBundle.getText("btnSign"),
+                      onClose: function (oAction) {
+                        self.downloadFileFromContent(documentoFirmato);
+                        self.setPropertyGlobal(self.RELOAD_MODEL,"canRefresh",true);
+                        self.onNavBack();
+                      },
+                    });   
+              }
+              return false;
+            },
+            error: function (err) {
+              self.getView().setBusy(false);
+              console.log(err);
+            },
+            async: true,
+            urlParameters: {},
+          });
+      },
+
+        downloadSignedFile:function(){
             var self =this,
                 detailModel = self.getModel(DETAIL_MODEL),
                 checklist = detailModel.getProperty("/checkList");

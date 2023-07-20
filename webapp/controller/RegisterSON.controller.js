@@ -154,6 +154,7 @@ sap.ui.define(
             ZimptotDivisa: null,
             TaxnumCf: null,
             Zzamministr: null,
+            PayMode:[]
           });
           Step3List = new JSONModel([
             {
@@ -707,6 +708,8 @@ sap.ui.define(
             .getView()
             .getModel(DataSON_MODEL)
             .setProperty("/Zzamministr", null);
+          self.getView().getModel(DataSON_MODEL).setProperty("/PayMode", []);
+
         },
 
         resetWizardModel: function () {

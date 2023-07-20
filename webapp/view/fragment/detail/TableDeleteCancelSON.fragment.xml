@@ -72,14 +72,14 @@
 					<Text  text="{listTable>Fipos}" />
 					<Text  text="{listTable>Fistl}" />
 					<Text  text="{listTable>Zimptot}" />
-					<Text  text="{listTable>Ztipodisp3}" />
-						<Text   text="{
-								path: 'listTable>Zdatarichann',
-								type: 'sap.ui.model.type.Date',
-								formatOptions: {
-									pattern: 'dd.MM.yyyy'
-									}
-							}" />
+					<Text  text="{listTable>Zdesctipodisp3}" />
+					<Text   text="{
+							path: 'listTable>Zdatarichann',
+							type: 'sap.ui.model.type.Date',
+							formatOptions: {
+								pattern: 'dd.MM.yyyy'
+								}
+						}" />
 					<Text  text="{listTable>Zricann}" visible="{detailModel>/deleteCancel}"/>
 					<Text  text="{
 							path: 'listTable>ZstatoSop',

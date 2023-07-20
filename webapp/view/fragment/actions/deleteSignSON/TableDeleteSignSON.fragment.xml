@@ -2,6 +2,7 @@
 	xmlns="sap.m"
 	xmlns:c="sap.ui.core"
     xmlns:l="sap.ui.layout"
+	xmlns:zcontrolPosFin="zsap.com.r3.cobi.s4.custposfin.z_s4_zposfinlink.controls"
 >
 
 
@@ -64,10 +65,17 @@
 									}
 							}"/>					
 					<Text  text="{checkList>Beneficiario}" />
-					<Text  text="{checkList>Fipos}" />
+					<!-- <Text  text="{checkList>Fipos}" /> -->
+					<zcontrolPosFin:LinkPosizioneFinanziaria id="linkPosFinSpesaDeleteSign" anno="{checkList>Gjahr}" eos="S" fikrs="S001" fase="GEST" 
+                        reale="R" versione="D" fipex="{checkList>Fipos}" 
+                        datbis="99991231" text="{checkList>Fipos}" semanticObject="ESAMINAMODIFICA"/>
 					<Text  text="{checkList>Fistl}" />
-					<Text  text="{checkList>Zimptot}" />
-					<Text  text="{checkList>Ztipodisp3}" />
+					<!-- <Text  text="{checkList>Zimptot}" /> -->
+					<Text  text="{
+							path: 'checkList>Zimptot',
+							formatter: '.formatter.convertFormattedNumber'
+						}" />
+					<Text  text="{checkList>Zdesctipodisp3}" />
 					<Text  text="{checkList>Znumprot}"/>	
 					<Text   text="{
 							path: 'checkList>Zdataprot',

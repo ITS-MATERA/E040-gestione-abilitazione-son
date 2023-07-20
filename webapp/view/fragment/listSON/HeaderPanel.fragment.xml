@@ -3,6 +3,8 @@
 	xmlns:core="sap.ui.core"
 	xmlns:l="sap.ui.layout"
 	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:zcontrol="zsap.com.r3.cobi.s4.custposfin.z_s4_zposfin.controls"
+	xmlns:zcontrolMatchSar="zsap.com.r3.cobi.s4.custapiuser.z_s4_userlog.controls"
 >
 	<VBox class="bgWhite">
 		<items>
@@ -15,6 +17,7 @@
 							id="fGjahr"
 							width="100%"
 							app:searchPropertyModel="Gjahr"
+							change="onFilterGjahrChange"
 							>
 							
 						</ComboBox>
@@ -266,15 +269,17 @@
 				<VBox >
 					<items>
 						<Label  design="Bold" text="{i18n>filterNameFiposFrom}"></Label>
-							<FlexBox  alignItems="Start">								
-								<Input
+							<FlexBox  alignItems="Start">
+								<zcontrol:InputPosizioneFinanziaria id="fFiposFrom" fase="GEST" spesa="X" 
+								reale="R" anno="{listSONModel>/filterGjahr}" versione="D" maxSuggestionWidth="60%" liveChange="onSelectPosFin" width="100%"/>								
+								<!-- <Input
 									id="fFiposFrom"
 									app:searchPropertyModel="Fipos"								
 									>	
 								    <layoutData>
 										<FlexItemData  growFactor="4" />
 									</layoutData>
-								</Input>
+								</Input> -->
 							</FlexBox>
 					</items>
 					<layoutData><l:GridData  span="XL2 L4 M4 S12"/></layoutData>
@@ -283,15 +288,9 @@
 				<VBox >
 					<items>
 						<Label  design="Bold" text="{i18n>filterNameFiposTo}"></Label>
-							<FlexBox  alignItems="Start">								
-								<Input
-									id="fFiposTo"
-									app:searchPropertyModel="Fipos"								
-									>	
-								    <layoutData>
-										<FlexItemData  growFactor="4" />
-									</layoutData>
-								</Input>
+							<FlexBox  alignItems="Start">	
+								<zcontrol:InputPosizioneFinanziaria id="fFiposTo" fase="GEST" spesa="X" 
+								reale="R" anno="{listSONModel>/filterGjahr}" versione="D" maxSuggestionWidth="60%" liveChange="onSelectPosFin" width="100%"/>								
 							</FlexBox>
 					</items>
 					<layoutData><l:GridData  span="XL2 L4 M4 S12"/></layoutData>
@@ -300,15 +299,9 @@
 				<VBox >
 					<items>
 						<Label  design="Bold" text="{i18n>filterNameFistl}"></Label>
-							<FlexBox  alignItems="Start">								
-								<Input
-									id="fFistl"
-									app:searchPropertyModel="Fistl"									
-									>	
-								    <layoutData>
-										<FlexItemData  growFactor="4" />
-									</layoutData>
-								</Input>
+							<FlexBox  alignItems="Start">	
+								<zcontrolMatchSar:GestioneLogUser eos="S" id="idFilterStruttAmmResp" fase="GEST" entrata="X" reale="R" 
+									anno="{listSONModel>/filterGjahr}" SEM_OBJ="Z_TEST_LIB"  versione="D" width="100%" placeholder="Scegli struttura amministrativa"/>					
 							</FlexBox>
 					</items>
 					<layoutData><l:GridData  span="XL3 L4 M6 S12"/></layoutData>

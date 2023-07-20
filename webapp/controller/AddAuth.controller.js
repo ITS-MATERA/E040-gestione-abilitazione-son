@@ -360,7 +360,8 @@ sap.ui.define(
 
           if (Fipos !== null && Fistl !== null) {
             var oParam = {
-              Fipex: !Fipos || Fipos === null ? "" : Fipos,
+              // Fipex: !Fipos || Fipos === null ? "" : Fipos,
+              Fipos: !Fipos || Fipos === null ? "" : Fipos,
               Fistl: !Fistl || Fistl === null ? "" : Fistl,
               Gjahr: !Gjahr || Gjahr === null ? "" : Gjahr,
               Prctr: !Prctr || Prctr === null ? "" : Prctr,

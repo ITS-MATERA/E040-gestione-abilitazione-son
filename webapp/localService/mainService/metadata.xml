@@ -211,8 +211,8 @@
                 <Property Name="Gjahr" Type="Edm.String" MaxLength="4" sap:unicode="false" sap:label="Fiscal Year" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Zchiaveabi" Type="Edm.String" Nullable="false" MaxLength="33" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="OperationType" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <NavigationProperty Name="AbilitazioneMessageSet" Relationship="ZS4_SOSPAUTPERMANENTE_SRV.DeepAbilitazioneToAbilitazioneMessage" FromRole="FromRole_DeepAbilitazioneToAbilitazioneMessage" ToRole="ToRole_DeepAbilitazioneToAbilitazioneMessage"/>
                 <NavigationProperty Name="AbilitazioneSet" Relationship="ZS4_SOSPAUTPERMANENTE_SRV.DeepAbilitazioneToAbilitazione" FromRole="FromRole_DeepAbilitazioneToAbilitazione" ToRole="ToRole_DeepAbilitazioneToAbilitazione"/>
+                <NavigationProperty Name="AbilitazioneMessageSet" Relationship="ZS4_SOSPAUTPERMANENTE_SRV.DeepAbilitazioneToAbilitazioneMessage" FromRole="FromRole_DeepAbilitazioneToAbilitazioneMessage" ToRole="ToRole_DeepAbilitazioneToAbilitazioneMessage"/>
             </EntityType>
             <EntityType Name="SonMessage" sap:content-version="1">
                 <Key>
@@ -237,9 +237,9 @@
                 <Property Name="Zchiavesop" Type="Edm.String" Nullable="false" MaxLength="33" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Ztipososp" Type="Edm.String" MaxLength="1" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="OperationType" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <NavigationProperty Name="ClassificazioneSonSet" Relationship="ZS4_SOSPAUTPERMANENTE_SRV.DeepSonToClassificazioneSon" FromRole="FromRole_DeepSonToClassificazioneSon" ToRole="ToRole_DeepSonToClassificazioneSon"/>
-                <NavigationProperty Name="SonSet" Relationship="ZS4_SOSPAUTPERMANENTE_SRV.DeepSonToSon" FromRole="FromRole_DeepSonToSon" ToRole="ToRole_DeepSonToSon"/>
                 <NavigationProperty Name="SonMessageSet" Relationship="ZS4_SOSPAUTPERMANENTE_SRV.DeepSonToSonMessage" FromRole="FromRole_DeepSonToSonMessage" ToRole="ToRole_DeepSonToSonMessage"/>
+                <NavigationProperty Name="SonSet" Relationship="ZS4_SOSPAUTPERMANENTE_SRV.DeepSonToSon" FromRole="FromRole_DeepSonToSon" ToRole="ToRole_DeepSonToSon"/>
+                <NavigationProperty Name="ClassificazioneSonSet" Relationship="ZS4_SOSPAUTPERMANENTE_SRV.DeepSonToClassificazioneSon" FromRole="FromRole_DeepSonToClassificazioneSon" ToRole="ToRole_DeepSonToClassificazioneSon"/>
             </EntityType>
             <EntityType Name="SonWf" sap:content-version="1">
                 <Key>
@@ -280,6 +280,63 @@
                 <Property Name="Lifnr" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Vendor" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Zwels" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Payment Methods" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Iban" Type="Edm.String" Nullable="false" MaxLength="34" sap:unicode="false" sap:label="IBAN" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="ModPagamento" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Beneficiario"/>
+                    <PropertyRef Name="ModalitaPagamento"/>
+                </Key>
+                <Property Name="Beneficiario" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ModalitaPagamento" Type="Edm.String" Nullable="false" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Iban" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="PaeseResidenza" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="TipoFirma" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Bic" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="CoordinateEstere" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Esercizio" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="InizioValidita" Type="Edm.DateTime" Precision="11" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="FineValidita" Type="Edm.DateTime" Precision="11" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Capo" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Capitolo" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Articolo" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="NumeroPagamento" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="FlagModifica" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="Quietanzante" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Beneficiario"/>
+                </Key>
+                <Property Name="Beneficiario" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Nome" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Cognome" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Qualifica" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="CodiceFiscale" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="DataNascita" Type="Edm.DateTime" Precision="11" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="LuogoNascita" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ProvinciaNascita" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Indirizzo" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Citta" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Cap" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ProvinciaResidenza" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Telefono" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="DestinatarioVaglia" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Beneficiario"/>
+                </Key>
+                <Property Name="Beneficiario" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Nome" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Cognome" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Qualifica" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="CodiceFiscale" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="DataNascita" Type="Edm.DateTime" Precision="11" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="LuogoNascita" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ProvinciaNascita" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Indirizzo" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Citta" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Cap" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ProvinciaResidenza" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Telefono" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </EntityType>
             <EntityType Name="TipologiaDisp" sap:content-version="1">
                 <Key>
@@ -354,6 +411,65 @@
                 </Key>
                 <Property Name="Key" Type="Edm.String" Nullable="false" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Value" Type="Edm.String" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="AnagraficaBeneficiario" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Beneficiario"/>
+                </Key>
+                <Property Name="Beneficiario" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Paese" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Categoria" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="RagioneSociale" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Nome" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Cognome" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Via" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="NumeroCivico" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Localita" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Provincia" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Cap" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="SedeLegale" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="CodiceFiscale" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="PartitaIva" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="IdFiscaleEstero" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ModPagamento" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="PaeseResidenza" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Iban" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="TipoFirma" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Bic" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="CoordinateEstere" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="InizioValidita" Type="Edm.DateTime" Precision="11" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="FineValidita" Type="Edm.DateTime" Precision="11" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="BypassSife" Type="Edm.String" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="ZwelsList" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Lifnr"/>
+                    <PropertyRef Name="Zwels"/>
+                </Key>
+                <Property Name="Lifnr" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="Zwels" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="ZdescWels" Type="Edm.String" MaxLength="50" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Iban" Type="Edm.String" MaxLength="34" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Swift" Type="Edm.String" MaxLength="11" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Banks" Type="Edm.String" MaxLength="3" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ZtipoFirma" Type="Edm.String" MaxLength="2" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ZcoordEst" Type="Edm.String" MaxLength="35" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ValidFromDats" Type="Edm.DateTime" Precision="11" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ValidToDats" Type="Edm.DateTime" Precision="11" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Gjahr" Type="Edm.String" MaxLength="4" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ZcapoEnt" Type="Edm.String" MaxLength="2" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ZcapiEnt" Type="Edm.String" MaxLength="4" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ZartEnt" Type="Edm.String" MaxLength="4" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Seqnr" Type="Edm.String" MaxLength="3" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="NewModalitaPagamento" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Zwels"/>
+                </Key>
+                <Property Name="Zwels" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="Lifnr" Type="Edm.String" MaxLength="10" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="ZdescWels" Type="Edm.String" MaxLength="50" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Type" Type="Edm.String" MaxLength="1" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </EntityType>
             <Association Name="DeepAbilitazioneToAbilitazioneMessage" sap:content-version="1">
                 <End Type="ZS4_SOSPAUTPERMANENTE_SRV.DeepAbilitazione" Multiplicity="1" Role="FromRole_DeepAbilitazioneToAbilitazioneMessage"/>
@@ -437,6 +553,9 @@
                 <EntitySet Name="KostlMcSet" EntityType="ZS4_SOSPAUTPERMANENTE_SRV.KostlMc" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
                 <EntitySet Name="TvarvcParameterSet" EntityType="ZS4_SOSPAUTPERMANENTE_SRV.TvarvcParameter" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
                 <EntitySet Name="ListaIbanSet" EntityType="ZS4_SOSPAUTPERMANENTE_SRV.ListaIban" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="ModPagamentoSet" EntityType="ZS4_SOSPAUTPERMANENTE_SRV.ModPagamento" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+                <EntitySet Name="QuietanzanteSet" EntityType="ZS4_SOSPAUTPERMANENTE_SRV.Quietanzante" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+                <EntitySet Name="DestinatarioVagliaSet" EntityType="ZS4_SOSPAUTPERMANENTE_SRV.DestinatarioVaglia" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
                 <EntitySet Name="TipoDispSet" EntityType="ZS4_SOSPAUTPERMANENTE_SRV.TipologiaDisp" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
                 <EntitySet Name="UserParametersSet" EntityType="ZS4_SOSPAUTPERMANENTE_SRV.UserParameters" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
                 <EntitySet Name="ContoCogeSet" EntityType="ZS4_SOSPAUTPERMANENTE_SRV.ContoCoge" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
@@ -444,6 +563,9 @@
                 <EntitySet Name="MessageSet" EntityType="ZS4_SOSPAUTPERMANENTE_SRV.Message" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
                 <EntitySet Name="ClassificazioneSonSet" EntityType="ZS4_SOSPAUTPERMANENTE_SRV.ClassificazioneSon" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="FileSet" EntityType="ZS4_SOSPAUTPERMANENTE_SRV.File" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+                <EntitySet Name="AnagraficaBeneficiarioSet" EntityType="ZS4_SOSPAUTPERMANENTE_SRV.AnagraficaBeneficiario" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+                <EntitySet Name="ZwelsListSet" EntityType="ZS4_SOSPAUTPERMANENTE_SRV.ZwelsList" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+                <EntitySet Name="NewModalitaPagamentoSet" EntityType="ZS4_SOSPAUTPERMANENTE_SRV.NewModalitaPagamento" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
                 <AssociationSet Name="DeepSonToSonSet" Association="ZS4_SOSPAUTPERMANENTE_SRV.DeepSonToSon" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
                     <End EntitySet="DeepSonSet" Role="FromRole_DeepSonToSon"/>
                     <End EntitySet="SonSet" Role="ToRole_DeepSonToSon"/>
@@ -465,53 +587,53 @@
                     <End EntitySet="SonMessageSet" Role="ToRole_DeepSonToSonMessage"/>
                 </AssociationSet>
                 <FunctionImport Name="ValidazioneSonRegW1" ReturnType="Collection(ZS4_SOSPAUTPERMANENTE_SRV.Message)" EntitySet="MessageSet" m:HttpMethod="GET">
-                    <Parameter Name="ZufficioCont" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Fistl" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Kostl" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Saknr" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Fipos" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Ztipodisp3" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="AgrName" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Fikrs" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Gjahr" Type="Edm.String" Mode="In"/>
                     <Parameter Name="Prctr" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Gjahr" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Fikrs" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="AgrName" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Ztipodisp3" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Fipos" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Saknr" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Kostl" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Fistl" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="ZufficioCont" Type="Edm.String" Mode="In"/>
                 </FunctionImport>
                 <FunctionImport Name="ValidazioneSonRegW2" ReturnType="Collection(ZS4_SOSPAUTPERMANENTE_SRV.Message)" EntitySet="MessageSet" m:HttpMethod="GET">
-                    <Parameter Name="Zcoordest" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Lifnr" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Zwels" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Iban" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Banks" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="ZZcausaleval" Type="Edm.String" Mode="In"/>
                     <Parameter Name="Zimptot" Type="Edm.Decimal" Mode="In" Precision="2" Scale="2"/>
+                    <Parameter Name="ZZcausaleval" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Banks" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Iban" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Zwels" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Lifnr" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Zcoordest" Type="Edm.String" Mode="In"/>
                 </FunctionImport>
                 <FunctionImport Name="ValidazioneSonW1" ReturnType="Collection(ZS4_SOSPAUTPERMANENTE_SRV.Message)" EntitySet="MessageSet" m:HttpMethod="GET">
-                    <Parameter Name="Fistl" Type="Edm.String" Mode="In"/>
                     <Parameter Name="Fipos" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Fistl" Type="Edm.String" Mode="In"/>
                 </FunctionImport>
                 <FunctionImport Name="ValidazioneSonW2" ReturnType="Collection(ZS4_SOSPAUTPERMANENTE_SRV.Message)" EntitySet="MessageSet" m:HttpMethod="GET">
-                    <Parameter Name="ZZcausaleval" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Iban" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Zwels" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Lifnr" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Zcoordest" Type="Edm.String" Mode="In"/>
                     <Parameter Name="Banks" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Zcoordest" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Lifnr" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Zwels" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Iban" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="ZZcausaleval" Type="Edm.String" Mode="In"/>
                 </FunctionImport>
                 <FunctionImport Name="ValidazioneSonW3" ReturnType="Collection(ZS4_SOSPAUTPERMANENTE_SRV.Message)" EntitySet="MessageSet" m:HttpMethod="GET">
-                    <Parameter Name="Zimptotcos" Type="Edm.Decimal" Mode="In" Precision="2" Scale="2"/>
                     <Parameter Name="Zimptot" Type="Edm.Decimal" Mode="In" Precision="2" Scale="2"/>
+                    <Parameter Name="Zimptotcos" Type="Edm.Decimal" Mode="In" Precision="2" Scale="2"/>
                 </FunctionImport>
                 <FunctionImport Name="ValidazioneSonRegW4" ReturnType="Collection(ZS4_SOSPAUTPERMANENTE_SRV.Message)" EntitySet="MessageSet" m:HttpMethod="GET">
-                    <Parameter Name="Zlocpag" Type="Edm.String" Mode="In"/>
                     <Parameter Name="Zzonaint" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Zlocpag" Type="Edm.String" Mode="In"/>
                 </FunctionImport>
                 <FunctionImport Name="ValidazioneAbilitazione" ReturnType="Collection(ZS4_SOSPAUTPERMANENTE_SRV.Message)" EntitySet="MessageSet" m:HttpMethod="GET">
-                    <Parameter Name="AgrName" Type="Edm.String" Mode="In" MaxLength="30"/>
-                    <Parameter Name="Prctr" Type="Edm.String" Mode="In" MaxLength="40"/>
-                    <Parameter Name="Fikrs" Type="Edm.String" Mode="In" MaxLength="40"/>
-                    <Parameter Name="Gjahr" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Fipos" Type="Edm.String" Mode="In" MaxLength="24"/>
                     <Parameter Name="Fistl" Type="Edm.String" Mode="In" MaxLength="16"/>
+                    <Parameter Name="Fipos" Type="Edm.String" Mode="In" MaxLength="24"/>
+                    <Parameter Name="Gjahr" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Fikrs" Type="Edm.String" Mode="In" MaxLength="40"/>
+                    <Parameter Name="Prctr" Type="Edm.String" Mode="In" MaxLength="40"/>
+                    <Parameter Name="AgrName" Type="Edm.String" Mode="In" MaxLength="30"/>
                 </FunctionImport>
             </EntityContainer>
             <atom:link rel="self" href="http://l2vs2slass01.mef.gov.it:8000/sap/opu/odata/sap/ZS4_SOSPAUTPERMANENTE_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
