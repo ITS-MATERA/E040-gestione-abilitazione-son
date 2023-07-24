@@ -69,10 +69,20 @@ sap.ui.define(
         },
 
         _onObjectMatched: function () {
-          var self = this;
-          self.getFistl();
+          var self = this,
+              authModel = self.getModelGlobal(self.AUTHORITY_CHECK_ABILITAZIONE);
+           
+          if(!authModel || authModel === null){
+            self.getAuthorityCheck(self.FILTER_AUTH_OBJ, function(callback){
+              if(callback){
+                self.getFistl();
+              }
+              else{
+                self.getRouter().navTo("notAuth", {mex: self.getResourceBundle().getText("notAuthText")});
+              }
+            });
+          }   
         },
-
         
         getFistl:function(){
           var self= this,
@@ -97,7 +107,6 @@ sap.ui.define(
                 });
             });
         },
-
 
         configLog: function () {
           var self = this;
@@ -351,9 +360,14 @@ sap.ui.define(
             oDataModel = self.getModel(),
             oView = self.getView(),
             addAuthModel = self.getModel(ADD_AUTH_MODEL),
+            oControlFilterBarPosFinSpesa = self.getView().byId("filterBarPosFinSpesa"),
+            oControlIdFilterStruttAmmResp = self.getView().byId("idFilterStruttAmmResp"),
+                        
             Gjahr = addAuthModel.getProperty("/Gjahr"),
-            Fipos = addAuthModel.getProperty("/Fipos"),
-            Fistl = addAuthModel.getProperty("/Fistl"),
+            Fipos = oControlFilterBarPosFinSpesa.getValue() && oControlFilterBarPosFinSpesa.getValue() !== "" ? oControlFilterBarPosFinSpesa.getValue() : "",
+            Fistl = oControlIdFilterStruttAmmResp.getValue() && oControlIdFilterStruttAmmResp.getValue() !== "" ? oControlIdFilterStruttAmmResp.getValue() : "",
+            // Fipos = addAuthModel.getProperty("/Fipos"),
+            // Fistl = addAuthModel.getProperty("/Fistl"),
             Fikrs = self.getModelGlobal(self.AUTHORITY_CHECK_ABILITAZIONE).getData().FIKRS,
             AgrName = self.getModelGlobal(self.AUTHORITY_CHECK_ABILITAZIONE).getData().AGR_NAME,
             Prctr = self.getModelGlobal(self.AUTHORITY_CHECK_ABILITAZIONE).getData().PRCTR;
