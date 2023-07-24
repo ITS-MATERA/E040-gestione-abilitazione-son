@@ -50,13 +50,13 @@
 						<Label  design="Bold" required="true" width="100%" text="{i18n>columnNameFipos}" class="sapUiTinyMarginTop sapUiLargeMarginEnd"/>
 						<zcontrol:InputPosizioneFinanziaria id="filterBarPosFinSpesa" fase="GEST" spesa="X" reale="R" 
 							anno="{addAuhModel>/Gjahr}" versione="D" maxSuggestionWidth="60%" 
-							liveChange="onSelectPosFin" width="100%"/>
+							liveChange="onSelectPosFin" width="100%" value="{addAuhModel>/Fipos}"/>
 						<layoutData><l:GridData span="XL4 L4 M6 S12" linebreak="true" /></layoutData>
 					</HBox>
 					<HBox>
 						<Label  design="Bold" required="true" width="100%" text="{i18n>columnNameFistl}" class="sapUiTinyMarginTop sapUiLargeMarginEnd"/>
 						<zcontrolMatchSar:GestioneLogUser eos="S" id="idFilterStruttAmmResp" fase="GEST" entrata="X" reale="R" anno="{addAuhModel>/Gjahr}" 
-						SEM_OBJ="Z_TEST_LIB"  
+						SEM_OBJ="Z_TEST_LIB"  value="{addAuhModel>/Fistl}"
 						versione="D" width="100%" placeholder="Scegli struttura amministrativa"/>
 						<layoutData><l:GridData span="XL4 L4 M6 S12"  /></layoutData>
 					</HBox>
