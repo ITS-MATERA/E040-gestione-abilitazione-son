@@ -994,8 +994,8 @@ sap.ui.define(
             wizardModel = self.getModel(WIZARD_MODEL);
           var sNewValue = oEvent.getSource().getSelectedKey();
           var sNewDesc = oEvent.getSource().getValue();
-          // wizardModel.setProperty("/Ztipodisp3", sNewValue);//TODO:da verificare
-          wizardModel.setProperty("/Ztipodisp3", sNewDesc);
+          wizardModel.setProperty("/Ztipodisp3", sNewValue);//TODO:da verificare
+          // wizardModel.setProperty("/Ztipodisp3", sNewDesc);
           wizardModel.setProperty("/Zdesctipodisp3", sNewDesc);
           if (sNewValue !== null) self.fillFipos();
         },
