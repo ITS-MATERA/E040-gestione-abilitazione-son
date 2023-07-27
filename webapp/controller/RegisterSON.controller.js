@@ -209,14 +209,31 @@ sap.ui.define(
             oDataModel = self.getModel(),
             oView = self.getView();
             oView.setBusy(true);
-          console.log("CALL");
-          self.getAmministrazione();
-          self.getUfficioAction(); 
-          self.getFistl();          
+            
+            if(!self.getModelGlobal(self.AUTHORITY_CHECK_SON) || self.getModelGlobal(self.AUTHORITY_CHECK_SON) === null){
+              self.getAuthorityCheck(self.FILTER_SON_OBJ, function(callback){
+                if(callback){
+                  self.getAmministrazione();
+                  self.getUfficioAction(); 
+                  self.getFistl();          
 
-          setTimeout(() => {                
-            oView.setBusy(false);
-          },2000);
+                  setTimeout(() => {                
+                    oView.setBusy(false);
+                  },2000);
+                }
+                else{
+                  self.getRouter().navTo("notAuth", {mex: self.getResourceBundle().getText("notAuthText")});
+                }
+              });
+            }
+
+          // self.getAmministrazione();
+          // self.getUfficioAction(); 
+          // self.getFistl();          
+
+          // setTimeout(() => {                
+          //   oView.setBusy(false);
+          // },2000);
         },
 
         getAmministrazione:function(){

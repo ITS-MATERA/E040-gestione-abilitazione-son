@@ -26,7 +26,7 @@
 						
 						<Label design="Bold" text="{i18n>wizardFieldGjahr}" class="sapUiSmallMarginBottom"/>
 				
-						<Input editable="{wizardModel>/isInChange}" id="idWizardGjahr"  app:property="Gjahr" value="{wizardModel>/Gjahr}" liveChange="onLiveChange" submit="onSubmitGjahr">
+						<Input editable="{wizardModel>/isInChange}" id="idWizardGjahr"  app:property="Gjahr" value="{wizardModel>/Gjahr}" liveChange="onLiveChange" submit="onSubmitGjahr" >
 							<layoutData>
 								<l:GridData span="XL3 L5 M6 S12"  />
 							</layoutData>

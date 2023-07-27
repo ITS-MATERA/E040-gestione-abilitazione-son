@@ -1074,12 +1074,13 @@ sap.ui.define(
                 urlParameters: oParam,
                 success: function (oData, response) {
                   console.log(oData);
-                  self.getView().setBusy(false);
+                  
                   var arrayMessage = oData.results;
                   if (!self.isErrorInLog(arrayMessage)) {      
                     wizardModel.setProperty("/btnBackVisible", false);                
                     wizard.previousStep();
                     self.handleButtonsVisibility(0);
+                    self.getView().setBusy(false);
                   } else {
                     var oModel = new JSONModel();
                     oModel.setData([]);
@@ -1642,7 +1643,6 @@ sap.ui.define(
           var filter = [self.setFilterEQWithKey("Lifnr", lifnr)];       
           self.getModel().metadataLoaded().then(function () {
             oDataModel.read("/ZwelsListSet", {
-              //giannilecci
               async: true,
               urlParameters: {IsDistinct:"X"},
               filters: filter,
@@ -1914,6 +1914,190 @@ sap.ui.define(
 
         /*WIZARD - END*/
 
+
+        newAnagraficaBeneficiarioPress:function(oEvent){
+          var self =this,
+              dataSonModel = self.getView().getModel(DataSON_MODEL);
+
+          var newAbObj={
+            countries:[],
+            catsBen:[],
+            provinces:[],
+            Form:{
+              PaeseCode:null,
+              PaeseDesc:null,
+              ProvinciaCode:null,
+              ProvinciaDesc:null,
+              CategoriaBeneficiario:null,              
+              RagioneSociale:null,
+              Nome:null,
+              Cognome:null,
+              Via:null,
+              Localita:null,
+              Civico:null,
+              Cap:null,
+              SedeLegale:null,
+              CodiceFiscale:null,
+              PartitaIva:null,
+              IdentificativoFiscaleEstero:null
+            }
+          };
+
+          self.loadABDefaultInfo(function(callback){
+            if(callback.success){          
+              console.log(callback.data); //TODO:da canc
+              newAbObj.countries = callback.data.countries;
+              newAbObj.catsBen = callback.data.catsBen;
+              dataSonModel.setSizeLimit(1000);
+              dataSonModel.setProperty("/NewAB",newAbObj);
+              dataSonModel.setProperty("/NewPayModeButton",self._resetNewModalitaPagamentoButtons());   
+
+              self.getView().setBusy(false);
+              var oDialog = self.openDialog(
+                "gestioneabilitazioneeson.view.fragment.anagraficaBeneficiario.NewAnagraficaBeneficiario"
+              );    
+              oDialog.open();  
+            }
+            else{
+              self.getView().setBusy(false);
+            }
+          });
+        },
+
+        loadABDefaultInfo:function(callback){
+          var self =this,
+              oDataModel = self.getModel();
+          
+          var obj={
+            countries:[],
+            catsBen:[]
+          };    
+          
+          self.getModel().metadataLoaded().then(function () {
+            oDataModel.read("/NabPaeseSet", {
+              success: function (data, oResponse) {
+                obj.countries = data.results.length >0 ? data.results : [];
+                oDataModel.read("/NabCategoriaBeneficiarioSet", {
+                  success:function(data, oResponse){
+                    obj.catsBen = data.results.length >0 ? data.results : [];
+                    callback({success:true,data:obj});
+                  },
+                  error: function (error) {
+                    console.log(error);//TODO:da canc
+                    callback({success:false, data:obj});
+                  }
+                });
+              },
+              error: function (error) {
+                console.log(error);//TODO:da canc
+                callback({success:false, data:obj});
+              }
+            });
+          });    
+        },
+
+        onNewABPaeseChange:function(oEvent){
+          var self =this,
+            oDataModel = self.getModel(),
+            desc = oEvent.getParameters().value,
+            oController = sap.ui.getCore().byId(oEvent.getParameters().id),
+            key = oController.getSelectedKey();
+
+          if(!key || key=== null || key==="" || desc ===""){
+            self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/provinces",null);
+            self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/PaeseDesc",null);
+            self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/PaeseCode",null);
+            self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/ProvinciaDesc",null);
+            self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/ProvinciaCode",null);
+            return false;
+          }
+          
+          self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/PaeseDesc",desc);
+          self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/PaeseCode",key);
+          var filters = [self.setFilterEQWithKey("SCountry", key)];  
+          self.getModel().metadataLoaded().then(function () {
+            oDataModel.read("/NabProvinciaSet", {
+              filters:filters,
+              success:function(data, oResponse){
+                self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/provinces",data.results);
+                self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/ProvinciaDesc",null);
+                self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/ProvinciaCode",null);
+              },
+              error: function (error) {
+                console.log(error);//TODO:da canc
+              }
+            });
+          });
+        },
+
+        onNewABProvinciaChange:function(oEvent){
+          var self =this,
+            desc = oEvent.getParameters().value,
+            oController = sap.ui.getCore().byId(oEvent.getParameters().id),
+            key = oController.getSelectedKey();
+
+          if(!key || key=== null || key==="" || desc ===""){
+            self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/ProvinciaDesc",null);
+            self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/ProvinciaCode",null);
+            return false;
+          }
+          self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/ProvinciaDesc",desc);
+          self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/ProvinciaCode",key);
+        },
+
+        onNewABCategoriaBeneficiarioChange:function(oEvent){
+          var self =this,
+            desc = oEvent.getParameters().value,
+            oController = sap.ui.getCore().byId(oEvent.getParameters().id),
+            key = oController.getSelectedKey(),
+            comboTipoFirma = sap.ui.getCore().byId("PagamentoTipoFirma");
+
+          self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/Nome",null);
+          self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/Cognome",null);
+          self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/RagioneSociale",null);
+
+          if(comboTipoFirma){
+            comboTipoFirma.setSelectedKey(null);
+          }
+
+          if(!key || key=== null || key==="" || desc ===""){
+            self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/CategoriaBeneficiario",null);
+            self.getView().getModel(DataSON_MODEL).setProperty("/NewPayMode",null);
+            return false;
+          }
+
+          self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/CategoriaBeneficiario",key);
+
+          var oDataModel = self.getModel(),
+              dataSonModel = self.getView().getModel(DataSON_MODEL);
+          self.getModel().metadataLoaded().then(function () {
+              oDataModel.read("/NewModalitaPagamentoSet", {
+                urlParameters:{"SType":key},
+                success: function (data, oResponse) {
+                  self.getView().setBusy(false);
+                  console.log(data.results);
+
+                  dataSonModel.setProperty("/NewPayMode",data.results);  
+                  dataSonModel.setProperty("/NewPayModeButton",self._resetNewModalitaPagamentoButtons());   
+                  self.setNewModalitaPagamentoModel(); 
+
+                  // var oDialog = self.openDialog(
+                  //   "gestioneabilitazioneeson.view.fragment.modalitaPagamento.NewModalitaPagamento"
+                  // );    
+                  // oDialog.open();  
+                },
+                error: function (error) {
+                  self.getView().setBusy(false);
+                },
+              });
+          });
+
+
+
+
+
+        },
+
         newModalitaPagamentoDialogPress:function(oEvent){
           var self =this,
               oDataModel = self.getModel(),
@@ -1935,8 +2119,8 @@ sap.ui.define(
                     self.getView().setBusy(false);
                     console.log(data.results);
 
-                    if(!data || data.results.length === 0)
-                      return;
+                    // if(!data || data.results.length === 0)
+                    //   return;
 
                     dataSonModel.setProperty("/NewPayMode",data.results);  
                     dataSonModel.setProperty("/NewPayModeButton",self._resetNewModalitaPagamentoButtons());   
@@ -1960,16 +2144,24 @@ sap.ui.define(
             dataSonModel = self.getView().getModel(DataSON_MODEL),
             oController = sap.ui.getCore().byId(oEvent.getParameters().id),
             selectedItem = oController.getSelectedKey(),
-            payModeType = oController.getSelectedItem().data("payModeType");
+            payModeType = oController.getSelectedItem().data("payModeType"),
+            comboTipoFirma = sap.ui.getCore().byId("PagamentoTipoFirma");
 
           if(selectedItem === ""){
-            //TODO azzera il modello della new modalita pagamento            
+            //TODO azzera il modello della new modalita pagamento 
             dataSonModel.setProperty("/NewPayModeButton",self._resetNewModalitaPagamentoButtons());
+            if(comboTipoFirma){
+              comboTipoFirma.setSelectedKey(null);
+            }
             return false;    
           }
-          dataSonModel.setProperty("/NewPayModeButton",self._resetNewModalitaPagamentoButtons());  
-          
           self.getView().setBusy(true);
+          
+          dataSonModel.setProperty("/NewPayModeButton",self._resetNewModalitaPagamentoButtons());  
+          if(comboTipoFirma){
+            comboTipoFirma.setSelectedKey(null);
+          }
+
           var filter = [
             self.setFilterEQWithKey("Zwels", selectedItem),
             self.setFilterEQWithKey("Lifnr", ""),
@@ -2242,52 +2434,53 @@ sap.ui.define(
             return;
            
           self.getView().setBusy(true);
-          var entityRequest = {
-            Beneficiario: wizardModel.getProperty("/Lifnr"),
-            ModPagamento:entity.PayMode,
-            TipoBeneficiario:entity.PayModeType, 
-            DatiPagamento:{
-              Iban: entity.Iban ? entity.Iban : null, 
-              PaeseResidenza: entity.PaeseResidenza ? entity.PaeseResidenza : null,
-              TipoFirma: entity.TipoFirma ? entity.TipoFirma : null,
-              Bic: entity.Bic ? entity.Bic : null,
-              CoordinateEstere: entity.CoordinateEstere ? entity.CoordinateEstere : null,
-              InizioValidita: entity.InizioValidita ? self.formatter.formateDateForDeep(entity.InizioValidita): null,
-              FineValidita: entity.FineValidita ? self.formatter.formateDateForDeep(entity.FineValidita): null,
-              Esercizio: entity.Esercizio ? entity.Esercizio : null,
-              Capo: entity.Capo ? entity.Capo : null,
-              Capitolo: entity.Capitolo ? entity.Capitolo : null,
-              Articolo: entity.Articolo ? entity.Articolo : null,
-            },
-            Quietanzante:{
-              Nome: entity.QNome ? entity.QNome : null,
-              Cognome: entity.QCognome ? entity.QCognome : null,
-              Qualifica: entity.QQualifica ? entity.QQualifica : null,
-              CodiceFiscale: entity.QCodiceFiscale ? entity.QCodiceFiscale : null,
-              DataNascita: entity.QDataNascita ? self.formatter.formateDateForDeep(entity.QDataNascita): null,
-              LuogoNascita: entity.QLuogoNascita ? entity.QLuogoNascita : null,
-              ProvinciaNascita: entity.QProvinciaNascita ? entity.QProvinciaNascita : null,
-              Indirizzo: entity.QIndirizzo ? entity.QIndirizzo : null,
-              Citta: entity.QCitta ? entity.QCitta : null,
-              Cap: entity.QCap ? entity.QCap : null,
-              ProvinciaResidenza: entity.QProvinciaResidenza ? entity.QProvinciaResidenza : null,
-              Telefono: entity.QTelefono ? entity.QTelefono : null
-            },
-            DestinatarioVaglia:{
-              Nome: entity.VNome ? entity.VNome : null,
-              Cognome: entity.VCognome ? entity.VCognome : null,
-              Qualifica: entity.VQualifica ? entity.VQualifica : null,
-              CodiceFiscale: entity.VCodiceFiscale ? entity.VCodiceFiscale : null,
-              DataNascita: entity.VDataNascita ? self.formatter.formateDateForDeep(entity.VDataNascita): null,
-              LuogoNascita: entity.VLuogoNascita ? entity.VLuogoNascita : null,
-              ProvinciaNascita: entity.VProvinciaNascita ? entity.VProvinciaNascita : null,
-              Indirizzo: entity.VIndirizzo ? entity.QIndirizzo : null,
-              Citta: entity.VCitta ? entity.VCitta : null,
-              Cap: entity.VCap ? entity.VCap : null,
-              ProvinciaResidenza: entity.VProvinciaResidenza ? entity.VProvinciaResidenza : null,
-              Telefono: entity.VTelefono ? entity.VTelefono : null
-            }
-          }
+          var entityRequest =self.getEntityModalitaPagamento(entity, wizardModel.getProperty("/Lifnr"));
+          // var entityRequest = {
+          //   Beneficiario: wizardModel.getProperty("/Lifnr"),
+          //   ModPagamento:entity.PayMode,
+          //   TipoBeneficiario:entity.PayModeType, 
+          //   DatiPagamento:{
+          //     Iban: entity.Iban ? entity.Iban : null, 
+          //     PaeseResidenza: entity.PaeseResidenza ? entity.PaeseResidenza : null,
+          //     TipoFirma: entity.TipoFirma ? entity.TipoFirma : null,
+          //     Bic: entity.Bic ? entity.Bic : null,
+          //     CoordinateEstere: entity.CoordinateEstere ? entity.CoordinateEstere : null,
+          //     InizioValidita: entity.InizioValidita ? self.formatter.formateDateForDeep(entity.InizioValidita): null,
+          //     FineValidita: entity.FineValidita ? self.formatter.formateDateForDeep(entity.FineValidita): null,
+          //     Esercizio: entity.Esercizio ? entity.Esercizio : null,
+          //     Capo: entity.Capo ? entity.Capo : null,
+          //     Capitolo: entity.Capitolo ? entity.Capitolo : null,
+          //     Articolo: entity.Articolo ? entity.Articolo : null,
+          //   },
+          //   Quietanzante:{
+          //     Nome: entity.QNome ? entity.QNome : null,
+          //     Cognome: entity.QCognome ? entity.QCognome : null,
+          //     Qualifica: entity.QQualifica ? entity.QQualifica : null,
+          //     CodiceFiscale: entity.QCodiceFiscale ? entity.QCodiceFiscale : null,
+          //     DataNascita: entity.QDataNascita ? self.formatter.formateDateForDeep(entity.QDataNascita): null,
+          //     LuogoNascita: entity.QLuogoNascita ? entity.QLuogoNascita : null,
+          //     ProvinciaNascita: entity.QProvinciaNascita ? entity.QProvinciaNascita : null,
+          //     Indirizzo: entity.QIndirizzo ? entity.QIndirizzo : null,
+          //     Citta: entity.QCitta ? entity.QCitta : null,
+          //     Cap: entity.QCap ? entity.QCap : null,
+          //     ProvinciaResidenza: entity.QProvinciaResidenza ? entity.QProvinciaResidenza : null,
+          //     Telefono: entity.QTelefono ? entity.QTelefono : null
+          //   },
+          //   DestinatarioVaglia:{
+          //     Nome: entity.VNome ? entity.VNome : null,
+          //     Cognome: entity.VCognome ? entity.VCognome : null,
+          //     Qualifica: entity.VQualifica ? entity.VQualifica : null,
+          //     CodiceFiscale: entity.VCodiceFiscale ? entity.VCodiceFiscale : null,
+          //     DataNascita: entity.VDataNascita ? self.formatter.formateDateForDeep(entity.VDataNascita): null,
+          //     LuogoNascita: entity.VLuogoNascita ? entity.VLuogoNascita : null,
+          //     ProvinciaNascita: entity.VProvinciaNascita ? entity.VProvinciaNascita : null,
+          //     Indirizzo: entity.VIndirizzo ? entity.QIndirizzo : null,
+          //     Citta: entity.VCitta ? entity.VCitta : null,
+          //     Cap: entity.VCap ? entity.VCap : null,
+          //     ProvinciaResidenza: entity.VProvinciaResidenza ? entity.VProvinciaResidenza : null,
+          //     Telefono: entity.VTelefono ? entity.VTelefono : null
+          //   }
+          // }
           console.log(entityRequest);
           oDataModel.create("/ModalitaPagamentoSet", entityRequest, {
             success: function (data, oResponse) {
@@ -2369,6 +2562,328 @@ sap.ui.define(
           self.closeDialog();
         },
 
+
+        /* ANAGRAFICA BENEFICIARIO - START */
+        onCloseNewAnagraficaBeneficiario:function(oEvent){
+          var self= this,
+              dataSonModel = self.getView().getModel(DataSON_MODEL);  
+
+          if(dataSonModel.getData().NewPayModeButton.VagliaMaskVisible){
+            dataSonModel.setProperty("/NewPayModeButton/VagliaMaskVisible",false);
+            dataSonModel.setProperty("/NewPayModeButton/MainMaskVisible",true); 
+            dataSonModel.setProperty("/NewPayModeButton/btnVagliaVisible",true);
+            dataSonModel.setProperty("/NewPayModeButton/btnQuietanzanteVisible",true); 
+            return;
+          }    
+
+          if(dataSonModel.getData().NewPayModeButton.QuietanzanteMaskVisible){
+            dataSonModel.setProperty("/NewPayModeButton/QuietanzanteMaskVisible",false);
+            dataSonModel.setProperty("/NewPayModeButton/MainMaskVisible",true); 
+            dataSonModel.setProperty("/NewPayModeButton/btnVagliaVisible",true);
+            dataSonModel.setProperty("/NewPayModeButton/btnQuietanzanteVisible",true); 
+            return;
+          } 
+          dataSonModel.setProperty("/NewModalitaPagamentoEntity", null);
+          dataSonModel.setProperty("/NewPayMode",[]);  
+          dataSonModel.setProperty("/NewPayModeTipoFirma",[]);  
+          dataSonModel.setProperty("/NewPayModeButton",null); 
+          dataSonModel.setProperty("/NewABLifnr",null); 
+          var oDialog = sap.ui.getCore().byId("dlgNewAnagraficaBeneficiario");
+          oDialog.close();
+          self.getView().setBusy(false);
+          self.closeDialog();
+        },
+
+        validateModalitaPagamento:function(entity){
+          var self =this,
+              dataSonModel = self.getView().getModel(DataSON_MODEL);
+
+          var selectedItem = dataSonModel.getProperty("/NewModalitaPagamentoEntity/PayMode");
+          switch(selectedItem){
+            case 'ID1':
+              if(!entity.TipoFirma || entity.TipoFirma === null || entity.TipoFirma === ""){
+                return ({success:false,message:"Tipo firma obbligatorio"});
+              }
+
+              if(entity.PayModeType === S_TYPE_2 && (entity.QNome === null || entity.QNome === "" || entity.QCognome === null || entity.QCognome === "") ){
+                return ({success:false,message:"Inserire almeno un quietanzante (Cognome e nome obbligatori)"});                  
+              }
+              break;
+            case 'ID6':  
+              if(!entity.CoordinateEstere || entity.CoordinateEstere === null || entity.CoordinateEstere === ""){
+                return ({success:false,message:"Coordinate estere obbligatorio"}); 
+              }
+              if(!entity.VCognome || entity.VCognome === null || entity.VCognome === "" ||
+                !entity.VNome || entity.VNome === null || entity.VNome === "" ||
+                !entity.VIndirizzo || entity.VIndirizzo === null || entity.VIndirizzo === "" ||
+                !entity.VCitta || entity.VCitta === null || entity.VCitta === "" ||
+                !entity.VCap || entity.VCap === null || entity.VCap === "" ||
+                !entity.VProvinciaResidenza || entity.VProvinciaResidenza === null || entity.VProvinciaResidenza === "" 
+              ){
+                return ({success:false,message:"Destinatario Vaglia: inserire i campi obbligatori"});
+              }
+            default:
+              console.log("default");
+          }
+          return ({success:true});  
+        },
+
+        ktm:function(oEvent){
+          var self =this;
+        },
+
+        onNewAnagraficaBeneficiarioSave:function(oEvent){
+          var self =this,
+            oBundle=self.getResourceBundle(),
+            dataSonModel= self.getView().getModel(DataSON_MODEL),
+            entity = !dataSonModel.getProperty("/NewModalitaPagamentoEntity") ? null : dataSonModel.getProperty("/NewModalitaPagamentoEntity"),
+            form = self.getView().getModel(DataSON_MODEL).getProperty("/NewAB/Form");
+
+            // DataModel>/NewAB/Form/SedeLegale
+            // ;
+
+          if(!entity || entity === null || !entity.PayMode || entity.PayMode === ""){
+            sap.m.MessageBox.error("Modalità di pagamento obbligatoria", {
+              title: oBundle.getText("titleDialogWarning"),
+              onClose: function (oAction) {
+                return;
+              }
+            });  
+            return;
+          }
+
+          var validate = self.validateModalitaPagamento(entity);
+          if(!validate.success){
+            sap.m.MessageBox.error(validate.message, {
+              title: oBundle.getText("titleDialogWarning"),
+              onClose: function (oAction) {
+                return;
+              }
+            });  
+            return;
+          }
+
+          self.getView().setBusy(true);
+
+          var benx = self.getView().getModel(DataSON_MODEL).getProperty("/NewABLifnr") && 
+                    self.getView().getModel(DataSON_MODEL).getProperty("/NewABLifnr") !==null &&
+                    self.getView().getModel(DataSON_MODEL).getProperty("/NewABLifnr") !== "" ? 
+                    self.getView().getModel(DataSON_MODEL).getProperty("/NewABLifnr") : "FITTIZIO";
+
+          var anagraficaBeneficiario={
+            Beneficiario: benx, 
+            Paese: form.PaeseCode,
+            Categoria:form.CategoriaBeneficiario,
+            RagioneSociale:form.RagioneSociale,
+            Nome:form.Nome,
+            Cognome:form.Cognome,
+            Via:form.Via,
+            NumeroCivico:form.Civico,
+            Localita:form.Localita,
+            Provincia:form.ProvinciaCode,
+            Cap:form.Cap,
+            SedeLegale: form.SedeLegale ? 'X' : "",
+            CodiceFiscale:form.CodiceFiscale,
+            PartitaIva:form.PartitaIva,
+            IdFiscaleEstero:form.IdentificativoFiscaleEstero,
+            BypassSife:null
+          };
+
+          console.log(anagraficaBeneficiario); //TODO:da canc
+          self._callSaveOnAnagraficaBeneficiario(anagraficaBeneficiario, function(callback){
+            if(!callback.success){
+              // C'è STATO UN PROBLEMA
+              console.log(callback.message);//TODO:da canc
+              self.getView().setBusy(false);
+              sap.m.MessageBox.error(callback.message, {
+                title: oBundle.getText("titleDialogError"),
+                onClose: function (oAction) {
+                  return;
+                }
+              });  
+            }
+            else{
+              if(callback.SifeKO){
+                // OK MA ERRORE SIFE
+                entityRequest.BypassSife = 'X';
+                self._callSaveOnAnagraficaBeneficiario(entityRequest, function(callback){
+                  if(!callback.success){
+                    self.getView().setBusy(false);
+                    console.log(callback.message);//TODO:da canc
+                    sap.m.MessageBox.error(callback.message, {
+                      title: oBundle.getText("titleDialogError"),
+                      onClose: function (oAction) {
+                        return;
+                      }
+                    });  
+                  }
+                  else{
+                    //dovrebbe essere andato tutto ok
+                    self.getView().setBusy(false);
+                    console.log(callback.message);
+                    switch(callback.severity){
+                      case 'Error':
+                        sap.m.MessageBox.error(callback.message, {
+                          title: oBundle.getText("titleDialogError"),
+                          onClose: function (oAction) {
+                            return;
+                          }
+                        });  
+                        break;
+                      case 'Warning':
+                        sap.m.MessageBox.warning(callback.message, {
+                          title: oBundle.getText("titleDialogWarning"),
+                          onClose: function (oAction) {
+                            return;
+                          }
+                        }); 
+                        break;
+                      case 'Success':
+                        sap.m.MessageBox.success(callback.message, {
+                          title: oBundle.getText("titleDialogSuccess"),
+                          onClose: function (oAction) {
+                            return;
+                          }
+                        }); 
+                        break;
+                    };
+                  }
+                
+                });              
+              }
+              else{
+                // dovrebbe essere andato tutto ok
+                self.getView().setBusy(false);
+                console.log(callback.message);//TODO:da canc
+                switch(callback.severity){
+                  case 'Error':
+                    sap.m.MessageBox.error(callback.message, {
+                      title: oBundle.getText("titleDialogError"),
+                      onClose: function (oAction) {
+                        return;
+                      }
+                    });  
+                    break;
+                  case 'Warning':
+                    sap.m.MessageBox.warning(callback.message, {
+                      title: oBundle.getText("titleDialogWarning"),
+                      onClose: function (oAction) {
+                        return;
+                      }
+                    }); 
+                    break;
+                  case 'Success':
+                    sap.m.MessageBox.success(callback.message, {
+                      title: oBundle.getText("titleDialogSuccess"),
+                      onClose: function (oAction) {
+                        return;
+                      }
+                    }); 
+                    break;
+                };
+              }
+            } 
+           
+          });        
+        },
+
+        _callSaveOnAnagraficaBeneficiario:function(entityRequest,callback){
+          var self =this,
+              oDataModel =self.getModel();
+
+            oDataModel.create("/AnagraficaBeneficiarioSet", entityRequest, {
+              success: function (data, oResponse) {
+                var sapMessage = JSON.parse(oResponse.headers["sap-message"]);
+                if(sapMessage.severity.toUpperCase() === "WARNING")
+                  callback({success:true, SifeKO:true, message:sapMessage.message});
+                else if(sapMessage.severity.toUpperCase() === "ERROR")  
+                  callback({success:false, message:sapMessage.message});
+                else{
+                  if(data.Beneficiario !== ""){
+                    self.getView().getModel(DataSON_MODEL).setProperty("/NewABLifnr",data.beneficiario);
+                    var mex = "Benificiario " + data.Beneficiario.ToString() + " creato correttamente!";
+                    var entityModalitaPagamento = self.getEntityModalitaPagamento(entity, data.Beneficiario);
+                    oDataModel.create("/ModalitaPagamentoSet", entityModalitaPagamento, {
+                      success: function (data, oResponse) {
+                        var message = JSON.parse(oResponse.headers["sap-message"]);
+                        if(message.severity === "error"){
+                          mex = mex + "\nCreazione modalità di pagamento non riuscita!";
+                          callback({success:true, message:mex, severity:"Warning"});
+                        }
+                        else{
+                          mex = mex + "\nModalità di pagamento creata correttamente";
+                          callback({success:true, message:mex, severity:"Success"});
+                        }
+                      },
+                      error: function (err) {
+                        console.log(err)//TODO:da canc
+                        mex = mex + "\nErrore nella modalità di pagamento!";
+                        callback({success:true, message:mex, severity:"Error"});
+                      },
+                      async: true
+                    });
+                  }
+                }
+              },
+              error: function (err) {
+                console.log(err);
+                // self.getView().setBusy(false);
+              },
+              async: true
+            });
+        },
+
+        getEntityModalitaPagamento(entity, lifnr){
+          var self=this;
+          return {
+            Beneficiario: lifnr,
+            ModPagamento:entity.PayMode,
+            TipoBeneficiario:entity.PayModeType, 
+            DatiPagamento:{
+              Iban: entity.Iban ? entity.Iban : null, 
+              PaeseResidenza: entity.PaeseResidenza ? entity.PaeseResidenza : null,
+              TipoFirma: entity.TipoFirma ? entity.TipoFirma : null,
+              Bic: entity.Bic ? entity.Bic : null,
+              CoordinateEstere: entity.CoordinateEstere ? entity.CoordinateEstere : null,
+              InizioValidita: entity.InizioValidita ? self.formatter.formateDateForDeep(entity.InizioValidita): null,
+              FineValidita: entity.FineValidita ? self.formatter.formateDateForDeep(entity.FineValidita): null,
+              Esercizio: entity.Esercizio ? entity.Esercizio : null,
+              Capo: entity.Capo ? entity.Capo : null,
+              Capitolo: entity.Capitolo ? entity.Capitolo : null,
+              Articolo: entity.Articolo ? entity.Articolo : null,
+            },
+            Quietanzante:{
+              Nome: entity.QNome ? entity.QNome : null,
+              Cognome: entity.QCognome ? entity.QCognome : null,
+              Qualifica: entity.QQualifica ? entity.QQualifica : null,
+              CodiceFiscale: entity.QCodiceFiscale ? entity.QCodiceFiscale : null,
+              DataNascita: entity.QDataNascita ? self.formatter.formateDateForDeep(entity.QDataNascita): null,
+              LuogoNascita: entity.QLuogoNascita ? entity.QLuogoNascita : null,
+              ProvinciaNascita: entity.QProvinciaNascita ? entity.QProvinciaNascita : null,
+              Indirizzo: entity.QIndirizzo ? entity.QIndirizzo : null,
+              Citta: entity.QCitta ? entity.QCitta : null,
+              Cap: entity.QCap ? entity.QCap : null,
+              ProvinciaResidenza: entity.QProvinciaResidenza ? entity.QProvinciaResidenza : null,
+              Telefono: entity.QTelefono ? entity.QTelefono : null
+            },
+            DestinatarioVaglia:{
+              Nome: entity.VNome ? entity.VNome : null,
+              Cognome: entity.VCognome ? entity.VCognome : null,
+              Qualifica: entity.VQualifica ? entity.VQualifica : null,
+              CodiceFiscale: entity.VCodiceFiscale ? entity.VCodiceFiscale : null,
+              DataNascita: entity.VDataNascita ? self.formatter.formateDateForDeep(entity.VDataNascita): null,
+              LuogoNascita: entity.VLuogoNascita ? entity.VLuogoNascita : null,
+              ProvinciaNascita: entity.VProvinciaNascita ? entity.VProvinciaNascita : null,
+              Indirizzo: entity.VIndirizzo ? entity.QIndirizzo : null,
+              Citta: entity.VCitta ? entity.VCitta : null,
+              Cap: entity.VCap ? entity.VCap : null,
+              ProvinciaResidenza: entity.VProvinciaResidenza ? entity.VProvinciaResidenza : null,
+              Telefono: entity.VTelefono ? entity.VTelefono : null
+            }
+          }
+        }
+
+        /* ANAGRAFICA BENEFICIARIO - END */
 
 
       }

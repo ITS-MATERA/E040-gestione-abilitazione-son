@@ -1,0 +1,140 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+    xmlns:l="sap.ui.layout"
+    xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+
+
+    <Panel backgroundDesign="Transparent" headerText="{i18n>labelAbDatiPagamentoBeneficiario}" visible="{DataModel>/NewPayModeButton/MainMaskVisible}">
+      <l:Grid defaultSpan="XL12 L12 M12 S12" vSpacing="0.5">
+        <Label text="{i18n>labelModalitaPagamento}" class="sapUiTinyMarginTop sapUiLargeMarginEnd" required="true" wrapping="true">  
+          <layoutData><l:GridData  span="XL2 L2 M6 S12" linebreak="true"/></layoutData>
+        </Label>
+        <ComboBox
+          width="100%" 
+          change="onNewModalitaPagamentoChange"
+          items="{path: 'DataModel>/NewPayMode'}"
+          app:payMode="{DataModel>/NewModalitaPagamentoEntity/PayMode}"
+        >
+          <c:Item key="{DataModel>Zwels}" text="{DataModel>ZdescWels}" app:payModeType="{DataModel>Type}" /> 
+          <layoutData><l:GridData  span="XL2 L2 M6 S12" /></layoutData>
+        </ComboBox>
+
+        <Text text="{i18n>inputIban}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+          <layoutData><l:GridData  span="XL2 L2 M6 S12" linebreak="true"/></layoutData>
+        </Text>
+        <Input enabled="{DataModel>/NewPayModeButton/IbanEnabled}" value="{DataModel>/NewModalitaPagamentoEntity/Iban}">
+          <layoutData><l:GridData  span="XL2 L2 M6 S12" /></layoutData>
+        </Input>
+        <Text text="{i18n>inputPaeseResidenza}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+          <layoutData><l:GridData  span="XL2 L2 M6 S12" /></layoutData>
+        </Text>
+        <Input enabled="{DataModel>/NewPayModeButton/PaeseResidenzaEnabled}" value="{DataModel>/NewModalitaPagamentoEntity/PaeseResidenza}">
+          <layoutData><l:GridData  span="XL1 L2 M6 S12" /></layoutData>
+        </Input>
+        <Text text="{i18n>inputTipoFirma}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+          <layoutData><l:GridData  span="XL2 L2 M6 S12" /></layoutData>
+        </Text>
+        <ComboBox
+          id="PagamentoTipoFirma"
+          width="100%" 
+          enabled="{DataModel>/NewPayModeButton/TipoFirmaEnabled}"
+          change="onNewTipoFirmaChange"
+          items="{path: 'DataModel>/NewPayModeTipoFirma'}">
+          <c:Item key="{DataModel>Value}" text="{DataModel>Description}" /> 
+          <layoutData><l:GridData  span="XL2 L2 M6 S12" /></layoutData>
+        </ComboBox>
+        
+        <Text text="{i18n>inputBic}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+          <layoutData><l:GridData  span="XL2 L2 M6 S12" linebreak="true"/></layoutData>
+        </Text>
+        <Input enabled="{DataModel>/NewPayModeButton/BicEnabled}" value="{DataModel>/NewModalitaPagamentoEntity/Bic}">
+          <layoutData><l:GridData  span="XL1 L2 M6 S12" /></layoutData>
+        </Input>
+        <Text text="{i18n>inputCoordinateEstere}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+          <layoutData><l:GridData  span="XL2 L2 M6 S12" indent="XL1"/></layoutData>
+        </Text>
+        <Input enabled="{DataModel>/NewPayModeButton/CoordinateEstereEnabled}" value="{DataModel>/NewModalitaPagamentoEntity/CoordinateEstere}">
+          <layoutData><l:GridData  span="XL1 L2 M6 S12" /></layoutData>
+        </Input>
+
+        <Text text="{i18n>inputInizioValidita}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+          <layoutData><l:GridData  span="XL2 L2 M6 S12" linebreak="true"/></layoutData>
+        </Text>
+        <!-- change="onChangeUpdateDate" -->
+        <DatePicker							     
+            class="sapUiTinyMarginBottom"	
+            valueFormat="dd.MM.yyyy"
+            displayFormat="dd.MM.yyyy"
+            value="{
+                    path: 'DataModel>/NewModalitaPagamentoEntity/InizioValidita',
+                    type: 'sap.ui.model.type.Date',
+                    formatOptions: {
+                        pattern: 'dd.MM.yyyy'
+                        }
+                    }"
+            >	         
+            <layoutData><l:GridData span="XL1 L2 M6 S12"/></layoutData>                
+        </DatePicker>
+        <Text text="{i18n>inputFineValidita}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+          <layoutData><l:GridData  span="XL2 L2 M6 S12" indent="XL1"/></layoutData>
+        </Text>
+        <DatePicker							     
+            class="sapUiTinyMarginBottom"	
+            valueFormat="dd.MM.yyyy"
+            displayFormat="dd.MM.yyyy"
+            value="{
+                    path: 'DataModel>/NewModalitaPagamentoEntity/FineValidita',
+                    type: 'sap.ui.model.type.Date',
+                    formatOptions: {
+                        pattern: 'dd.MM.yyyy'
+                        }
+                    }"
+            >	          
+            <layoutData><l:GridData span="XL1 L2 M6 S12"/></layoutData>                
+        </DatePicker>        
+        <Text text="{i18n>inputEsercizio}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+          <layoutData><l:GridData  span="XL2 L2 M6 S12" linebreak="true"/></layoutData>
+        </Text>
+        <Input enabled="{DataModel>/NewPayModeButton/EsercizioEnabled}" value="{DataModel>/NewModalitaPagamentoEntity/Esercizio}">
+          <layoutData><l:GridData  span="XL1 L2 M6 S12" /></layoutData>
+        </Input>
+        <Text text="{i18n>inputCapo}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+          <layoutData><l:GridData  span="XL2 L2 M6 S12" indent="XL1"/></layoutData>
+        </Text>
+        <Input enabled="{DataModel>/NewPayModeButton/CapoEnabled}" value="{DataModel>/NewModalitaPagamentoEntity/Capo}">
+          <layoutData><l:GridData  span="XL1 L2 M6 S12" /></layoutData>
+        </Input>
+        <Text text="{i18n>inputCapitolo}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+          <layoutData><l:GridData  span="XL2 L2 M6 S12" /></layoutData>
+        </Text>
+        <Input enabled="{DataModel>/NewPayModeButton/CapitoloEnabled}" value="{DataModel>/NewModalitaPagamentoEntity/Capitolo}">
+          <layoutData><l:GridData  span="XL1 L2 M6 S12" /></layoutData>
+        </Input>
+        <Text text="{i18n>inputArticolo}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+          <layoutData><l:GridData  span="XL1 L2 M6 S12" /></layoutData>
+        </Text>
+        <Input enabled="{DataModel>/NewPayModeButton/ArticoloEnabled}" value="{DataModel>/NewModalitaPagamentoEntity/Articolo}">
+          <layoutData><l:GridData  span="XL1 L2 M6 S12" /></layoutData>
+        </Input>
+
+        <Text text="{i18n>inputContoTesoreria}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+          <layoutData><l:GridData  span="XL2 L2 M6 S12" linebreak="true"/></layoutData>
+        </Text>
+        <Input enabled="{DataModel>/NewPayModeButton/ContoTesoreriaEnabled}" value="{DataModel>/NewModalitaPagamentoEntity/ContoTesoreria}">
+          <layoutData><l:GridData  span="XL1 L2 M6 S12" /></layoutData>
+        </Input>
+        <Text text="{i18n>inputDescrizione}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+          <layoutData><l:GridData  span="XL2 L2 M6 S12" indent="XL1"/></layoutData>
+        </Text>
+        <Input  enabled="false" value="{DataModel>/NewModalitaPagamentoEntity/ContoTesoreriaDescrizione}">
+          <layoutData><l:GridData  span="XL1 L2 M6 S12" /></layoutData>
+        </Input>
+      
+      
+      
+      </l:Grid>
+    </Panel>  
+
+
+</c:FragmentDefinition>

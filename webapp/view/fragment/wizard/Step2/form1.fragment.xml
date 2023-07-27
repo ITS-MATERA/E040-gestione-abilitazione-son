@@ -12,7 +12,7 @@
 				<Title text="{i18n>wizardStep2SubTitle1}" />
 				<ToolbarSpacer />
 				<Button   enabled="{wizardModel>/isInChange}"  text="{i18n>btnInsertPayMethod}" type="Emphasized" press="newModalitaPagamentoDialogPress"></Button>
-				<Button enabled="{wizardModel>/isInChange}"  text="{i18n>btnCreateDataBeneficary}" type="Emphasized"></Button>
+				<Button enabled="{wizardModel>/isInChange}"  text="{i18n>btnCreateDataBeneficary}" type="Emphasized" press="newAnagraficaBeneficiarioPress"></Button>
 			</OverflowToolbar>
 		</headerToolbar>
 		<content>

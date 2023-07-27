@@ -54,6 +54,7 @@
           <layoutData><l:GridData  span="XL2 L2 M6 S12" /></layoutData>
         </Text>
         <ComboBox
+          id="PagamentoTipoFirma"
           width="100%" 
           enabled="{DataModel>/NewPayModeButton/TipoFirmaEnabled}"
           change="onNewTipoFirmaChange"
@@ -93,9 +94,6 @@
             >	         
             <layoutData><l:GridData span="XL1 L2 M6 S12"/></layoutData>                
         </DatePicker>
-        <!-- <Input>
-          <layoutData><l:GridData  span="XL1 L2 M6 S12" /></layoutData>
-        </Input> -->
         <Text text="{i18n>inputFineValidita}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
           <layoutData><l:GridData  span="XL2 L2 M6 S12" indent="XL1"/></layoutData>
         </Text>
@@ -113,10 +111,6 @@
             >	          
             <layoutData><l:GridData span="XL1 L2 M6 S12"/></layoutData>                
         </DatePicker>
-        <!-- <Input>
-          <layoutData><l:GridData  span="XL1 L2 M6 S12" /></layoutData>
-        </Input> -->
-        
         <Text text="{i18n>inputEsercizio}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
           <layoutData><l:GridData  span="XL2 L2 M6 S12" linebreak="true"/></layoutData>
         </Text>
@@ -157,7 +151,10 @@
       </l:Grid>
     </Panel>	
 
-    <Panel backgroundDesign="Transparent" visible="{DataModel>/NewPayModeButton/VagliaMaskVisible}" headerText="Inserisci Destinatario Vaglia">
+    <c:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.modalitaPagamento.NewModalitaVaglia" type="XML"/>
+    <c:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.modalitaPagamento.NewModalitaQuietanzante" type="XML"/>  
+
+    <!-- <Panel backgroundDesign="Transparent" visible="{DataModel>/NewPayModeButton/VagliaMaskVisible}" headerText="Inserisci Destinatario Vaglia">
       <l:Grid defaultSpan="XL12 L12 M12 S12" vSpacing="0.5">
         <Label text="{i18n>labelCognome}" class="sapUiTinyMarginTop sapUiLargeMarginEnd" required="true" wrapping="true">  
           <layoutData><l:GridData  span="XL1 L2 M6 S12" /></layoutData>
@@ -244,9 +241,9 @@
           <layoutData><l:GridData  span="XL2 L2 M6 S12" /></layoutData>
         </Input>
       </l:Grid>
-    </Panel>  
+    </Panel>   -->
 
-    <Panel backgroundDesign="Transparent" visible="{DataModel>/NewPayModeButton/QuietanzanteMaskVisible}" headerText="Inserisci quietanzante" >
+    <!-- <Panel backgroundDesign="Transparent" visible="{DataModel>/NewPayModeButton/QuietanzanteMaskVisible}" headerText="Inserisci quietanzante" >
       <l:Grid defaultSpan="XL12 L12 M12 S12" vSpacing="0.5">
         <Label text="{i18n>labelCognome}" class="sapUiTinyMarginTop sapUiLargeMarginEnd" required="true" wrapping="true">  
           <layoutData><l:GridData  span="XL1 L2 M6 S12" /></layoutData>
@@ -332,10 +329,8 @@
         <Input value="{DataModel>/NewModalitaPagamentoEntity/QProvinciaResidenza}">
           <layoutData><l:GridData  span="XL2 L2 M6 S12" /></layoutData>
         </Input>
-
-
       </l:Grid>
-    </Panel>  
+    </Panel>   -->
 
 
 

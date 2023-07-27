@@ -1,0 +1,151 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+  xmlns:l="sap.ui.layout"
+  xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+    <Dialog 
+    id="dlgNewAnagraficaBeneficiario"
+    title="{i18n>titleNewAnagraficaBeneficiario}"
+    contentWidth="100%">
+    <content>
+        <Panel backgroundDesign="Transparent" >
+            <l:Grid defaultSpan="XL12 L12 M12 S12" vSpacing="0.5">
+            
+                <Panel backgroundDesign="Transparent"  headerText="{i18n>labelAbDatiAnagraficaBeneficiario}" visible="{DataModel>/NewPayModeButton/MainMaskVisible}">
+                    <l:Grid defaultSpan="XL12 L12 M12 S12" vSpacing="0.5">
+                        <Label text="{i18n>labelPaese}" class="sapUiTinyMarginTop sapUiLargeMarginEnd" required="true" wrapping="true">  
+                            <layoutData><l:GridData  span="XL2 L2 M6 S12" linebreak="true"/></layoutData>
+                        </Label>
+                        <ComboBox
+                            width="100%" 
+                            showSecondaryValues= "true"
+                            change="onNewABPaeseChange"
+                            items="{    path: 'DataModel>/NewAB/countries',
+                                    sorter: {
+                                        path: 'Descrizione'
+                                    }
+                            }">
+                            <c:ListItem key="{DataModel>SCountry}" text="{DataModel>Descrizione}" additionalText = "{DataModel>SCountry}" app:key="{DataModel>SCountry}" /> 
+                            <layoutData><l:GridData  span="XL2 L2 M6 S12" /></layoutData>
+                        </ComboBox>
+                        <Input value="{DataModel>/NewAB/Form/PaeseDesc}" enabled="false">
+                            <layoutData><l:GridData  span="XL2 L2 M6 S12" /></layoutData>
+                        </Input>
+                        <Label text="{i18n>labelCategoriaBeneficiario}" class="sapUiTinyMarginTop sapUiLargeMarginEnd" required="true" wrapping="true">  
+                            <layoutData><l:GridData  span="XL2 L2 M6 S12" linebreak="true"/></layoutData>
+                        </Label>
+                        <ComboBox
+                            width="100%" 
+                            change="onNewABCategoriaBeneficiarioChange"
+                            items="{    path: 'DataModel>/NewAB/catsBen'}">
+                            <c:Item key="{DataModel>SType}" text="{DataModel>Descrizione}" app:payModeType="{DataModel>SType}" /> 
+                            <layoutData><l:GridData  span="XL4 L4 M6 S12" /></layoutData>
+                        </ComboBox>
+                        <Label text="{i18n>labelRagioneSociale}" class="sapUiTinyMarginTop sapUiLargeMarginEnd"  wrapping="true">  
+                            <layoutData><l:GridData  span="XL2 L2 M6 S12" linebreak="true"/></layoutData>
+                        </Label>
+                        <Input value="{DataModel>/NewAB/Form/RagioneSociale}" enabled="{= ${DataModel>/NewAB/Form/CategoriaBeneficiario} === '2' ? true : false }">
+                            <layoutData><l:GridData  span="XL4 L4 M6 S12" /></layoutData>
+                        </Input>
+                        <Label text="{i18n>labelNome}" class="sapUiTinyMarginTop sapUiLargeMarginEnd" wrapping="true">  
+                            <layoutData><l:GridData  span="XL2 L2 M6 S12" linebreak="true"/></layoutData>
+                        </Label>
+                        <Input value="{DataModel>/NewAB/Form/Nome}" enabled="{= ${DataModel>/NewAB/Form/CategoriaBeneficiario} === '1' ? true : false }">
+                            <layoutData><l:GridData  span="XL4 L4 M6 S12" /></layoutData>
+                        </Input>
+                        <Label text="{i18n>labelCognome}" class="sapUiTinyMarginTop sapUiLargeMarginEnd"  wrapping="true">  
+                            <layoutData><l:GridData  span="XL2 L2 M6 S12" linebreak="true"/></layoutData>
+                        </Label>
+                        <Input value="{DataModel>/NewAB/Form/Cognome}" enabled="{= ${DataModel>/NewAB/Form/CategoriaBeneficiario} === '1' ? true : false }">
+                            <layoutData><l:GridData  span="XL4 L4 M6 S12" /></layoutData>
+                        </Input>
+
+                        <Label text="{i18n>labelVia}" class="sapUiTinyMarginTop sapUiLargeMarginEnd" required="true" wrapping="true">  
+                            <layoutData><l:GridData  span="XL2 L2 M6 S12" linebreak="true"/></layoutData>
+                        </Label>
+                        <Input value="{DataModel>/NewAB/Form/Via}" >
+                            <layoutData><l:GridData  span="XL4 L4 M6 S12" /></layoutData>
+                        </Input>
+                        <Label text="{i18n>labelNumeroCivico}" class="sapUiTinyMarginTop sapUiLargeMarginEnd"  wrapping="true">  
+                            <layoutData><l:GridData  span="XL2 L2 M6 S12" /></layoutData>
+                        </Label>
+                        <Input value="{DataModel>/NewAB/Form/Civico}" >
+                            <layoutData><l:GridData  span="XL4 L4 M6 S12" /></layoutData>
+                        </Input>
+
+                        <Label text="{i18n>labelLocalita}" class="sapUiTinyMarginTop sapUiLargeMarginEnd" required="true" wrapping="true">  
+                            <layoutData><l:GridData  span="XL2 L2 M6 S12" linebreak="true"/></layoutData>
+                        </Label>
+                        <Input value="{DataModel>/NewAB/Form/Localita}" >
+                            <layoutData><l:GridData  span="XL4 L4 M6 S12" /></layoutData>
+                        </Input>
+                        <Label text="{i18n>labelABProvincia}" class="sapUiTinyMarginTop sapUiLargeMarginEnd" required="true" wrapping="true">  
+                            <layoutData><l:GridData  span="XL2 L2 M6 S12" /></layoutData>
+                        </Label>
+                        <ComboBox
+                            width="100%" 
+                            showSecondaryValues= "true"
+                            change="onNewABProvinciaChange"
+                            items="{ path: 'DataModel>/NewAB/provinces' }">
+                            <c:ListItem key="{DataModel>SRegion}" text="{DataModel>Descrizione}" additionalText = "{DataModel>SRegion}" app:key="{DataModel>SRegion}" /> 
+                            <layoutData><l:GridData  span="XL2 L2 M6 S12" /></layoutData>
+                        </ComboBox>
+                        <Input value="{DataModel>/NewAB/Form/ProvinciaDesc}" enabled="false">
+                            <layoutData><l:GridData  span="XL2 L2 M6 S12" /></layoutData>
+                        </Input>
+
+                        <Label text="{i18n>labelCAP}" class="sapUiTinyMarginTop sapUiLargeMarginEnd" required="true" wrapping="true">  
+                            <layoutData><l:GridData  span="XL2 L2 M6 S12" /></layoutData>
+                        </Label>
+                        <Input value="{DataModel>/NewAB/Form/Cap}" >
+                            <layoutData><l:GridData  span="XL4 L4 M6 S12" /></layoutData>
+                        </Input>
+                        <CheckBox text="{i18n>labelSedeLegale}" selected="{DataModel>/NewAB/Form/SedeLegale}" >
+                            <layoutData><l:GridData  span="XL2 L2 M6 S12" /></layoutData>
+                        </CheckBox>
+                    </l:Grid>
+                </Panel>                    
+   
+                <Panel backgroundDesign="Transparent"  headerText="{i18n>labelAbDatiFiscaliBeneficiario}" visible="{DataModel>/NewPayModeButton/MainMaskVisible}">
+                    <l:Grid defaultSpan="XL12 L12 M12 S12" vSpacing="0.5">
+                        <Label text="{i18n>labelCodiceFiscale}" class="sapUiTinyMarginTop sapUiLargeMarginEnd"  wrapping="true">  
+                            <layoutData><l:GridData  span="XL2 L2 M6 S12" linebreak="true" /></layoutData>
+                        </Label>
+                        <Input value="{DataModel>/NewAB/Form/CodiceFiscale}" textFormatter="ktm">
+                            <layoutData><l:GridData  span="XL4 L4 M6 S12" /></layoutData>
+                        </Input>
+
+                        <Label text="{i18n>labelPartitaIVA}" class="sapUiTinyMarginTop sapUiLargeMarginEnd"  wrapping="true">  
+                            <layoutData><l:GridData  span="XL2 L2 M6 S12" linebreak="true" /></layoutData>
+                        </Label>
+                        <Input value="{DataModel>/NewAB/Form/PartitaIva}" >
+                            <layoutData><l:GridData  span="XL4 L4 M6 S12" /></layoutData>
+                        </Input>
+
+                        <Label text="{i18n>labelIdentificativoFiscEstero}" class="sapUiTinyMarginTop sapUiLargeMarginEnd"  wrapping="true">  
+                            <layoutData><l:GridData  span="XL2 L2 M6 S12" linebreak="true" /></layoutData>
+                        </Label>
+                        <Input value="{DataModel>/NewAB/Form/IdentificativoFiscaleEstero}" >
+                            <layoutData><l:GridData  span="XL4 L4 M6 S12" /></layoutData>
+                        </Input>
+                    </l:Grid>
+                </Panel>
+
+                <!-- <Title level="H3" text="{i18n>labelAbDatiPagamentoBeneficiario}" /> -->
+                <c:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.anagraficaBeneficiario.NewABModalitaPagamento" type="XML"/>
+                <c:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.anagraficaBeneficiario.NewABModalitaVaglia" type="XML"/>
+                <c:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.anagraficaBeneficiario.NewABModalitaQuietanzante" type="XML"/>
+
+            </l:Grid>
+        </Panel>
+    </content>
+    <buttons>
+        <Button text="{i18n>btnBack}" press="onCloseNewAnagraficaBeneficiario" type="Emphasized"/>
+        <Button text="{i18n>btnNewDestinatario}" press="onNewVaglia" enabled="{DataModel>/NewPayModeButton/btnVagliaEnabled}" visible="{DataModel>/NewPayModeButton/btnVagliaVisible}" type="Emphasized"/>
+        <Button text="{i18n>btnNewQuietanzante}" press="onNewQuietanzante" enabled="{DataModel>/NewPayModeButton/btnQuietanzanteEnabled}" 
+            visible="{DataModel>/NewPayModeButton/btnQuietanzanteVisible}" type="Emphasized"/>
+        <Button text="{i18n>btnSalvaModalitaPagamento}" press="onNewAnagraficaBeneficiarioSave" type="Emphasized" visible="{DataModel>/NewPayModeButton/MainMaskVisible}"/>
+    </buttons>
+    </Dialog>
+</c:FragmentDefinition>
