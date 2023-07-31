@@ -31,7 +31,8 @@
 					singleContainerFullSize="false">
 					<f:content>
 						<Label design="Bold" text="{i18n>wizardFieldLinfnr}" class="sapUiSmallMarginBottom"/>
-						<Input  editable="{wizardModel>/isInChange}" id="idWizardLifnr"  app:property="Lifnr" value="{wizardModel>/Lifnr}"  submit="onSubmitLifnr" liveChange="onLiveChange">
+						<Input  editable="{wizardModel>/isInChange}" id="idWizardLifnr"  app:property="Lifnr" value="{wizardModel>/Lifnr}"  
+							submit="onSubmitLifnr" liveChange="onLiveChange">
 							<layoutData>
 								<l:GridData span="XL4 L5 M6 S12"  />
 							</layoutData>

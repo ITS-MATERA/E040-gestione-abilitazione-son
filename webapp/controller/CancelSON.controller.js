@@ -150,6 +150,8 @@ function (BaseController, JSONModel, formatter, MessageBox, History,library,
                 Iban: null,
                 Zcoordest: null,
                 isZcoordestEditable: false,
+                isIbanEditable:false,
+                isBicEditable:false,
                 Swift: null,
                 PayMode: null,
                 ZZcausaleval: null,
@@ -550,6 +552,8 @@ function (BaseController, JSONModel, formatter, MessageBox, History,library,
                 Iban: data.Iban,
                 Zcoordest: data.Zcoordest,
                 isZcoordestEditable: false,
+                isIbanEditable:false,
+                isBicEditable:false,
                 Swift: data.Swift,
                 PayMode: data.Zwels,
                 ZZcausaleval: data.ZCausaleval,
@@ -710,6 +714,9 @@ function (BaseController, JSONModel, formatter, MessageBox, History,library,
             self.getView().getModel(WIZARD_MODEL).setProperty("/Iban", null);
             self.getView().getModel(WIZARD_MODEL).setProperty("/Zcoordest", null);
             self.getView().getModel(WIZARD_MODEL).setProperty("/isZcoordestEditable", false);
+            self.getView().getModel(WIZARD_MODEL).setProperty("/isZZcausalevalEditable", false); 
+            self.getView().getModel(WIZARD_MODEL).setProperty("/isIbanEditable", false);
+            self.getView().getModel(WIZARD_MODEL).setProperty("/isBicEditable", false);
             self.getView().getModel(WIZARD_MODEL).setProperty("/Swift", null);
             self.getView().getModel(WIZARD_MODEL).setProperty("/PayMode", null);
             self.getView().getModel(WIZARD_MODEL).setProperty("/ZZcausaleval", null);

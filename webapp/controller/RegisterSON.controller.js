@@ -132,6 +132,8 @@ sap.ui.define(
             Zcoordest: null,
             isZcoordestEditable: false,
             isZZcausalevalEditable:false,
+            isIbanEditable:false,
+            isBicEditable:false,
             Swift: null,
             PayMode: null,
             ZZcausaleval: null,
@@ -217,6 +219,7 @@ sap.ui.define(
                   self.getUfficioAction(); 
                   self.getFistl();          
 
+
                   setTimeout(() => {                
                     oView.setBusy(false);
                   },2000);
@@ -226,14 +229,6 @@ sap.ui.define(
                 }
               });
             }
-
-          // self.getAmministrazione();
-          // self.getUfficioAction(); 
-          // self.getFistl();          
-
-          // setTimeout(() => {                
-          //   oView.setBusy(false);
-          // },2000);
         },
 
         getAmministrazione:function(){
@@ -271,7 +266,7 @@ sap.ui.define(
                     success: function (data, oResponse) {                      
                         self.getView().getModel(WIZARD_MODEL).setProperty("/ZufficioCont",data.ZufficioCont);
                         self.getView().getModel(WIZARD_MODEL).setProperty("/ZvimDescrufficio",data.ZvimDescrufficio);
-                        self.getView().getModel(DataSON_MODEL).setProperty("/ZufficioCont",data.ZufficioCont);
+                        // self.getView().getModel(DataSON_MODEL).setProperty("/ZufficioCont",data.ZufficioCont); //TODO:da canc
                     },
                     error: function (error) {
                         console.log(error);
@@ -282,7 +277,7 @@ sap.ui.define(
 
         getFistl:function(){
           var self= this,
-                oDataModel = self.getModel();
+              oDataModel = self.getModel();
 
             var path = self.getModel().createKey(FistlMc_SET, {
                 Name: "COSPR3FIORIE040_FISTL",
@@ -292,7 +287,7 @@ sap.ui.define(
                 oDataModel.read("/" + path, {
                     success: function (data, oResponse) {                      
                         self.getView().getModel(WIZARD_MODEL).setProperty("/Fistl",data.Value);
-                        self.getView().getModel(DataSON_MODEL).setProperty("/Fistl",data.Value);
+                        // self.getView().getModel(DataSON_MODEL).setProperty("/Fistl",data.Value);//TODO:da canc
                     },
                     error: function (error) {
                         console.log(error);
@@ -478,7 +473,8 @@ sap.ui.define(
           console.log("Validazione 4");
           var self = this;
 
-          self.goToFinish(oEvent, function(callback){
+          // self.goToFinish(oEvent, function(callback){
+            self.goToFinish("CreateProductWizard", function(callback){
             switch(callback){
               case 'ValidationError':
                   return false;
@@ -526,6 +522,16 @@ sap.ui.define(
           });
 
           oDialog.open();
+        },
+
+        onWizardFinishButton:function(oEvent){
+          var self =this,
+              wizardType = oEvent.getSource().data("dataWizardType");
+
+          if(wizardType === "Fine")
+            return false;
+          
+          self.onSaveAll();
         },
 
         saveWizard: function () {
@@ -848,9 +854,12 @@ sap.ui.define(
             self
             .getView()
             .getModel(WIZARD_MODEL)
-            .setProperty("/isZZcausalevalEditable", false);            
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Swift", null);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/PayMode", null);
+            .setProperty("/isZZcausalevalEditable", false);    
+            
+          self.getView().getModel(WIZARD_MODEL).setProperty("/isIbanEditable", false);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/isBicEditable", false);  
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Swift", false);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/PayMode", false);
           self
             .getView()
             .getModel(WIZARD_MODEL)

@@ -18,13 +18,7 @@
                                         <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
                                             <Label  design="Bold" width="100%" text="{i18n>wizardStep2SubTitle2}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData><l:GridData span="XL5 L5 M4 S12" /></layoutData>
-                                            </Label>
-
-                                            <!-- <Input  editable="{wizardModel>/isInChange}" id="idWizardPayMode"  app:property="PayMode" value="{wizardModel>/PayMode}" submit="onSubmitPayMode" liveChange="onLiveChangePayMode">
-                                                <layoutData>
-                                                    <l:GridData span="XL5 L5 M6 S12"  />
-                                                </layoutData>
-                                            </Input> -->
+                                            </Label>                                            
                                             <ComboBox
                                                 id="idWizardPayMode"
                                                 width="100%"             
@@ -35,7 +29,6 @@
                                                         }"
                                                 selectedKey="{wizardModel>/PayMode}"
                                                 >
-                                                <!--TODO: forse ci vuole l'additional text -->
                                                 <core:Item  key="{DataModel>Zwels}" text="{DataModel>ZdescWels}" />
                                                 <layoutData>
                                                     <l:GridData span="XL5 L5 M6 S12"  />
@@ -94,7 +87,8 @@
                                             <Label  design="Bold" width="100%" text="{i18n>wizardFieldIban}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData><l:GridData span="XL5 L5 M4 S12" /></layoutData>
                                             </Label>
-                                          <Input  editable="{wizardModel>/isInChange}" id="idWizardIban"  app:property="Iban" value="{wizardModel>/Iban}" liveChange="onLiveChange" submit="onSubmitIban" >
+                                          <Input  editable="{wizardModel>/isInChange}" id="idWizardIban" enabled="{wizardModel>/isIbanEditable}"
+                                            app:property="Iban" value="{wizardModel>/Iban}" liveChange="onLiveChange" submit="onSubmitIban" >
                                             <layoutData>
                                                 <l:GridData span="XL7 L7 M6 S12"  />
                                             </layoutData>
@@ -113,7 +107,7 @@
                                             <Label  design="Bold" width="100%" text="{i18n>wizardFieldSwift}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData><l:GridData span="XL6 L6 M4 S12" /></layoutData>
                                             </Label>
-                                           <Input  value="{wizardModel>/Swift}"  editable="false">
+                                           <Input  value="{wizardModel>/Swift}"   enabled="{wizardModel>/isBicEditable}">
                                                 <layoutData>
                                                     <l:GridData span="XL5 L5 M6 S12"  />
                                                 </layoutData>
