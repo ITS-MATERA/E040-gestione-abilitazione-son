@@ -304,7 +304,6 @@ sap.ui.define(
 
           self.resetEntityModel(SON_MODEL_EXPORT);
           self.resetEntityModel(SON_SET);
-          // oView.setBusy(true);
 
           self._getEntity(false, true);
         },
@@ -406,6 +405,15 @@ sap.ui.define(
                       }
                     }
                   }
+
+                  if(data.results.length === 0){
+                    MessageBox.warning("Nessun dato soddisfa i criteri di ricerca",{
+                        title: oBundle.getText("titleDialogWarning"),
+                        onClose: function (oAction) {
+                          return false;
+                        }
+                      });
+                  }
                 },
                 error: function (error) {
                   oView.setBusy(false);
@@ -456,6 +464,18 @@ sap.ui.define(
           oTable.setVisible(true);
 
           this.getView().setBusy(false);
+          // if(!parseInt(iTotalItems) === true || iTotalItems===null || iTotalItems === "" || parseInt(iTotalItems) === 0){
+          //   //giannilecci
+          //   var oBundle= this.getResourceBundle();
+          //   MessageBox.warning("Nessun dato soddisfa i criteri di ricerca",
+          //     {
+          //       title: oBundle.getText("titleDialogWarning"),
+          //       onClose: function (oAction) {
+          //         return false;
+          //       }
+          //     }
+          //   );
+          // }
         },
         // ----------------------------- END INITIALIZATION -----------------------------  //
 

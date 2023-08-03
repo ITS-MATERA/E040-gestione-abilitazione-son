@@ -45,8 +45,9 @@
 							editable="{wizardModel>/isInChange}"
 							change="onLiveChangeZtipodisp3List"
 							items="{wizardModel>/Ztipodisp3List}"
-							selectedKey="{defaultModel>/Ztipodisp3}"
+							selectedKey="{wizardModel>/Ztipodisp3}"
 							>
+							<!-- selectedKey="{defaultModel>/Ztipodisp3}" -->
 							<core:Item  key="{wizardModel>Ztipodisp3}" text="{wizardModel>Zdesctipodisp3}" />
 							<layoutData>
 								<l:GridData span="XL8 L8 M6 S12"  />

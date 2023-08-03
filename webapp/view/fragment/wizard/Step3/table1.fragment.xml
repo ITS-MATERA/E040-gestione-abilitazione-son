@@ -23,21 +23,18 @@
 				fixedLayout="false"
 				contextualWidth="Auto"
 				growing="true"
-				selectionChange="onSelectedItem"
+				
 				updateFinished="onUpdateFinished"
 						items="{
 				path: 'step3List>/'
 			}"
 		>
+		<!-- selectionChange="onSelectedItem" -->
 		
 		<headerToolbar>
 			<OverflowToolbar >
-				<!-- <FlexBox >
-					<CheckBox id="idCheckSelectAllDetail" class="sapUiTinyMargin textBlack" select="onCheck" text="{i18n>checkBoxText}" />
-				</FlexBox> -->
 				<ToolbarSpacer/>
-				<FlexBox width="100%"  justifyContent="End">
-					
+				<FlexBox width="100%"  justifyContent="End">					
 					<Button enabled="{wizardModel>/isInChange}" class="sapUiTinyMarginEnd sapUiTinyMarginBegin sapUiTinyMarginBottom" icon="sap-icon://add" text="{i18n>btnAddRow}" type="Emphasized" press="onAddRow">
 						<layoutData>
 							<OverflowToolbarLayoutData priority="NeverOverflow" />
@@ -102,7 +99,7 @@
 					width="30%"
 					id ="idInputZimpcos"
 					type="Number"
-					value="{step3List>ZimptotClass}"	
+					value="{step3List>ZimptotClass}"
 					app:property="Zimpcos"
 					liveChange="onLiveChangeTable"
 					editable="{wizardModel>/isInChange}"
@@ -117,8 +114,6 @@
 	<FlexBox justifyContent="Center" width="100%" class="sapUiSmallMargin">
 		<FlexBox justifyContent="End" width="50%" >
 		<Text text="{i18n>msgTotImpClass}" class="sapUiSmallMarginEnd"></Text>
-	
-		<!-- <Text text="{wizardModel>/Zimptotcos}" ></Text> -->
 		<Text text="{path:'wizardModel>/Zimptotcos', formatter:'.formatter.convertFormattedNumber'}" />
 	</FlexBox>
 

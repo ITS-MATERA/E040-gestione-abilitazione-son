@@ -77,6 +77,7 @@ sap.ui.define(
     const CLASSIFICAZIONE_SON_DEEP="classificazioneSonModel";
     const LOG_MODEL = "logModel";
     const MESSAGE_MODEL = "messageModel";
+    const COS = "COS";
 
     return BaseController.extend(
       "gestioneabilitazioneeson.controller.DetailSON",
@@ -290,7 +291,7 @@ sap.ui.define(
             var self = this,
                 oBundle = self.getResourceBundle();
                 
-            
+            self._indexClassificazioneSON  = 0;
             if (self.getModelGlobal("checkList") === undefined || self.getModelGlobal("actionModel") === undefined) {
               self.setPropertyGlobal(self.RELOAD_MODEL,"canRefresh",true);
               self.onNavBack();
@@ -548,7 +549,7 @@ sap.ui.define(
                 Zstep: oItem.Zstep,
                 Ztipososp: oItem.Ztipososp
             });
-
+            
             self.getModel().metadataLoaded().then(function () {
                 oDataModel.read("/" + path, {
                     success: function (data, oResponse) {
@@ -563,6 +564,7 @@ sap.ui.define(
 
                         self.getSedeBeneficiario(data.Lifnr, data.Zidsede);
                         oWizardModel = self.setWizardModel(data);
+                        
 
                         setTimeout(() => {     
                             oWizardModel.getData().FirstKeyStras= self._sedeBeneficiario ? self._sedeBeneficiario.Stras: "";
@@ -592,9 +594,9 @@ sap.ui.define(
                                 NameFirst: self._beneficiario ? self._beneficiario.NameFirst : "",
                                 NameLast: self._beneficiario ? self._beneficiario.NameLast : "",
                                 Zimptot: data.Zimptot,
+                                ZimptotDivisa:data.ZimptotDivisa,
                                 TaxnumPiva: self._beneficiario ? self._beneficiario.TaxnumPiva : "",
                                 ZzragSoc: self._beneficiario ? self._beneficiario.ZzragSoc : "",
-                                ZimptotDivisa: oItem.ZimptotDivisa,
                                 TaxnumCf: self._beneficiario ? self._beneficiario.TaxnumCf : "",
                                 Zzamministr: self._amministrazione.Value,
                                 PayMode: self.payMode,
@@ -617,6 +619,8 @@ sap.ui.define(
 
                             self.setModel(oWizardModel, WIZARD_MODEL);
                             self.setModel(oDataSONModel, DataSON_MODEL);
+                            self.fillZtipodisp3List();
+                            self.getClassificazioneFRomFillWizard(self.getView().getModel(WIZARD_MODEL));
                             self.getView().setBusy(false);
                         },4000);
                     },
@@ -1252,12 +1256,12 @@ sap.ui.define(
             var arrayClassificazioneSonList=[];
             for(var i=0;i<classificazioneSonList.length;i++){
                 var item = classificazioneSonList[i];
-                if(item.Id === 0)
-                    continue;
+                if(item.Id === 0 || !item.ZcosDesc || item.ZcosDesc === null || item.ZcosDesc === "")
+                  continue;
                 delete item.Id;
                 arrayClassificazioneSonList.push(item);
             }
-
+            // return false;//TODO:da canc
             var entityRequestBody = {
               Zchiavesop: Zchiavesop,
               Bukrs: "",
@@ -1270,7 +1274,8 @@ sap.ui.define(
                 {
                     Bukrs: wizardModel.getProperty("/Bukrs"),
                     ZstatoSop:wizardModel.getProperty("/ZstatoSop"),
-                    Zimptot:wizardModel.getProperty("/Zimptot"),
+                    Zimptot: wizardModel.getProperty("/Zimptot"),
+                    ZimptotDivisa: wizardModel.getProperty("/ZimptotDivisa"),
                     Zidsede:wizardModel.getProperty("/Zidsede"),
                     Gjahr:wizardModel.getProperty("/Gjahr"),
                     Zchiavesop:wizardModel.getProperty("/Zchiavesop"),
@@ -1360,9 +1365,9 @@ sap.ui.define(
               oTable = oEvent.getSource(),
               step3List = self.getModel(STEP3_LIST).getData(),
               wizardModel = self.getModel(WIZARD_MODEL),
-              iTotalItems = step3List.length - 1;
-  
-            if (iTotalItems && oTable.getBinding("items").isLengthFinal()) {
+              iTotalItems = step3List.length;
+
+          if (iTotalItems && oTable.getBinding("items").isLengthFinal() && iTotalItems >0) {
               sTitle = self.getResourceBundle().getText("Step3TableTitleCount", [
                 iTotalItems,
               ]);
@@ -1388,19 +1393,7 @@ sap.ui.define(
                 self._indexClassificazioneSON = step3List.length;
             }
 
-            // var firstRow = _.clone(step3List[0]);   
-            var firstRow = Object.assign({}, step3List[0]);
-            
-            if(firstRow.Zcos === null || firstRow.Zcos === "" || firstRow.ZimptotClass === null || firstRow.ZimptotClass === ""){
-                sap.m.MessageBox.warning(oBundle.getText("msgWizardCodiceGestionaleRequired"), {
-                    title: oBundle.getText("titleDialogWarning"),
-                    onClose: function (oAction) {
-                        return false;
-                    },
-                });
-                return false;
-            } 
-            
+            var firstRow = {};
             firstRow.Zchiavesop = Zchiavesop;
             firstRow.Bukrs = Bukrs 
             firstRow.Zetichetta = COS;
@@ -1411,11 +1404,6 @@ sap.ui.define(
             step3List.push(firstRow);   
             classificazoneSonDeep.push(firstRow);
             
-            step3List[0].Zcos = null;
-            step3List[0].ZcosDesc= null;
-            step3List[0].ZimptotClass= null;
-            step3List[0].Id= 0;
-
             var sum = 0;
             for(var i=0; i<step3List.length;i++){
                 var item = step3List[i].ZimptotClass;
@@ -1457,6 +1445,10 @@ sap.ui.define(
                 return false;
             }
 
+            console.log(classificazoneSonDeep);
+            console.log(step3List);
+
+
             var cloneStep3List = Object.assign([], step3List);
             for(var i=0; i<selected.length;i++){
                 var path = selected[i];
@@ -1478,8 +1470,6 @@ sap.ui.define(
                 var indiceStep3 = step3List.findIndex((x)=>x.Id === selectedItem.Id);
                 step3List.splice(indiceStep3,1)
             }
-            
-            
             var sum = 0;
             for(var i=0; i<step3List.length;i++){
                 var item = step3List[i].ZimptotClass;
@@ -1550,8 +1540,12 @@ sap.ui.define(
             }
 
             var item = oTableModel.getObject(path);
-            item.ZimptotClass = oEvent.getParameters().value;
-
+            var value = oEvent.getParameters().value;
+            value.replace(",",".");
+            value = parseFloat(value).toFixed(2);
+            value.replace(".",",");
+            item.ZimptotClass = value;
+            self.getView().getModel(STEP3_LIST).setProperty(path+"/ZimptotClass",item.ZimptotClass);
             var indexClassificazoneSonDeep = classificazoneSonDeep.findIndex((x)=>x.Id === item.Id);
             if(indexClassificazoneSonDeep>-1){
                 classificazoneSonDeep.splice(indexClassificazoneSonDeep,1);
@@ -1560,12 +1554,12 @@ sap.ui.define(
                 classificazoneSonDeep.push(item);
             }
 
-            var step3List = oTable.getModel(STEP3_LIST).getData();
+            var step3List = self.getView().getModel(STEP3_LIST).getData();
             var sum = 0;
             for(var i=0; i<step3List.length;i++){
                 var item = step3List[i].ZimptotClass;
                 if(!item || item === null)
-                    item= "0";
+                  item= "0";
                 item.replace(",",".");
                 sum = sum + parseFloat(item);
             }
@@ -1576,25 +1570,47 @@ sap.ui.define(
             self.setModel(oModelJsonCS, CLASSIFICAZIONE_SON_DEEP);
         },
 
-        handleHeaderClose: function (oEvent) {
+        // handleHeaderClose_OLD: function (oEvent) {
+        //     var self = this;
+        //     var oSelectedItem = oEvent.getParameter("selectedItem");
+    
+        //     if (!oSelectedItem) {
+        //       self.closeDialog();
+        //       return;
+        //     }
+
+        //     var self = this,
+        //         step3List = self.getModel(STEP3_LIST).getData();
+        //     step3List[0].Zcos = oSelectedItem.getCells()[0].getTitle();
+        //     step3List[0].ZcosDesc = oSelectedItem.getCells()[1].getText();
+        //     var oModelJson = new sap.ui.model.json.JSONModel();
+        //     oModelJson.setData(step3List);
+        //     console.log(step3List);
+        //     self.setModel(oModelJson, STEP3_LIST);
+        //     self.closeDialog();
+        //   },
+
+          handleHeaderClose: function (oEvent) {
             var self = this;
             var oSelectedItem = oEvent.getParameter("selectedItem");
-    
+  
             if (!oSelectedItem) {
               self.closeDialog();
               return;
             }
-
+  
             var self = this,
-                step3List = self.getModel(STEP3_LIST).getData();
-            step3List[0].Zcos = oSelectedItem.getCells()[0].getTitle();
-            step3List[0].ZcosDesc = oSelectedItem.getCells()[1].getText();
+              step3List = self.getModel(STEP3_LIST).getData();
+            step3List[step3List.length-1].Zcos = oSelectedItem.getCells()[0].getTitle();
+            step3List[step3List.length-1].ZcosDesc = oSelectedItem.getCells()[1].getText()
             var oModelJson = new sap.ui.model.json.JSONModel();
             oModelJson.setData(step3List);
             console.log(step3List);
             self.setModel(oModelJson, STEP3_LIST);
             self.closeDialog();
           },
+
+
           configLog:function(){
             var self = this;
             var oMessageTemplate = new MessageItem({

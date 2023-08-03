@@ -48,6 +48,7 @@
 							<FlexBox  alignItems="Start">								
 								<Input
 									id="fCapitolo"
+									maxLength="4"
 									app:searchPropertyModel="Capitolo"						
 									>	
 								    <layoutData>
@@ -271,7 +272,8 @@
 						<Label  design="Bold" text="{i18n>filterNameFiposFrom}"></Label>
 							<FlexBox  alignItems="Start">
 								<zcontrol:InputPosizioneFinanziaria id="fFiposFrom" fase="GEST" spesa="X" 
-								reale="R" anno="{listSONModel>/filterGjahr}" versione="D" maxSuggestionWidth="60%" liveChange="onSelectPosFin" width="100%"/>								
+								reale="R" anno="{listSONModel>/filterGjahr}" versione="D" maxSuggestionWidth="60%" liveChange="onSelectPosFin" width="100%"
+								app:searchPropertyModel="Fipos"	/>								
 								<!-- <Input
 									id="fFiposFrom"
 									app:searchPropertyModel="Fipos"								
@@ -290,7 +292,8 @@
 						<Label  design="Bold" text="{i18n>filterNameFiposTo}"></Label>
 							<FlexBox  alignItems="Start">	
 								<zcontrol:InputPosizioneFinanziaria id="fFiposTo" fase="GEST" spesa="X" 
-								reale="R" anno="{listSONModel>/filterGjahr}" versione="D" maxSuggestionWidth="60%" liveChange="onSelectPosFin" width="100%"/>								
+								reale="R" anno="{listSONModel>/filterGjahr}" versione="D" maxSuggestionWidth="60%" liveChange="onSelectPosFin" width="100%"
+								app:searchPropertyModel="Fipos"	/>								
 							</FlexBox>
 					</items>
 					<layoutData><l:GridData  span="XL2 L4 M4 S12"/></layoutData>

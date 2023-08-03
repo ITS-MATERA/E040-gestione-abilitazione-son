@@ -17,17 +17,7 @@
 							<OverflowToolbarLayoutData priority="NeverOverflow" />
 						</layoutData>
 					</Button>
-					<!-- <Button
-				    icon="{ path: 'logModel>/', formatter: '.buttonIconFormatter' }"
-					type="{ path: 'logModel>/', formatter: '.buttonTypeFormatter' }"
-					text= "{path: 'logModel>/', formatter: '.highestSeverityMessages' }"
-			        press="handleDialogPress"/> -->
 					<ToolbarSpacer />
-					<!-- <Button type="Emphasized" text="{i18n>btnRegisterMax}" press="onRegisterMax" >
-						<layoutData>
-							<OverflowToolbarLayoutData priority="NeverOverflow" />
-						</layoutData>
-					</Button> -->
 					<Button type="Emphasized" text="{i18n>btnRegisterSON}" press="onRegisterSON" >
 						<layoutData>
 							<OverflowToolbarLayoutData priority="NeverOverflow" />

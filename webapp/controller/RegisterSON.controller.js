@@ -266,7 +266,6 @@ sap.ui.define(
                     success: function (data, oResponse) {                      
                         self.getView().getModel(WIZARD_MODEL).setProperty("/ZufficioCont",data.ZufficioCont);
                         self.getView().getModel(WIZARD_MODEL).setProperty("/ZvimDescrufficio",data.ZvimDescrufficio);
-                        // self.getView().getModel(DataSON_MODEL).setProperty("/ZufficioCont",data.ZufficioCont); //TODO:da canc
                     },
                     error: function (error) {
                         console.log(error);
@@ -287,7 +286,6 @@ sap.ui.define(
                 oDataModel.read("/" + path, {
                     success: function (data, oResponse) {                      
                         self.getView().getModel(WIZARD_MODEL).setProperty("/Fistl",data.Value);
-                        // self.getView().getModel(DataSON_MODEL).setProperty("/Fistl",data.Value);//TODO:da canc
                     },
                     error: function (error) {
                         console.log(error);
@@ -340,8 +338,6 @@ sap.ui.define(
               });
           } else return false;
         },
-
-        // almost global -- only  specific   urlParameters: { Gjahr: Gjahr },
 
         onValueHelpRequestedZcos: function (oEvent) {
           var self = this,
@@ -397,41 +393,20 @@ sap.ui.define(
             self._indexClassificazioneSON = step3List.length;
           }
 
-          // var firstRow = _.clone(step3List[0]);
           var firstRow = Object.assign({}, step3List[0]);
-
-          if (
-            firstRow.Zcos === null ||
-            firstRow.Zcos === "" ||
-            firstRow.ZimptotClass === null ||
-            firstRow.ZimptotClass === ""
-          ) {
-            sap.m.MessageBox.warning(
-              oBundle.getText("msgWizardCodiceGestionaleRequired"),
-              {
-                title: oBundle.getText("titleDialogWarning"),
-                onClose: function (oAction) {
-                  return false;
-                },
-              }
-            );
-            return false;
-          }
-
           firstRow.Zchiavesop = Zchiavesop;
           firstRow.Bukrs = Bukrs;
           firstRow.Zetichetta = COS;
           firstRow.ZstepSop = ZstepSop;
           firstRow.Zposizione = "";
+          firstRow.Zcos=null;
+          firstRow.ZcosDesc=null;
+          firstRow.ZimptotClass=null;
+
           firstRow.Id = self._indexClassificazioneSON + 1;
           self._indexClassificazioneSON = self._indexClassificazioneSON + 1;
           step3List.push(firstRow);
           classificazoneSonDeep.push(firstRow);
-
-          step3List[0].Zcos = null;
-          step3List[0].ZcosDesc = null;
-          step3List[0].ZimptotClass = null;
-          step3List[0].Id = 0;
 
           var sum = 0;
           for (var i = 0; i < step3List.length; i++) {
@@ -440,6 +415,7 @@ sap.ui.define(
             item.replace(",", ".");
             sum = sum + parseFloat(item);
           }
+
           wizardModel.setProperty("/Zimptotcos", sum.toFixed(2));
           var oModelJson = new sap.ui.model.json.JSONModel();
           oModelJson.setData(step3List);
@@ -460,8 +436,8 @@ sap.ui.define(
 
           var self = this,
             step3List = self.getModel(STEP3_LIST).getData();
-          step3List[0].Zcos = oSelectedItem.getCells()[0].getTitle();
-          step3List[0].ZcosDesc = oSelectedItem.getCells()[1].getText();
+          step3List[step3List.length-1].Zcos = oSelectedItem.getCells()[0].getTitle();
+          step3List[step3List.length-1].ZcosDesc = oSelectedItem.getCells()[1].getText()
           var oModelJson = new sap.ui.model.json.JSONModel();
           oModelJson.setData(step3List);
           console.log(step3List);
@@ -555,6 +531,9 @@ sap.ui.define(
             Iban = wizardModel.getProperty("/Iban"),
             Swift = wizardModel.getProperty("/Swift"),
             Zimptot = wizardModel.getProperty("/Zimptot"),
+            ZimptotDivisa = wizardModel.getProperty("/ZimptotDivisa"),
+            Trbtr = wizardModel.getProperty("/Trbtr"),
+            Twaer = wizardModel.getProperty("/Twaer"),
             Zidsede = wizardModel.getProperty("/Zidsede"),
             Znumprot = wizardModel.getProperty("/Znumprot"),
             Zcausale = wizardModel.getProperty("/Zcausale"),
@@ -568,11 +547,10 @@ sap.ui.define(
           var arrayClassificazioneSonList=[];
           for(var i=0;i<classificazioneSonList.length;i++){
               var item = classificazioneSonList[i];
-              if(item.Id === 0)
+              if(item.Id === 0 || !item.ZcosDesc || item.ZcosDesc === null || item.ZcosDesc === "")
                   continue;
               delete item.Id;
               delete item.Bukrs;
-              // delete item.Zchiavesop;
               delete item.ZstepSop;
               item.Zchiavesop ="FITTIZIO";
               arrayClassificazioneSonList.push(item);
@@ -612,6 +590,9 @@ sap.ui.define(
                 Zcausale: !Zcausale || Zcausale === null ? "" : Zcausale,
                 Zzonaint: !Zzonaint || Zzonaint === null ? "" : Zzonaint,
                 ZE2e: !ZE2e || ZE2e === null ? "" : ZE2e,
+                ZimptotDivisa: !ZimptotDivisa || ZimptotDivisa === null ? null :ZimptotDivisa,
+                Trbtr: !Trbtr || Trbtr === null ? null :Trbtr,
+                Twaer: !Twaer || Twaer === null ? null :Twaer
               },
             ],
           };
@@ -1020,14 +1001,13 @@ sap.ui.define(
         // ----------------------------- END MANAGE PAY MODE  -----------------------------  //
         
         onUpdateFinished: function (oEvent) {
-          console.log("update");
           var sTitle,
             oTable = oEvent.getSource(),
             step3List = this.getModel(STEP3_LIST).getData(),
             wizardModel = this.getModel(WIZARD_MODEL),
-            iTotalItems = step3List.length - 1;
+            iTotalItems = step3List.length;
 
-          if (iTotalItems && oTable.getBinding("items").isLengthFinal()) {
+          if (iTotalItems && oTable.getBinding("items").isLengthFinal() && iTotalItems >0) {
             sTitle = this.getResourceBundle().getText("Step3TableTitleCount", [
               iTotalItems,
             ]);

@@ -65,7 +65,7 @@ sap.ui.define(
     const RELOAD_MODEL = "reloadModel";
     const IbanBeneficiario_SET ="ListaIbanSet";
     const RELOAD_MODEL_AUTH = "reloadModelAuth";
-
+    const CLASSIFICAZIONE_SON_DEEP="classificazioneSonModel";
     const FILTER_SEM_OBJ = "ZS4_SOSPAUTPERMANENTE_SRV";
     
     const AUTHORITY_CHECK_ABILITAZIONE = "AuthorityCheckAbilitazione";
@@ -128,7 +128,7 @@ sap.ui.define(
           var self = this;
           var oView = self.getView();
           var oModelJson = new sap.ui.model.json.JSONModel();
-          oModelJson.setData({});
+          oModelJson.setData([]);
           oView.setModel(oModelJson, nameModel);
         },
 
@@ -501,6 +501,15 @@ sap.ui.define(
             return object;
           }
 
+          if(sCapitolo && sCapitolo.getValue() !== null && sCapitolo.getValue() !== "" &&
+            sFiposFrom && sFiposFrom.getValue() !== null && sFiposFrom.getValue() !== ""){
+              var substr = sFiposFrom.getValue().substring(4,8);
+              if(sCapitolo.getValue() !== substr){
+                object.isValidate = false;
+                object.validationMessage = "msgFiposCapitoloNotValid";
+                return object;
+              }
+          }
           /*STOP Validation*/
 
           /*Fill Filters*/
@@ -1223,6 +1232,7 @@ sap.ui.define(
               var arrayMessage = oData.results;
               if (!self.isErrorInLog(arrayMessage)) {                               
                 wizard.previousStep();
+                self.handleButtonsVisibility(1);
               } else {
                 var oModel = new JSONModel();
                 oModel.setData([]);
@@ -1260,24 +1270,24 @@ sap.ui.define(
                       success: function (data, oResponse) {                        
                         var array = [],
                           sum = 0;
-                        array.push({
-                          Zchiavesop: null,
-                          Bukrs: null,
-                          Zetichetta: null,
-                          Zposizione: null,
-                          ZstepSop: null,
-                          Zzcig: null,
-                          Zzcup: null,
-                          Zcpv: null,
-                          ZcpvDesc: null,
-                          Zcos: null,
-                          ZcosDesc: null,
-                          Belnr: null,
-                          ZimptotClass: null,
-                          Zflagcanc: null,
-                          ZstatoClass: null,
-                          Id: 0,
-                        });
+                        // array.push({
+                        //   Zchiavesop: null,
+                        //   Bukrs: null,
+                        //   Zetichetta: null,
+                        //   Zposizione: null,
+                        //   ZstepSop: null,
+                        //   Zzcig: null,
+                        //   Zzcup: null,
+                        //   Zcpv: null,
+                        //   ZcpvDesc: null,
+                        //   Zcos: null,
+                        //   ZcosDesc: null,
+                        //   Belnr: null,
+                        //   ZimptotClass: null,
+                        //   Zflagcanc: null,
+                        //   ZstatoClass: null,
+                        //   Id: 0,
+                        // });
 
                         for (var i = 0; i < data.results.length; i++) {
                           var item = data.results[i];
@@ -1299,6 +1309,7 @@ sap.ui.define(
                         oModelJson.setData([]);
                         self.getView().setModel(oModelJson, STEP3_LIST);
                         wizard.previousStep();
+                        self.handleButtonsVisibility(1);
                       },
                     });
                   });
@@ -1307,6 +1318,7 @@ sap.ui.define(
             error: function (oError) {
               self.getView().setBusy(false);
               wizard.previousStep();
+              self.handleButtonsVisibility(1);
             },
           });
         },
@@ -1325,7 +1337,7 @@ sap.ui.define(
 
           if (!wizardModel.getProperty("/isInChange")) return;
 
-          var len = Step3List.lenght - 1;
+          var len = Step3List.length;
           if (len <= 0) {
             self._setMessage("titleDialogError", "msgNoRequiredField", "error");
             return false;
@@ -1353,11 +1365,13 @@ sap.ui.define(
               var arrayMessage = oData.results;
               if (!self.isErrorInLog(arrayMessage)) {
                 wizard.previousStep();
+                self.handleButtonsVisibility(2);
               }
             },
             error: function (oError) {
               self.getView().setBusy(false);
               wizard.previousStep();
+              self.handleButtonsVisibility(2);
             },
           });
         },
@@ -1411,6 +1425,43 @@ sap.ui.define(
           }
           else
             callback("ValidationSuccess");
+        },
+
+        getClassificazioneFRomFillWizard(wizardModel){
+          var self =this,
+            array=[],
+            sum = 0,
+            oModel = self.getModel();
+          
+          var filters = [
+            self.setFilterEQWithKey("Bukrs",wizardModel.getProperty("/Bukrs")),
+            self.setFilterEQWithKey("Zchiavesop",wizardModel.getProperty("/Zchiavesop")),
+          ];
+
+          oModel.read("/" + CLASSIFICAZIONE_SON_SET, {
+            filters: filters,
+            urlParameters: {Gjahr: wizardModel.getProperty("/Gjahr")},
+            success: function (data, oResponse) {   
+              for (var i = 0; i < data.results.length; i++) {
+                var item = data.results[i];
+                item.Id = i + 1;
+                sum = sum + parseFloat(item.ZimptotClass);
+                array.push(item);
+              }
+              var oModelJson = new sap.ui.model.json.JSONModel();
+              oModelJson.setData(array);
+              self.getView().setModel(oModelJson,STEP3_LIST);
+              self.getView().getModel(oModelJson,CLASSIFICAZIONE_SON_DEEP);
+              self.getView().getModel(WIZARD_MODEL).setProperty("/Zimptotcos", sum.toFixed(2));
+            },
+            error: function (e) {
+              console.log(e);
+              var oModelJson = new sap.ui.model.json.JSONModel();
+              oModelJson.setData([]);
+              self.getView().setModel(oModelJson, STEP3_LIST); 
+              self.getView().setModel(oModelJson, CLASSIFICAZIONE_SON_DEEP);                           
+            },
+          });
         },
 
         _setMessage: function (sTitle, sText, sType, callPrev = "") {
@@ -1468,19 +1519,18 @@ sap.ui.define(
                   console.log("sede", data);
                   wizardModel.setProperty("/StrasList", data.results);
                   if (data.results.length > 0) {
-                    wizardModel.setProperty(
-                      "/FirstKeyStras",
-                      data.results[0]["Stras"]
-                    );
+                    wizardModel.setProperty("/FirstKeyStras", data.results[0]["Stras"]);
+                    wizardModel.setProperty("/Zidsede",data.results[0]["Zidsede"]);
                     wizardModel.setProperty("/Ort01", data.results[0]["Ort01"]);
                     wizardModel.setProperty("/Regio", data.results[0]["Regio"]);
                     wizardModel.setProperty("/Pstlz", data.results[0]["Pstlz"]);
                     wizardModel.setProperty("/Land1", data.results[0]["Land1"]);
                     if(data.results[0].Regio && data.results[0].Regio !== null && data.results[0].Regio !== ""){
-                      wizardModel.setProperty("/Zlocpag", data.results[0].Regio);
+                      wizardModel.setProperty("/Zlocpag", data.results[0].Ort01);
                     }
                   } else {
                     wizardModel.setProperty("/FirstKeyStras", "");
+                    wizardModel.setProperty("/Zidsede",null);
                     wizardModel.setProperty("/Ort01", "");
                     wizardModel.setProperty("/Regio", "");
                     wizardModel.setProperty("/Pstlz", "");
