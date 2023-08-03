@@ -381,7 +381,7 @@ sap.ui.define(
                   var oModelJson = new sap.ui.model.json.JSONModel();
                   oModelJson.setData(res);
                   oView.setModel(oModelJson, nameModel);
-                  oView.setBusy(false);
+                  
                   var oTable = self.getView().byId(TABLE_LISTSON);
 
                   var isSelectedAll =
@@ -406,6 +406,7 @@ sap.ui.define(
                     }
                   }
 
+                  oView.setBusy(false);
                   if(data.results.length === 0){
                     MessageBox.warning("Nessun dato soddisfa i criteri di ricerca",{
                         title: oBundle.getText("titleDialogWarning"),
@@ -461,9 +462,9 @@ sap.ui.define(
           var idText = this.getView().byId("idTextTableSON");
           idText.setVisible(true);
           oPaginatorPanel.setVisible(true);
-          oTable.setVisible(true);
+          // oTable.setVisible(true);
 
-          this.getView().setBusy(false);
+          // this.getView().setBusy(false);
           // if(!parseInt(iTotalItems) === true || iTotalItems===null || iTotalItems === "" || parseInt(iTotalItems) === 0){
           //   //giannilecci
           //   var oBundle= this.getResourceBundle();
