@@ -6,21 +6,20 @@
 >
 
 
-  <Table  			
-			contextualWidth="Auto"
-			growing="true"
-			selectionChange="onSelectedItem"
-			updateFinished="onUpdateFinishedDetail"
-				items="{
-				path: 'checkList>/'
-			}"
-		>
-		
+  	<Table  			
+		contextualWidth="Auto"
+		growing="true"
+		selectionChange="onSelectedItem"
+		updateFinished="onUpdateFinishedDetail"
+			items="{
+			path: 'checkList>/'
+		}"
+		>		
 		<headerToolbar>
 			<OverflowToolbar >
-			 	<Title text="{detailModel>/detailTableTitle}"  class="sapUiTinyMargin titleSize"></Title>
+			 	<!-- <Title text="{detailModel>/detailTableTitle}"  class="sapUiTinyMargin titleSize"></Title> -->
+				<Title text="Lista SON"  class="sapUiTinyMargin titleSize"></Title>
 				<ToolbarSpacer/>
-
 			</OverflowToolbar>
 		</headerToolbar>
 		<columns>

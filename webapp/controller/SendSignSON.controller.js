@@ -997,7 +997,9 @@ sap.ui.define(
                 oBundle = self.getResourceBundle(),
                 oDataModel = self.getModel(),
                 detailModel = self.getModel(DETAIL_MODEL),
-                checklist = detailModel.getProperty("/changeList");
+                list = detailModel.getProperty("/changeList"),
+                checklist = JSON.parse(JSON.stringify(list));
+                //checklist = Object.assign([], list);
                 // checklist = detailModel.getProperty("/checkList");
             checklist = self.resolveChecklist(checklist);
             
@@ -1037,9 +1039,15 @@ sap.ui.define(
               },
               async: true,
               urlParameters: {
-                    ZuffcontFirm:self.getView().getModel(HEADER_ACTION_MODEL).getProperty("/ZufficioCont"),
-                    Zcdr:self.getView().getModel(HEADER_ACTION_MODEL).getProperty("/Zcdr"),
-                    ZdirigenteAmm:self.getView().getModel(HEADER_ACTION_MODEL).getProperty("/ZdirigenteAmm")
+                    ZuffcontFirm:self.getView().getModel(HEADER_ACTION_MODEL).getProperty("/ZufficioCont") &&
+                              self.getView().getModel(HEADER_ACTION_MODEL).getProperty("/ZufficioCont") !== "" ?
+                              self.getView().getModel(HEADER_ACTION_MODEL).getProperty("/ZufficioCont") : null,
+                    Zcdr:self.getView().getModel(HEADER_ACTION_MODEL).getProperty("/Zcdr") && 
+                        self.getView().getModel(HEADER_ACTION_MODEL).getProperty("/Zcdr") !== "" ? 
+                        self.getView().getModel(HEADER_ACTION_MODEL).getProperty("/Zcdr") : null,
+                    ZdirigenteAmm: self.getView().getModel(HEADER_ACTION_MODEL).getProperty("/ZdirigenteAmm") && 
+                                  self.getView().getModel(HEADER_ACTION_MODEL).getProperty("/ZdirigenteAmm") !== "" ? 
+                                  self.getView().getModel(HEADER_ACTION_MODEL).getProperty("/ZdirigenteAmm") : null
                 },
             });
         },

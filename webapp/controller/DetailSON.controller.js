@@ -181,6 +181,8 @@ sap.ui.define(
                 Zcoordest: null,
                 isZcoordestEditable: false,
                 isZZcausalevalEditable:false,
+                isIbanEditable:false,
+                isBicEditable:false,
                 Swift: null,
                 PayMode: null,
                 ZZcausaleval: null,
@@ -685,6 +687,8 @@ sap.ui.define(
                 Zcoordest: data.Zcoordest,
                 isZcoordestEditable: false,
                 isZZcausalevalEditable:false,
+                isIbanEditable:false,
+                isBicEditable:false,
                 Swift: data.Swift,
                 PayMode: data.Zwels,
                 ZZcausaleval: data.ZCausaleval,
@@ -862,6 +866,8 @@ sap.ui.define(
             self.getView().getModel(WIZARD_MODEL).setProperty("/Zcoordest", null);
             self.getView().getModel(WIZARD_MODEL).setProperty("/isZcoordestEditable", false);
             self.getView().getModel(WIZARD_MODEL).setProperty("/isZZcausalevalEditable", false);
+            self.getView().getModel(WIZARD_MODEL).setProperty("/isIbanEditable", false);
+            self.getView().getModel(WIZARD_MODEL).setProperty("/isBicEditable", false);
             self.getView().getModel(WIZARD_MODEL).setProperty("/Swift", null);
             self.getView().getModel(WIZARD_MODEL).setProperty("/PayMode", null);
             self.getView().getModel(WIZARD_MODEL).setProperty("/ZZcausaleval", null);

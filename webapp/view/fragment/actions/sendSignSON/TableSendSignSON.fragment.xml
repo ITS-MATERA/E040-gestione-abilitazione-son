@@ -18,7 +18,8 @@
 		
 		<headerToolbar>
 			<OverflowToolbar >
-			 	<Title text="{detailModel>/detailTableTitle}"  class="sapUiTinyMargin titleSize"></Title>
+			<!-- {detailModel>/detailTableTitle} -->
+			 	<Title text="Lista SON"  class="sapUiTinyMargin titleSize"></Title>
 				<ToolbarSpacer/>
 				<FlexBox   justifyContent="End" >
 					<DatePicker		
@@ -82,14 +83,14 @@
 									}
 							}"/>					
 					<Text  text="{detailModel>Beneficiario}" />
-					<!-- <Text  text="{checkList>Fipos}" /> -->
-					<zcontrolPosFin:LinkPosizioneFinanziaria id="linkPosFinSpesaSendSign" anno="{checkList>Gjahr}" eos="S" fikrs="S001" fase="GEST" 
-                        reale="R" versione="D" fipex="{checkList>Fipos}" 
-                        datbis="99991231" text="{checkList>Fipos}" semanticObject="ESAMINAMODIFICA"/>
+					<!-- <Text  text="{detailModel>Fipos}" /> -->
+					<zcontrolPosFin:LinkPosizioneFinanziaria  anno="{detailModel>Gjahr}" eos="S" fikrs="S001" fase="GEST" 
+                        reale="R" versione="D" fipex="{detailModel>Fipos}" 
+                        datbis="99991231" text="{detailModel>Fipos}" semanticObject="ESAMINAMODIFICA"/>
 					<Text  text="{detailModel>Fistl}" />
 					<!-- <Text  text="{detailModel>Zimptot}" /> -->
 					<Text  text="{
-							path: 'checkList>Zimptot',
+							path: 'detailModel>Zimptot',
 							formatter: '.formatter.convertFormattedNumber'
 						}" />
 					<Text  text="{detailModel>Zdesctipodisp3}" />			

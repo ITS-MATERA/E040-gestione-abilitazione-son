@@ -2,11 +2,12 @@
     xmlns="sap.m"
 	xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core"
-     xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
-     height="100%"
+    xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+    xmlns:zcontrolMatchSar="zsap.com.r3.cobi.s4.custapiuser.z_s4_userlog.controls"
+    height="100%"
 >
-            <VBox >
-                <items>
+            <Panel  headerText="Inserimento dati per invio alla firma" class="panel-border-bottom-none">
+                <content>
                     <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
                         <VBox>
                             <items>
@@ -85,9 +86,12 @@
                                             <Label  design="Bold" width="100%" text="{i18n>fieldNameZcdr}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData><l:GridData span="XL6 L8 M4 S12" /></layoutData>
                                             </Label>
-                                            <Input width="100%" id="idFieldZcdr" app:property="Zcdr" value="{headerActionModel>/Zcdr}" liveChange="onLiveChange">
-                                                <layoutData><l:GridData span="XL5 L4 M7 S12"/></layoutData>
-                                            </Input>
+                                            <zcontrolMatchSar:GestioneLogUser eos="S" id="idFilterStruttAmmResp" fase="GEST" entrata="X" reale="R" 
+                                                anno="{listSONModel>/filterGjahr}" SEM_OBJ="Z_TEST_LIB"  versione="D" width="60%" 
+                                                placeholder="Scegli struttura amministrativa" value="{headerActionModel>/Zcdr}"
+                                                maxLength="16"
+                                                submit="strutturaAmministrativaLiveChangeHeaderActionModel" 
+                                                liveChange="strutturaAmministrativaLiveChangeHeaderActionModel" />
                                         </l:Grid>
                                     </items>     
                                 </FlexBox>                                
@@ -112,8 +116,8 @@
                             <layoutData><l:GridData span="XL7 L6 M12 S12"/></layoutData>
                         </VBox>                                                                       
                     </l:Grid>
-                </items>
+                </content>
                 <layoutData><l:GridData  span="XL3 L4 M6 S12"/></layoutData>
-            </VBox>	
+            </Panel>	
 
 </core:FragmentDefinition>

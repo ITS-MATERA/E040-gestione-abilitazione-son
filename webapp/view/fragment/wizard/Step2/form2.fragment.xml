@@ -107,7 +107,8 @@
                                             <Label  design="Bold" width="100%" text="{i18n>wizardFieldSwift}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData><l:GridData span="XL6 L6 M4 S12" /></layoutData>
                                             </Label>
-                                           <Input  value="{wizardModel>/Swift}"   enabled="{wizardModel>/isBicEditable}">
+                                           <Input  value="{wizardModel>/Swift}" editable="{wizardModel>/isInChange}" 
+                                             enabled="{wizardModel>/isBicEditable}">
                                                 <layoutData>
                                                     <l:GridData span="XL5 L5 M6 S12"  />
                                                 </layoutData>

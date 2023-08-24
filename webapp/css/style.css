@@ -97,3 +97,7 @@ div.middleFormAdd > div > div > section {
 .labelWidth > div {
   width: 100% !important;
 }
+
+.panel-border-bottom-none>div.sapMPanelContent{
+  border-bottom:0px!important;
+}

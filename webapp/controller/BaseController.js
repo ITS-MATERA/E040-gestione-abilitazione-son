@@ -1879,6 +1879,7 @@ sap.ui.define(
 
         resolveChecklist: function (checklist) {
           var self = this;
+
           for (var i = 0; i < checklist.length; i++) {
             var item = checklist[i];
             if (
@@ -1887,9 +1888,10 @@ sap.ui.define(
               item.Zdataprot !== ""
             ) {
               if (item.Zdataprot instanceof Date && !isNaN(item.Zdataprot)) {
-                item.Zdataprot = self.formatter.formateDateForDeep(
-                  item.Zdataprot
-                );
+                item.Zdataprot = self.formatter.formateDateForDeep(item.Zdataprot);
+              }
+              if(item.Zdataprot.includes(".000Z")){
+                item.Zdataprot = item.Zdataprot.replace(".000Z","");
               }
             }
             if (
@@ -1897,13 +1899,11 @@ sap.ui.define(
               item.Zdatarichann !== null &&
               item.Zdatarichann !== ""
             ) {
-              if (
-                item.Zdatarichann instanceof Date &&
-                !isNaN(item.Zdatarichann)
-              ) {
-                item.Zdatarichann = self.formatter.formateDateForDeep(
-                  item.Zdatarichann
-                );
+              if (item.Zdatarichann instanceof Date && !isNaN(item.Zdatarichann)) {
+                item.Zdatarichann = self.formatter.formateDateForDeep(item.Zdatarichann);
+              }
+              if(item.Zdatarichann.includes(".000Z")){
+                item.Zdatarichann = item.Zdatarichann.replace(".000Z","");
               }
             }
             if (
@@ -1912,17 +1912,16 @@ sap.ui.define(
               item.Zdatasop !== ""
             ) {
               if (item.Zdatasop instanceof Date && !isNaN(item.Zdatasop)) {
-                item.Zdatasop = self.formatter.formateDateForDeep(
-                  item.Zdatasop
-                );
+                item.Zdatasop = self.formatter.formateDateForDeep(item.Zdatasop);
+              }
+              if(item.Zdatasop.includes(".000Z")){
+                item.Zdatasop = item.Zdatasop.replace(".000Z","");
               }
             }
           }
           return checklist;
         },
-
-
-
+        
         onWizardNextButton:function(oEvent){
           var self =this,
             wizardId = oEvent.getSource().data("dataWizardId"),
@@ -3004,10 +3003,14 @@ sap.ui.define(
               Telefono: entity.VTelefono ? entity.VTelefono : null
             }
           }
-        }
+        },
 
         /* ANAGRAFICA BENEFICIARIO - END */
 
+        strutturaAmministrativaLiveChangeHeaderActionModel:function(oEvent){
+          var self = this;
+          self.getView().getModel("headerActionModel").setProperty("/Zcdr",oEvent.getParameters().value);
+        }  
 
       }
     );
