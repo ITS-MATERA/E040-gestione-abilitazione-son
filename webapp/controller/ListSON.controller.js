@@ -192,6 +192,7 @@ sap.ui.define(
             .then(function () {
               oDataModel.read("/" + path, {
                 success: function (data, oResponse) {
+                  self.getView().setBusy(false);
                   console.log(data);
                   if(data && data.Value!== null && data.Value !== "")
                     self.getView().byId("fZzamministr").setValue(data.Value);
@@ -200,7 +201,7 @@ sap.ui.define(
                 },
                 error: function (error) {
                   console.log(error);
-                  oView.setBusy(false);
+                  self.getView().setBusy(false);
                 },
               });
             });

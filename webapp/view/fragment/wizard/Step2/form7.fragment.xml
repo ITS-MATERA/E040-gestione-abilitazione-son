@@ -1,0 +1,330 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:l="sap.ui.layout"
+  xmlns:core="sap.ui.core"
+  xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+  <Panel headerText="{i18n>wizardStep2SubTitle7}" width="auto" class="margin0 padding0  expanded"
+    visible="{= ${wizardModel>/PayMode} === 'ID6' || ${wizardModel>/PayMode} === 'ID10' ? true : false }">
+        <content>
+            <VBox id="idStep2Form7">
+                <items>
+                    <l:Grid vSpacing="0">
+                        <VBox >
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                      <l:Grid vSpacing="0">
+                                        <Label design="Bold" width="100%" text="IBAN:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                            <layoutData>
+                                                <l:GridData span="XL3 L3 M3 S12"/>
+                                            </layoutData>
+                                        </Label>
+                                        <Input value="{wizardModel>/IntermediarioIban}">
+                                            <layoutData>
+                                                <l:GridData span="XL9 L9 M9 S12" />
+                                            </layoutData>
+                                        </Input>
+                                      </l:Grid>  
+                                    </items>
+                                </FlexBox>
+                            </items>
+                            <layoutData>
+                                <l:GridData span="XL3 L4 M6 S12"/>
+                            </layoutData>
+                        </VBox>
+                        <VBox >
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom">
+                                    <items>
+                                        <l:Grid vSpacing="0">
+                                            <Label design="Bold" width="100%" text="BIC:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData>
+                                                    <l:GridData span="XL3 L3 M3 S12"/>
+                                                </layoutData>
+                                            </Label>
+                                            <Input value="{wizardModel>/IntermediarioBic}">
+                                                <layoutData>
+                                                    <l:GridData span="XL9 L9 M9 S12"/>
+                                                </layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>
+                                </FlexBox>
+                            </items>
+                            <layoutData>
+                                <l:GridData span="XL3 L4 M6 S12"/>
+                            </layoutData>
+                        </VBox>
+                        <VBox >
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom">
+                                    <items>
+                                        <l:Grid vSpacing="0">
+                                            <Label design="Bold" width="100%" text="Coordinate Estere:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData>
+                                                    <l:GridData span="XL5 L5 M5 S12"/>
+                                                </layoutData>
+                                            </Label>
+                                            <Input value="{wizardModel>/IntermediarioCoordinateEstere}" width="100%">
+                                                <layoutData>
+                                                    <l:GridData span="XL7 L7 M7 S12"/>
+                                                </layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>
+                                </FlexBox>
+                            </items>
+                            <layoutData>
+                                <l:GridData span="XL3 L4 M6 S12"/>
+                            </layoutData>
+                        </VBox>
+                        <VBox >
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
+                                    <items>
+                                        <l:Grid vSpacing="0">
+                                            <Label design="Bold" width="100%" text="Dati Altro ID Banca:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData>
+                                                    <l:GridData span="XL12 L12 M12 S12"/>
+                                                </layoutData>
+                                            </Label>
+                                        </l:Grid>
+                                    </items>
+                                </FlexBox>
+                            </items>
+                            <layoutData>
+                                <l:GridData span="XL12 L12 M12 S12" linebreak="true"/>
+                            </layoutData>
+                        </VBox>
+                        <VBox >
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom">
+                                    <items>
+                                        <l:Grid vSpacing="0">
+                                            <Label design="Bold" wrapping="true" width="100%" text="Denominazione Banca:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData>
+                                                    <l:GridData span="XL4 L4 M4 S12"/>
+                                                </layoutData>
+                                            </Label>
+                                            <Input value="{wizardModel>/IntermediarioDenominazioneBanca}">
+                                                <layoutData>
+                                                    <l:GridData span="XL8 L8 M8 S12"/>
+                                                </layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>
+                                </FlexBox>
+                            </items>
+                            <layoutData>
+                                <l:GridData span="XL3 L4 M6 S12" linebreak="true"/>
+                            </layoutData>
+                        </VBox>
+                        <VBox >
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom">
+                                    <items>
+                                        <l:Grid vSpacing="0">
+                                            <Label design="Bold" width="100%" text="ClearingSystemid:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData>
+                                                    <l:GridData span="XL5 L5 M5 S12"/>
+                                                </layoutData>
+                                            </Label>
+                                            <Input value="{wizardModel>/IntermediarioClearingSystemid}">
+                                                <layoutData>
+                                                    <l:GridData span="XL7 L7 M7 S12"/>
+                                                </layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>
+                                </FlexBox>
+                            </items>
+                            <layoutData>
+                                <l:GridData span="XL3 L4 M6 S12"/>
+                            </layoutData>
+                        </VBox>
+                        <VBox >
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom">
+                                    <items>
+                                        <l:Grid vSpacing="0">
+                                            <Label design="Bold" width="100%" text="Indirizzo Altro ID Banca:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData>
+                                                    <l:GridData span="XL12 L12 M12 S12"/>
+                                                </layoutData>
+                                            </Label>
+                                        </l:Grid>
+                                    </items>
+                                </FlexBox>
+                            </items>
+                            <layoutData>
+                                <l:GridData span="XL12 L12 M12 S12" linebreak="true"/>
+                            </layoutData>
+                        </VBox>
+                        <VBox >
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom">
+                                    <items>
+                                        <l:Grid vSpacing="0">
+                                            <Label design="Bold" width="100%" text="Via:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData>
+                                                    <l:GridData span="XL3 L3 M3 S12"/>
+                                                </layoutData>
+                                            </Label>
+                                            <Input value="{wizardModel>/IntermediarioVia}">
+                                                <layoutData>
+                                                    <l:GridData span="XL9 L9 M9 S12"/>
+                                                </layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>
+                                </FlexBox>
+                            </items>
+                            <layoutData>
+                                <l:GridData span="XL3 L4 M6 S12" linebreak="true"/>
+                            </layoutData>
+                        </VBox>
+                        <VBox >
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom">
+                                    <items>
+                                        <l:Grid vSpacing="0">
+                                            <Label design="Bold" width="100%" text="Civico:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData>
+                                                    <l:GridData span="XL3 L3 M3 S12"/>
+                                                </layoutData>
+                                            </Label>
+                                            <Input value="{wizardModel>/IntermediarioCivico}">
+                                                <layoutData>
+                                                    <l:GridData span="XL9 L9 M9 S12"/>
+                                                </layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>
+                                </FlexBox>
+                            </items>
+                            <layoutData>
+                                <l:GridData span="XL3 L4 M6 S12"/>
+                            </layoutData>
+                        </VBox>
+                        <VBox >
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom">
+                                    <items>
+                                        <l:Grid vSpacing="0">
+                                            <Label design="Bold" width="100%" text="Città:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData>
+                                                    <l:GridData span="XL3 L3 M3 S12"/>
+                                                </layoutData>
+                                            </Label>
+                                            <Input value="{wizardModel>/IntermediarioCitta}">
+                                                <layoutData>
+                                                    <l:GridData span="XL9 L9 M9 S12"/>
+                                                </layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>
+                                </FlexBox>
+                            </items>
+                            <layoutData>
+                                <l:GridData span="XL3 L4 M6 S12" linebreak="true"/>
+                            </layoutData>
+                        </VBox>
+                        <VBox >
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom">
+                                    <items>
+                                        <l:Grid vSpacing="0">
+                                            <Label design="Bold" width="100%" text="Provicnia:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData>
+                                                    <l:GridData span="XL3 L3 M3 S12"/>
+                                                </layoutData>
+                                            </Label>
+                                            <Input value="{wizardModel>/IntermediarioProvincia}">
+                                                <layoutData>
+                                                    <l:GridData span="XL9 L9 M9 S12"/>
+                                                </layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>
+                                </FlexBox>
+                            </items>
+                            <layoutData>
+                                <l:GridData span="XL3 L4 M6 S12"/>
+                            </layoutData>
+                        </VBox>
+                        <VBox >
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom">
+                                    <items>
+                                        <l:Grid vSpacing="0">
+                                            <Label design="Bold" width="100%" text="CAP:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData>
+                                                    <l:GridData span="XL3 L3 M3 S12"/>
+                                                </layoutData>
+                                            </Label>
+                                            <Input value="{wizardModel>/IntermediarioCap}">
+                                                <layoutData>
+                                                    <l:GridData span="XL9 L9 M9 S12"/>
+                                                </layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>
+                                </FlexBox>
+                            </items>
+                            <layoutData>
+                                <l:GridData span="XL3 L4 M6 S12"/>
+                            </layoutData>
+                        </VBox>
+                        <VBox >
+                            <items>
+                                <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom">
+                                    <items>
+                                        <l:Grid vSpacing="0">
+                                            <Label design="Bold" width="100%" text="Nazione:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData>
+                                                    <l:GridData span="XL3 L3 M3 S12"/>
+                                                </layoutData>
+                                            </Label>
+                                            <Input value="{wizardModel>/IntermediarioNazione}">
+                                                <layoutData>
+                                                    <l:GridData span="XL9 L9 M9 S12"/>
+                                                </layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>
+                                </FlexBox>
+                            </items>
+                            <layoutData>
+                                <l:GridData span="XL3 L4 M6 S12"/>
+                            </layoutData>
+                        </VBox>
+                        <!-- <VBox >
+                            <items>
+                                <FlexBox >
+                                    <items>
+                                        <l:Grid >
+                                            <Label design="Bold" text="" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                                <layoutData>
+                                                    <l:GridData span="XL3 L3 M3 S12"/>
+                                                </layoutData>
+                                            </Label>
+                                            <Input >
+                                                <layoutData>
+                                                    <l:GridData span="XL9 L9 M9 S12"/>
+                                                </layoutData>
+                                            </Input>
+                                        </l:Grid>
+                                    </items>
+                                </FlexBox>
+                            </items>
+                            <layoutData>
+                                <l:GridData span="XL3 L4 M6 S12"/>
+                            </layoutData>
+                        </VBox> -->
+                    </l:Grid>
+                </items>
+            </VBox>
+        </content>
+    </Panel>
+</core:FragmentDefinition>

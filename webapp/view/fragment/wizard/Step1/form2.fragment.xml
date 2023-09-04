@@ -26,25 +26,8 @@
                                             liveChange="onLiveChange" width="100%"
                                             submit="onLiveChange"
                                             app:property="Fipos"
-                                            editable="{wizardModel>/isInChange}"
+                                            editable="{= !${wizardModel>/isInChange} || ( ${wizardModel>/isInChange} &amp;&amp; ${DataModel>/ZstatoSop} === '00' ) ? false : true }" 
                                             value="{wizardModel>/Fipos}"/>
-
-
-                                            <!-- <ComboBox
-                                                id="idWizardFipos"
-                                                width="100%"
-                                                 editable="{wizardModel>/isInChange}"
-                                                app:property="Fipos"
-                                                change="onLiveChange"
-                                                items="{wizardModel>/FiposList}"
-                                                selectedKey="{wizardModel>/Fipos}"
-                                                value="{wizardModel>/Fipos}"
-                                                >
-                                                <core:Item  key="{wizardModel>Fipos}" text="{wizardModel>Fipos}" />
-                                                <layoutData>
-                                                    <l:GridData span="XL8 L8 M7 S12"  />
-                                                </layoutData>
-                                            </ComboBox>	                        -->
                                         </l:Grid>
                                     </items>     
                                 </FlexBox>                                
@@ -66,11 +49,8 @@
                                             value="{wizardModel>/Fistl}"
                                             liveChange="onLiveChange"
                                             submit="onLiveChange"
-                                            editable="{wizardModel>/isInChange}"
+                                            editable="{= !${wizardModel>/isInChange} || ( ${wizardModel>/isInChange} &amp;&amp; ${DataModel>/ZstatoSop} === '00' ) ? false : true }" 
                                             />
-                                            <!-- <Input   editable="{wizardModel>/isInChange}" id="idWizardFistl"  app:property="Fistl" width="100%" value="{wizardModel>/Fistl}" liveChange="onLiveChange" >
-                                                <layoutData><l:GridData span="XL7 L9 M7 S12"/></layoutData>
-                                            </Input> -->
                                         </l:Grid>
                                     </items>     
                                 </FlexBox>                                

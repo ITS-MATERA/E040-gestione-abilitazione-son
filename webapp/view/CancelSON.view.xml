@@ -9,7 +9,8 @@
         <Panel class="bgBlue margin0" visible="{detailModel>/headerVisible}">
             <core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.HeaderPanel" type="XML"/>
             <FlexBox justifyContent="End">
-            <Button text="Rettifica" type="Emphasized" press="onChangeSON" enabled="{AuthorityCheckSON>/Z02Enabled}" ></Button>
+            <Button text="Rettifica" type="Emphasized" press="onChangeSON" visible="{= ${wizardModel>/isInChange} ? false : true }" 
+                enabled="{AuthorityCheckSON>/Z02Enabled}" ></Button>
             </FlexBox>
         </Panel>
         <IconTabBar select="onSelectTab" id ="idIconTabBar" selectedKey="{detailModel>/tabSelectedKey}">
@@ -21,9 +22,10 @@
                     visible="{iconTabModel>/CancelSONEnabled}" >
                     <core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.actions.cancelSON.TableCancelSON" type="XML"/>
                 </IconTabFilter>
+
                 <IconTabFilter 
-                    icon="{detailModel>/iconTab}" 
-                    text="{detailModel>/text}"
+                    icon="{= ${wizardModel>/isInChange} ? 'sap-icon://edit' : ${detailModel>/iconTab} }"
+                    text="{= ${wizardModel>/isInChange} ? ${i18n>btnChangeSON} : ${detailModel>/text} }"
                     key="{detailModel>/key}"
                     visible="{AuthorityCheckSON>/Z03Enabled}">
                     <Panel visible="{detailModel>/showSelection}">
@@ -32,8 +34,15 @@
                     <Panel visible="{= !${detailModel>/showSelection}}" >
                         <core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.detail.wizard" type="XML"/>
                     </Panel>
-                    
                 </IconTabFilter>
+
+                <IconTabFilter 
+                    icon="sap-icon://detail-view" 
+                    text="{i18n>btnDetail}"
+                    key="{i18n>btnFake}"	
+                    visible="{= ${AuthorityCheckSON>/Z03Enabled} &amp;&amp; !${detailModel>/showSelection} &amp;&amp; ${wizardModel>/isInChange} }" >
+                </IconTabFilter>
+
                 <IconTabFilter
                     icon="sap-icon://history"
                     text="{i18n>btnWorkflow}"

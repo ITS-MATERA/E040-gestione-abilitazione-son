@@ -37,6 +37,10 @@ div.panelListAuth > div {
   color: black !important;
 }
 
+.display-none{
+  display: none!important;
+}
+
 /*#~~~ Hides title form in wizard ~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .formHiddenTitle .sapUiFormContainerTitle .sapUiFormTitle {

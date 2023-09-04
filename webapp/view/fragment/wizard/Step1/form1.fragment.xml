@@ -26,13 +26,15 @@
 						
 						<Label design="Bold" text="{i18n>wizardFieldGjahr}" class="sapUiSmallMarginBottom"/>
 				
-						<Input editable="{wizardModel>/isInChange}" id="idWizardGjahr"  app:property="Gjahr" value="{wizardModel>/Gjahr}" liveChange="onLiveChange" submit="onSubmitGjahr" >
+						<Input editable="{= !${wizardModel>/isInChange} || ( ${wizardModel>/isInChange} &amp;&amp; ${DataModel>/ZstatoSop} === '00' ) ? false : true }" 
+							id="idWizardGjahr"  app:property="Gjahr" value="{wizardModel>/Gjahr}" liveChange="onLiveChange" submit="onSubmitGjahr" >
 							<layoutData>
 								<l:GridData span="XL3 L5 M6 S12"  />
 							</layoutData>
 						</Input>
 						<Label design="Bold" text="{i18n>wizardFieldZufficioCont}" class="sapUiSmallMarginBottom"/>
-						<Input editable="{wizardModel>/isInChange}" id="idWizardZufficioCont"  app:property="ZufficioCont" value="{wizardModel>/ZufficioCont}" submit="onSubmitZufficioCont"  liveChange="onLiveChange">
+						<Input editable="{= !${wizardModel>/isInChange} || ( ${wizardModel>/isInChange} &amp;&amp; ${DataModel>/ZstatoSop} === '00' ) ? false : true }" 
+						 id="idWizardZufficioCont"  app:property="ZufficioCont" value="{wizardModel>/ZufficioCont}" submit="onSubmitZufficioCont"  liveChange="onLiveChange">
 							<layoutData>
 								<l:GridData span="XL3 L5 M6 S12"  />
 							</layoutData>
@@ -42,11 +44,10 @@
 						<ComboBox
 							id="idWizardZdesctipodisp3"
 							width="100%"
-							editable="{wizardModel>/isInChange}"
+							editable="{= !${wizardModel>/isInChange} || ( ${wizardModel>/isInChange} &amp;&amp; ${DataModel>/ZstatoSop} === '00' ) ? false : true }" 
 							change="onLiveChangeZtipodisp3List"
 							items="{wizardModel>/Ztipodisp3List}"
-							selectedKey="{wizardModel>/Ztipodisp3}"
-							>
+							selectedKey="{wizardModel>/Ztipodisp3}">
 							<!-- selectedKey="{defaultModel>/Ztipodisp3}" -->
 							<core:Item  key="{wizardModel>Ztipodisp3}" text="{wizardModel>Zdesctipodisp3}" />
 							<layoutData>

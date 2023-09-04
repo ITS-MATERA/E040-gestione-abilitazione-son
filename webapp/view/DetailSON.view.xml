@@ -10,7 +10,11 @@
 	<Panel class="bgBlue margin0" visible="{detailModel>/headerVisible}">
 		<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.HeaderPanel" type="XML"/>
 		<FlexBox justifyContent="End">
-		<Button text="Rettifica" type="Emphasized" press="onChangeSON" visible="{iconTabModel>/ChangeSONEnabled}" ></Button>
+		<Button text="Rettifica" type="Emphasized" press="onChangeSON" visible="{= ${iconTabModel>/ChangeSONEnabled} &amp;&amp; ${wizardModel>/isInChange} ? false : true }"
+    
+     
+    
+     ></Button>
 		</FlexBox>
 	</Panel>
 
@@ -18,19 +22,6 @@
 	selectedKey="{detailModel>/tabSelectedKey}"
 		>
 		<items>
-		<!-- <IconTabFilter
-				icon="{detailModel>/iconTab}"
-				design="Horizontal"
-				text="{detailModel>/text}"
-				key="{detailModel>/key}"
-				visible="{detailModel>/iconTabVisible}">
-					<Panel  visible="{detailModel>/showPanel}" headerText="{detailModel>/titlePanel}" width="auto" class="margin0 padding0">
-						<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.detail.panelFields" type="XML"/>
-					</Panel>
-				<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.detail.table" type="XML"/>			
-			</IconTabFilter> -->
-	
-
 			<IconTabFilter 
 				icon="sap-icon://list" 
 				text="{i18n>btnCancelSON}"
@@ -82,19 +73,26 @@
 				visible="{iconTabModel>/DeleteCancelSONEnabled}" >
 				<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.actions.deleteCancelSON.TableDeleteCancelSON" type="XML"/>
 			</IconTabFilter>
-											
+				
 			<IconTabFilter 
-				icon="{detailModel>/iconTab}" 
-				text="{detailModel>/text}"
-				key="{detailModel>/key}"	 >
+				icon="{= ${wizardModel>/isInChange} ? 'sap-icon://edit' : ${detailModel>/iconTab} }"
+        text="{= ${wizardModel>/isInChange} ? ${i18n>btnChangeSON} : ${detailModel>/text} }"
+        key="{detailModel>/key}">
 				<Panel visible="{detailModel>/showSelection}">
 					<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.detail.tableDetail" type="XML"/>
 				</Panel>
 					<Panel visible="{= !${detailModel>/showSelection}}" >
 					<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.detail.wizard" type="XML"/>
-				</Panel>
-				
+				</Panel>				
 			</IconTabFilter>
+
+      <IconTabFilter 
+          icon="sap-icon://detail-view" 
+          text="{i18n>btnDetail}"
+          key="{i18n>btnFake}"	
+          visible="{= ${AuthorityCheckSON>/Z03Enabled} &amp;&amp; !${detailModel>/showSelection} &amp;&amp; ${wizardModel>/isInChange} }" >
+      </IconTabFilter>
+
 			<IconTabFilter
 				icon="sap-icon://history"
 				text="{i18n>btnWorkflow}"

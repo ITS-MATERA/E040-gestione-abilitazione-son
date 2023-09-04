@@ -6,7 +6,8 @@
       xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 >   
 <!-- expandable="true" -->
-    <Panel   headerText="{i18n>wizardStep2SubTitle4}" width="auto" class="margin0 padding0 expanded">
+    <Panel   headerText="{i18n>wizardStep2SubTitle4}" width="auto" class="margin0 padding0 expanded"
+        visible="{= ${wizardModel>/PayMode} === 'ID3' || ${wizardModel>/PayMode} === 'ID4' ? true : false }">
 		<content >
             <f:SimpleForm id="idStep2Form4"
                 editable="true"
