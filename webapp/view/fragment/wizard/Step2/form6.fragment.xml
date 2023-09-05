@@ -16,7 +16,7 @@
                                 <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
                                     <items>
                                       <l:Grid vSpacing="0">
-                                        <Label design="Bold" width="100%" text="IBAN:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                        <Label design="Bold" width="100%" text="{i18n>wizardFieldIban}:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                             <layoutData><l:GridData span="XL3 L3 M3 S12"/></layoutData>
                                         </Label>
                                         <Input value="{wizardModel>/BAIban}" editable="false">
@@ -34,7 +34,7 @@
                                 <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom">
                                     <items>
                                         <l:Grid vSpacing="0">
-                                            <Label design="Bold" width="100%" text="BIC:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                            <Label design="Bold" width="100%" text="{i18n>wizardFieldSwift}:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData><l:GridData span="XL3 L3 M3 S12"/></layoutData></Label>
                                             <Input value="{wizardModel>/BABic}" editable="false">
                                                 <layoutData><l:GridData span="XL9 L9 M9 S12"/></layoutData>
@@ -51,7 +51,7 @@
                               <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom">
                                 <items>
                                   <l:Grid vSpacing="0">
-                                    <Label design="Bold" width="100%" text="Coordinate Estere:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                    <Label design="Bold" width="100%" text="{i18n>wizardFieldZcoordest}:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                       <layoutData><l:GridData span="XL5 L5 M5 S12"/></layoutData>
                                     </Label>
                                     <Input value="{wizardModel>/BACoordinateEstere}" editable="false">
@@ -69,7 +69,7 @@
                                 <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
                                     <items>
                                         <l:Grid vSpacing="0">
-                                            <Label design="Bold" width="100%" text="Dati Altro ID Banca:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                            <Label design="Bold" width="100%" text="{i18n>wizardFieldDatiAltroIDBanca}:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData><l:GridData span="XL12 L12 M12 S12"/></layoutData>
                                             </Label>
                                         </l:Grid>
@@ -84,7 +84,7 @@
                                 <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom">
                                     <items>
                                         <l:Grid vSpacing="0">
-                                            <Label design="Bold" wrapping="true" width="100%" text="Denominazione Banca:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                            <Label design="Bold" wrapping="true" width="100%" text="{i18n>wizardFieldDenominazioneBanca}:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                               <layoutData><l:GridData span="XL4 L4 M4 S12"/></layoutData>
                                             </Label>
                                             <Input value="{wizardModel>/BADenominazioneBanca}" editable="false">
@@ -102,7 +102,7 @@
                                 <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom">
                                     <items>
                                         <l:Grid vSpacing="0">
-                                            <Label design="Bold" width="100%" text="ClearingSystemid:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                            <Label design="Bold" width="100%" text="{i18n>wizardFieldClearingSystemid}:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData><l:GridData span="XL5 L5 M5 S12"/></layoutData>
                                             </Label>
 
@@ -121,7 +121,7 @@
                                 <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom">
                                     <items>
                                         <l:Grid vSpacing="0">
-                                            <Label design="Bold" width="100%" text="Indirizzo Altro ID Banca:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                            <Label design="Bold" width="100%" text="{i18n>wizardFieldIndirizzoAltroBanca}:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData><l:GridData span="XL12 L12 M12 S12"/></layoutData>
                                             </Label>
                                         </l:Grid>
@@ -136,7 +136,7 @@
                                 <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom">
                                     <items>
                                         <l:Grid vSpacing="0">
-                                            <Label design="Bold" width="100%" text="Via:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                            <Label design="Bold" width="100%" text="{i18n>wizardFieldVia}:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData><l:GridData span="XL3 L3 M3 S12"/></layoutData>
                                             </Label>
 
@@ -155,7 +155,7 @@
                                 <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom">
                                     <items>
                                         <l:Grid vSpacing="0">
-                                            <Label design="Bold" width="100%" text="Civico:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                            <Label design="Bold" width="100%" text="{i18n>wizardFieldCivico}:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData><l:GridData span="XL3 L3 M3 S12"/></layoutData>
                                             </Label>
                                             <Input value="{wizardModel>/BACivico}">
@@ -173,7 +173,7 @@
                                 <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom">
                                     <items>
                                         <l:Grid vSpacing="0">
-                                            <Label design="Bold" width="100%" text="Città:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                            <Label design="Bold" width="100%" text="{i18n>wizardFieldCitta}:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData><l:GridData span="XL3 L3 M3 S12"/></layoutData>
                                             </Label>
                                             <Input value="{wizardModel>/BACitta}">
@@ -191,7 +191,7 @@
                                 <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom">
                                     <items>
                                       <l:Grid vSpacing="0">
-                                        <Label design="Bold" width="100%" text="Provicnia:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                        <Label design="Bold" width="100%" text="{i18n>wizardFieldRegio}:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                           <layoutData><l:GridData span="XL3 L3 M3 S12"/></layoutData>
                                         </Label>
                                         <Input value="{wizardModel>/BAProvincia}">
@@ -209,7 +209,7 @@
                                 <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom">
                                     <items>
                                         <l:Grid vSpacing="0">
-                                            <Label design="Bold" width="100%" text="CAP:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                            <Label design="Bold" width="100%" text="{i18n>wizardFieldPstlz}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData><l:GridData span="XL3 L3 M3 S12"/></layoutData>
                                             </Label>
                                             <Input value="{wizardModel>/BACap}">
@@ -228,7 +228,7 @@
                                 <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom">
                                     <items>
                                         <l:Grid vSpacing="0">
-                                            <Label design="Bold" width="100%" text="Nazione:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
+                                            <Label design="Bold" width="100%" text="{i18n>wizardFieldLand1}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData>
                                                     <l:GridData span="XL3 L3 M3 S12"/>
                                                 </layoutData>

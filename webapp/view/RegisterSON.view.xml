@@ -37,6 +37,8 @@
 									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form3" type="XML"/>
 									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form4" type="XML"/>
 									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form5" type="XML"/>
+									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form6" type="XML"/>
+									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form7" type="XML"/>
 								</VBox>		
 							
 							</WizardStep>
