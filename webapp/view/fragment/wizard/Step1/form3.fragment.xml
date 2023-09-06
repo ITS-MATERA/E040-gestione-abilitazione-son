@@ -24,7 +24,7 @@
                     singleContainerFullSize="false">
                     <f:content>      
                         <Label design="Bold" text="{i18n>wizardFieldZimptot}" class="sapUiSmallMarginBottom"/>
-                        <Input  editable="{wizardModel>/isInChange}" id="idWizardZimptot" type="Number"  app:property="Zimptot" value="{wizardModel>/Zimptot}" liveChange="onLiveChange">
+                        <Input  editable="{wizardModel>/isInChange}" id="idWizardZimptot" type="Number"  app:property="Zimptot" value="{wizardModel>/Zimptot}" liveChange="onLiveChangeImportoStep1Wizard">
                             <layoutData>
                                 <l:GridData span="XL4 L5 M8 S12"  />
                             </layoutData>

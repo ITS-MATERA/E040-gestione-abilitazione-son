@@ -22,7 +22,7 @@
 	selectedKey="{detailModel>/tabSelectedKey}"
 		>
 		<items>
-			<IconTabFilter 
+			<!-- <IconTabFilter 
 				icon="sap-icon://list" 
 				text="{i18n>btnCancelSON}"
 				key="{i18n>btnCancelSON}"	
@@ -72,7 +72,7 @@
 				key="{i18n>btnDeleteCancel}"	
 				visible="{iconTabModel>/DeleteCancelSONEnabled}" >
 				<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.actions.deleteCancelSON.TableDeleteCancelSON" type="XML"/>
-			</IconTabFilter>
+			</IconTabFilter> -->
 				
 			<IconTabFilter 
 				icon="{= ${wizardModel>/isInChange} ? 'sap-icon://edit' : ${detailModel>/iconTab} }"

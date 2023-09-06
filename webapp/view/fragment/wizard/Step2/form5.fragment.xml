@@ -22,7 +22,7 @@
                                             <ComboBox
                                                 id="idWizardStras"
                                                 width="100%"
-                                                 editable="{wizardModel>/isInChange}"
+                                                editable="{wizardModel>/isInChange}"
                                                 selectedKey="{wizardModel>/FirstKeyStras}"
                                                 change="onLiveChangeStras"
                                                 items="{wizardModel>/StrasList}"

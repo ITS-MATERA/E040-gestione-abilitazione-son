@@ -19,7 +19,7 @@
                                         <Label design="Bold" width="100%" text="{i18n>wizardFieldIban}:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                             <layoutData><l:GridData span="XL3 L3 M3 S12"/></layoutData>
                                         </Label>
-                                        <Input value="{wizardModel>/BAIban}" editable="false">
+                                        <Input value="{wizardModel>/Ziban_b}" editable="false">
                                             <layoutData><l:GridData span="XL9 L9 M9 S12" /></layoutData>
                                         </Input>
                                       </l:Grid>  
@@ -36,7 +36,7 @@
                                         <l:Grid vSpacing="0">
                                             <Label design="Bold" width="100%" text="{i18n>wizardFieldSwift}:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData><l:GridData span="XL3 L3 M3 S12"/></layoutData></Label>
-                                            <Input value="{wizardModel>/BABic}" editable="false">
+                                            <Input value="{wizardModel>/Zbic_b}" editable="false">
                                                 <layoutData><l:GridData span="XL9 L9 M9 S12"/></layoutData>
                                             </Input>
                                         </l:Grid>
@@ -54,7 +54,7 @@
                                     <Label design="Bold" width="100%" text="{i18n>wizardFieldZcoordest}:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                       <layoutData><l:GridData span="XL5 L5 M5 S12"/></layoutData>
                                     </Label>
-                                    <Input value="{wizardModel>/BACoordinateEstere}" editable="false">
+                                    <Input value="{wizardModel>/Zcoordest_b}" editable="false">
                                       <layoutData><l:GridData span="XL7 L7 M7 S12"/></layoutData>
                                     </Input>
                                   </l:Grid>
@@ -87,7 +87,7 @@
                                             <Label design="Bold" wrapping="true" width="100%" text="{i18n>wizardFieldDenominazioneBanca}:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                               <layoutData><l:GridData span="XL4 L4 M4 S12"/></layoutData>
                                             </Label>
-                                            <Input value="{wizardModel>/BADenominazioneBanca}" editable="false">
+                                            <Input value="{wizardModel>/Zdenbanca_b}" editable="false">
                                                 <layoutData><l:GridData span="XL8 L8 M8 S12"/></layoutData>
                                             </Input>
                                         </l:Grid>
@@ -106,7 +106,7 @@
                                                 <layoutData><l:GridData span="XL5 L5 M5 S12"/></layoutData>
                                             </Label>
 
-                                            <Input value="{wizardModel>/BAClearingSystemid}" editable="false">
+                                            <Input value="{wizardModel>/Zclearsyst_b}" editable="false">
                                                 <layoutData><l:GridData span="XL7 L7 M7 S12"/></layoutData>
                                             </Input>
                                         </l:Grid>
@@ -140,7 +140,7 @@
                                                 <layoutData><l:GridData span="XL3 L3 M3 S12"/></layoutData>
                                             </Label>
 
-                                            <Input value="{wizardModel>/BAVia}">
+                                            <Input value="{wizardModel>/Stras_b}">
                                                 <layoutData><l:GridData span="XL9 L9 M9 S12"/></layoutData>
                                             </Input>
                                         </l:Grid>
@@ -158,7 +158,7 @@
                                             <Label design="Bold" width="100%" text="{i18n>wizardFieldCivico}:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData><l:GridData span="XL3 L3 M3 S12"/></layoutData>
                                             </Label>
-                                            <Input value="{wizardModel>/BACivico}">
+                                            <Input value="{wizardModel>/Zcivico_b}">
                                               <layoutData><l:GridData span="XL9 L9 M9 S12"/></layoutData>
                                             </Input>
                                         </l:Grid>
@@ -176,7 +176,7 @@
                                             <Label design="Bold" width="100%" text="{i18n>wizardFieldCitta}:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData><l:GridData span="XL3 L3 M3 S12"/></layoutData>
                                             </Label>
-                                            <Input value="{wizardModel>/BACitta}">
+                                            <Input value="{wizardModel>/Ort01_b}">
                                                 <layoutData><l:GridData span="XL9 L9 M9 S12"/></layoutData>
                                             </Input>
                                         </l:Grid>
@@ -194,7 +194,7 @@
                                         <Label design="Bold" width="100%" text="{i18n>wizardFieldRegio}:" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                           <layoutData><l:GridData span="XL3 L3 M3 S12"/></layoutData>
                                         </Label>
-                                        <Input value="{wizardModel>/BAProvincia}">
+                                        <Input value="{wizardModel>/Regio_b}">
                                           <layoutData><l:GridData span="XL9 L9 M9 S12"/></layoutData>
                                         </Input>
                                       </l:Grid>
@@ -212,7 +212,7 @@
                                             <Label design="Bold" width="100%" text="{i18n>wizardFieldPstlz}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData><l:GridData span="XL3 L3 M3 S12"/></layoutData>
                                             </Label>
-                                            <Input value="{wizardModel>/BACap}">
+                                            <Input value="{wizardModel>/Pstlz_b}">
                                                 <layoutData><l:GridData span="XL9 L9 M9 S12"/></layoutData>
                                             </Input>
                                         </l:Grid>
@@ -233,7 +233,7 @@
                                                     <l:GridData span="XL3 L3 M3 S12"/>
                                                 </layoutData>
                                             </Label>
-                                            <Input value="{wizardModel>/BANazione}">
+                                            <Input value="{wizardModel>/Land1_b}">
                                                 <layoutData>
                                                     <l:GridData span="XL9 L9 M9 S12"/>
                                                 </layoutData>

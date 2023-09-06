@@ -151,6 +151,10 @@ sap.ui.define(
           oView.setModel(oModelJson, nameModel);
         },
 
+        
+
+
+
         // ----------------------------- START-----------------------------  //
 
         openDialog: function (dialogPath) {
@@ -968,6 +972,38 @@ sap.ui.define(
           wizardModel.setProperty("/" + sProperty, sNewValue);
         },
 
+        onLiveChangeImportoStep1Wizard:function(oEvent) {
+          var self = this,
+            sNewValue,
+            oDataModel = self.getModel(),
+            wizardModel = self.getModel(WIZARD_MODEL);
+
+          var sInputId = self._getIdElement(oEvent);
+          console.log(sInputId);
+          var oInput = self.getView().byId(sInputId);
+          var sProperty = oInput.data("property");
+
+          sNewValue = oEvent.getSource().getValue();
+          wizardModel.setProperty("/" + sProperty, sNewValue);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/ZimptotDivisa",null);
+          if(sNewValue !== ""){
+            var path = self.getModel().createKey("TvarvcParameterSet", {
+                Name: "COSP-R3-FIORI-E018_DIVISA",
+            });
+    
+            self.getModel().metadataLoaded().then(function () {
+                oDataModel.read("/" + path, {
+                    success: function (data, oResponse) {                      
+                        self.getView().getModel(WIZARD_MODEL).setProperty("/ZimptotDivisa",data.Value);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                });
+            });
+          }
+        },
+
         onLiveChangePayMode: function (oEvent) {
           var self = this,
             sNewValue,
@@ -1064,6 +1100,7 @@ sap.ui.define(
 
         fillFipos: function () {
           var self = this,
+            oBundle=self.getResourceBundle(),
             wizardModel = self.getModel(WIZARD_MODEL),
             Gjahr = wizardModel.getProperty("/Gjahr"),
             wizardModel = self.getModel(WIZARD_MODEL),
@@ -1091,11 +1128,24 @@ sap.ui.define(
                   },
                   success: function (data, oResponse) {
                     oView.setBusy(false);
-                    if(data && data.results && data.results.length>0)
-                      wizardModel.setProperty("/Fipos", data.results[0].Fipos);
-                      // wizardModel.setProperty("/FiposList", data.results);
-                    else  
-                     wizardModel.setProperty("/Fipos", null);
+                    var message = oResponse.headers["sap-message"] && oResponse.headers["sap-message"] !== "" ? JSON.parse(oResponse.headers["sap-message"]) : null;
+                    if(message && message.severity === "error"){
+                      sap.m.MessageBox.warning(message.message,{
+                        title: oBundle.getText("titleDialogWarning"),
+                        onClose: function (oAction) {
+                          wizardModel.setProperty("/Fipos", null);
+                          return false;
+                        },
+                      });
+                      return false;
+                    }
+                    else{
+                      oView.setBusy(false);
+                      if(data && data.results && data.results.length>0)
+                        wizardModel.setProperty("/Fipos", data.results[0].Fipos);
+                      else  
+                      wizardModel.setProperty("/Fipos", null);
+                    }
                   },
                   error: function (error) {
                     wizardModel.setProperty("/Fipos", null);
@@ -1226,6 +1276,10 @@ sap.ui.define(
               Zwels: !Zwels || Zwels === null ? "" : Zwels,
               ZZcausaleval: !ZZcausaleval || ZZcausaleval === null ? "" : ZZcausaleval,
               Banks: !Banks || Banks === null ? "" : Banks,
+              AliasRgs: !wizardModel.getProperty("/Zalias") || wizardModel.getProperty("/Zalias") === null ? "" : wizardModel.getProperty("/Zalias"),
+              Flagfruttifero: !wizardModel.getProperty("/Zflagfrutt") || wizardModel.getProperty("/Zflagfrutt") === null ? "" : wizardModel.getProperty("/Zflagfrutt"),
+              Purpose: !wizardModel.getProperty("/Zpurpose") || wizardModel.getProperty("/Zpurpose") === null ? "" : wizardModel.getProperty("/Zpurpose"),
+              Zcodtrib: !wizardModel.getProperty("/Zcodtrib") || wizardModel.getProperty("/Zcodtrib") === null ? "" : wizardModel.getProperty("/Zcodtrib")
             };
           } else {
             url = URL_VALIDATION_2;
@@ -1237,6 +1291,10 @@ sap.ui.define(
               Zwels: !Zwels || Zwels === null ? "" : Zwels,
               ZZcausaleval: !ZZcausaleval || ZZcausaleval === null ? "" : ZZcausaleval,
               Banks: !Banks || Banks === null ? "" : Banks, 
+              AliasRgs: !wizardModel.getProperty("/Zalias") || wizardModel.getProperty("/Zalias") === null ? "" : wizardModel.getProperty("/Zalias"),
+              Flagfruttifero: !wizardModel.getProperty("/Zflagfrutt") || wizardModel.getProperty("/Zflagfrutt") === null ? "" : wizardModel.getProperty("/Zflagfrutt"),
+              Purpose: !wizardModel.getProperty("/Zpurpose") || wizardModel.getProperty("/Zpurpose") === null ? "" : wizardModel.getProperty("/Zpurpose"),
+              Zcodtrib: !wizardModel.getProperty("/Zcodtrib") || wizardModel.getProperty("/Zcodtrib") === null ? "" : wizardModel.getProperty("/Zcodtrib")
             };
           }
 
@@ -1544,9 +1602,10 @@ sap.ui.define(
                     wizardModel.setProperty("/Regio", data.results[0]["Regio"]);
                     wizardModel.setProperty("/Pstlz", data.results[0]["Pstlz"]);
                     wizardModel.setProperty("/Land1", data.results[0]["Land1"]);
-                    if(data.results[0].Regio && data.results[0].Regio !== null && data.results[0].Regio !== ""){
-                      wizardModel.setProperty("/Zlocpag", data.results[0].Ort01);
-                    }
+                    wizardModel.setProperty("/Zlocpag", data.results[0].Zlocpag);
+                    // if(data.results[0].Regio && data.results[0].Regio !== null && data.results[0].Regio !== ""){
+                    //   wizardModel.setProperty("/Zlocpag", data.results[0].Zlocpag);
+                    // }
                   } else {
                     wizardModel.setProperty("/FirstKeyStras", "");
                     wizardModel.setProperty("/Zidsede",null);
@@ -1594,9 +1653,10 @@ sap.ui.define(
                     wizardModel.setProperty("/Regio", data.Regio);
                     wizardModel.setProperty("/Pstlz", data.Pstlz);
                     wizardModel.setProperty("/Land1", data.Land1);
-                    if(data.Regio && data.Regio !== null && data.Regio !== ""){
-                      wizardModel.setProperty("/Zlocpag", data.Regio);
-                    }
+                    wizardModel.setProperty("/Zlocpag", data.Zlocpag);
+                    // if(data.Regio && data.Regio !== null && data.Regio !== ""){
+                    //   wizardModel.setProperty("/Zlocpag", data.Zlocpag);
+                    // }
                   },
                   error: function (error) {
                     oView.setBusy(false);
@@ -1624,7 +1684,7 @@ sap.ui.define(
           self.getModel().metadataLoaded().then( function() {
             oDataModel.read("/" + path, {
               success: function(data, oResponse){
-                
+                console.log(data);
                 wizardModel.setProperty("/PayMode", data.Zwels);
                 wizardModel.setProperty("/Banks", data.Banks);
                 wizardModel.setProperty("/Iban", data.Iban);
@@ -1668,7 +1728,7 @@ sap.ui.define(
             wizardModel.setProperty("/Iban", null);
             wizardModel.setProperty("/isBicEditable", true);
           } else {
-            wizardModel.setProperty("/isIbanEditable", true);
+            wizardModel.setProperty("/isIbanEditable", PayMode.toUpperCase() === "ID3" ? false : true);
             wizardModel.setProperty("/isBicEditable", false);
             wizardModel.setProperty("/Iban", null);
             wizardModel.setProperty("/Swift", null);
@@ -1685,6 +1745,11 @@ sap.ui.define(
           var self = this,
             wizardModel = self.getModel(WIZARD_MODEL);
           self.fillBanks();
+
+          self.getView().setBusy(true);
+          self.getBancaAccreditoIntermediario(function(callback){
+            self.getView().setBusy(false);
+          });
         },
         
         onSubmitZcoordest: function (oEvent) {
@@ -1711,8 +1776,8 @@ sap.ui.define(
                   urlParameters: {Lifnr: wizardModel.getProperty("/Lifnr")},
                   success: function (data, oResponse) {
 
-                    var message = JSON.parse(oResponse.headers["sap-message"]);
-                    if(message.severity === "error"){
+                    var message = oResponse.headers["sap-message"] && oResponse.headers["sap-message"] !== "" ? JSON.parse(oResponse.headers["sap-message"]) : null;
+                    if(message && message.severity === "error"){
                       sap.m.MessageBox.error(message.message, {
                         title: oBundle.getText("titleDialogError"),
                         onClose: function (oAction) {
@@ -1720,17 +1785,88 @@ sap.ui.define(
                         }
                       });  
                     }
-
-                    oView.setBusy(false);
-                    console.log(data);
+                    console.log(data);//TODO:da canc
                     wizardModel.setProperty("/Swift", data.Swift);
+                    self.getBancaAccreditoIntermediario(function(callback){
+                      oView.setBusy(false);
+                    });
                   },
                   error: function (error) {
+                    self.setBancaAccredito(null);
+                    self.setIntermediario(null);
                     oView.setBusy(false);
                   },
                 });
               });
-          } else return false;
+            self.fillBanks();  
+          } 
+          else 
+            return false;
+        },
+
+        getBancaAccreditoIntermediario:function(callback){
+          var self =this,
+            oDataModel = self.getModel(),
+            wizardModel = self.getModel(WIZARD_MODEL);
+          
+          if(wizardModel.getProperty("/PayMode") !== 'ID6' && wizardModel.getProperty("/PayMode") !== 'ID10')
+            callback(true);
+          else{
+            var path = self.getModel().createKey("/BancaAccreditoSet", {
+              Lifnr: wizardModel.getProperty("/Lifnr") && wizardModel.getProperty("/Lifnr") !== null ? wizardModel.getProperty("/Lifnr"):"",  
+              Zwels:wizardModel.getProperty("/PayMode") && wizardModel.getProperty("/PayMode") !== null ? wizardModel.getProperty("/PayMode"):"",
+              Iban:wizardModel.getProperty("/Iban") && wizardModel.getProperty("/Iban") !== null ? wizardModel.getProperty("/Iban"):"",
+              Zcoordest: wizardModel.getProperty("/Zcoordest") && wizardModel.getProperty("/Zcoordest") !== null ? wizardModel.getProperty("/Zcoordest"):"",
+            });
+            self.getModel().metadataLoaded().then(function () {
+                oDataModel.read(path, {
+                  urlParameters: {"$expand": "Intermediario1"},
+                  success: function (data, oResponse) {
+                    console.log(data);
+                    self.setBancaAccredito(data);
+                    self.setIntermediario(data.Intermediario1);
+                    callback(true);
+                  },
+                  error: function (error) {
+                    console.log(error);
+                    self.setBancaAccredito(null);
+                    self.setIntermediario(null);
+                    callback(true);
+                  },
+                });
+              });
+          } 
+        },
+
+        setBancaAccredito:function(entity){
+          var self =this;
+          //Banca Accredito                                  
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Ziban_b",entity === null ? entity : entity.Zibanb);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zbic_b",entity === null ? entity : entity.Zbicb);                                            
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcoordest_b",entity === null ? entity : entity.Zcoordestb);                                       
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zdenbanca_b",entity === null ? entity : entity.Zdenbanca);                                       
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zclearsyst_b ",entity === null ? entity : entity.Zclearsyst);                                     
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Stras_b",entity === null ? entity : entity.Stras);                                          
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcivico_b",entity === null ? entity : entity.Zcivico);                                         
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Ort01_b",entity === null ? entity : entity.Ort01);                                           
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Regio_b",entity === null ? entity : entity.Regio);                                           
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Pstlz_b",entity === null ? entity : entity.Pstlz);                                           
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Land1_b",entity === null ? entity : entity.Land1);    
+        },
+
+        setIntermediario:function(entity){
+          //Intermediario1                                   
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Ziban_i",entity === null ? entity : entity.Zibani);                                           
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zbic_i",entity === null ? entity : entity.Zbici);                                            
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcoordest_i",entity === null ? entity : entity.Zcoordest);                                       
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zdenbanca_i",entity === null ? entity : entity.Zdenbancai);                                       
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zclearsyst_i",entity === null ? entity : entity.Zclearsysti);                                      
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zstras_i",entity === null ? entity : entity.Zstrasi);                                          
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcivico_i",entity === null ? entity : entity.Zcivicoi);                                         
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zort01_i",entity === null ? entity : entity.Zort01i);                                          
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zregio_i",entity === null ? entity : entity.Zregioi);                                          
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zpstlz_i",entity === null ? entity : entity.Zpstlzi);                                          
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zland1_i",entity === null ? entity : entity.Zland1i);
         },
 
         onSubmitLifnr: function (oEvent) {
@@ -1770,7 +1906,6 @@ sap.ui.define(
                     );
                     self.getModalitaPagamento(Lifnr);
                     self.fiilSedeBeneficiario(Lifnr);
-                    // self.fillBanks(); //TODO:da canc
                   },
                   error: function (error) {
                     oView.setBusy(false);
@@ -1864,7 +1999,8 @@ sap.ui.define(
             oView = self.getView(),
             Iban = wizardModel.getProperty("/Iban"),
             Zwels = wizardModel.getProperty("/PayMode"),
-            Lifnr = wizardModel.getProperty("/Lifnr");
+            Lifnr = wizardModel.getProperty("/Lifnr"),
+            Zcoordest = wizardModel.getProperty("/Zcoordest");
 
           if (Zwels !== null && Iban !== null && Lifnr !== null) {
             oView.setBusy(true);
@@ -1872,6 +2008,7 @@ sap.ui.define(
               Iban: Iban,
               Zwels: Zwels,
               Lifnr: Lifnr,
+              Zcoordest: Zcoordest
             });
             self
               .getModel()
@@ -3033,6 +3170,152 @@ sap.ui.define(
         
         
         /*REFactoring */
+        loadWizardModel(){
+          return {
+            btnBackVisible:false,
+            btnNextVisible:true,
+            btnFinishVisible:false,
+            isInChange: false,
+            Step3TableTitle: null,
+            Bukrs:null,
+            Zchiavesop:null,
+            Ztipososp:null,
+            Zstep:null,
+            Zzamministr:null,
+            Zchiaveopi:null,
+            //step4
+            ZE2e: null,
+            Zcausale: null,
+            Znumprot: null,
+            Zdataprot: null,
+            Zlocpag: null,
+            Zzonaint: null,
+            StrasList: null,
+            FirstKeyStras: null,
+            Zidsede: null,
+            Ort01: null,
+            Regio: null,
+            Pstlz: null,
+            Land1: null,
+            //step3
+            Zimptotcos: null,
+
+            Zimpcos: null,
+            Zcos: null,
+            //step1
+            Gjahr: null,
+            ZufficioCont: null,
+            ZvimDescrufficio: null,
+            Zdesctipodisp3: null,
+            Ztipodisp3: null,
+            Ztipodisp3List: null,
+            FiposList: null,
+            Fipos: null,
+            Fistl: null,
+            Kostl: null,
+            Ltext: null,
+            Skat: null,
+            Saknr: null,
+            Hkont: null,
+            Zimptot: null,
+            ZimptotDivisa: null,
+            Trbtr: null,
+            Twaer: null,
+            //step2
+            Lifnr: null,
+            TaxnumCf: null,
+            NameFirst: null,
+            ZzragSoc: null,
+            Zsede: null,
+            Type: true, //radio btn
+            Taxnumxl: null,
+            NameLast: null,
+            TaxnumPiva: null,
+            Zdenominazione: null,
+            Banks: null,
+            Iban: null,
+            Zcoordest: null,
+            isZcoordestEditable: false,
+            isZZcausalevalEditable:false,
+            isIbanEditable:false,
+            isBicEditable:false,
+            Swift: null,
+            PayMode: null,
+            ZZcausaleval: null,
+            Zwels:null,
+            ZCausaleval:null,
+            Zflagfrutt:null,
+            Zpurpose:null,
+            Zalias:null,
+
+            //sezione Versante
+            Zcodprov:null,
+            Zcodvers:null,
+            Zcfcommit:null,                                    
+            Zcfvers:null,                                           
+            Zcodtrib:null,                                          
+            Zperiodrifda:null,                                      
+            Zperiodrifa:null,                                       
+            Zcodinps:null,                                          
+            Zdescvers:null,                                         
+            Zdatavers:null,                                         
+            Zsedevers:null,                                         
+            Zprovvers:null,                                         
+
+            //Banca Accredito  
+            Ziban_b:null,
+            Zbic_b:null,                                            
+            Zcoordest_b:null,                                       
+            Zdenbanca_b:null,                                       
+            Zclearsyst_b :null,                                     
+            Stras_b:null,                                          
+            Zcivico_b:null,                                         
+            Ort01_b:null,                                           
+            Regio_b:null,                                           
+            Pstlz_b:null,                                           
+            Land1_b:null,                                           
+
+            //Intermediario1
+            Ziban_i:null,                                           
+            Zbic_i:null,                                            
+            Zcoordest_i:null,                                       
+            Zdenbanca_i:null,                                       
+            Zclearsyst_i:null,                                      
+            Zstras_i:null,                                          
+            Zcivico_i:null,                                         
+            Zort01_i:null,                                          
+            Zregio_i:null,                                          
+            Zpstlz_i:null,                                          
+            Zland1_i:null, 
+          };
+        },
+
+        loadDataSONModel:function(){
+          return {
+            ZstatoSop:null,
+            Gjahr: null,
+            ZufficioCont: null,
+            Zdesctipodisp3: null,
+            FiposList: null,
+            Fipos: null,
+            Fistl: null,
+            Kostl: null,
+            Saknr: null,
+            Lifnr: null,
+            NameFirst: null,
+            NameLast: null,
+            Zimptot: null,
+            TaxnumPiva: null,
+            ZzragSoc: null,
+            ZimptotDivisa: null,
+            TaxnumCf: null,
+            Zzamministr: null,
+            PayMode:[],
+            NewPayMode:[],
+            FlagFruttifero:[]
+          }; 
+        },
+
         resetWizardModel:function(){
           var self = this;
           self.getView().getModel(WIZARD_MODEL).setProperty("/isInChange", false);
@@ -3103,6 +3386,57 @@ sap.ui.define(
           self.getView().getModel(WIZARD_MODEL).setProperty("/ZZcausaleval", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/Zwels",null);  
           self.getView().getModel(WIZARD_MODEL).setProperty("/ZCausaleval",null);  
+
+          //nuovi Modalità pagamento
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zalias",null); 
+          self.getView().getModel(WIZARD_MODEL).setProperty("/AccTypeId",null); 
+          self.getView().getModel(WIZARD_MODEL).setProperty("/RegioSosp",null); 
+          self.getView().getModel(WIZARD_MODEL).setProperty("/ZaccText",null); 
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zzposfinent",null); 
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zpurpose",null); 
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcausben",null); 
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zflagfrutt",null); 
+          
+          //sezione Versante
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcodprov",null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcodvers",null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcfcommit",null);                                    
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcfvers",null);                                           
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcodtrib",null);                                          
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zperiodrifda",null);                                      
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zperiodrifa",null);                                       
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcodinps",null);                                          
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zdescvers",null);                                         
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zdatavers",null);                                         
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zsedevers",null);                                         
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zprovvers",null);                                         
+                                    
+          //Banca Accredito                                  
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Ziban_b",null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zbic_b",null);                                            
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcoordest_b",null);                                       
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zdenbanca_b",null);                                       
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zclearsyst_b ",null);                                     
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Stras_b",null);                                          
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcivico_b",null);                                         
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Ort01_b",null);                                           
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Regio_b",null);                                           
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Pstlz_b",null);                                           
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Land1_b",null);                                           
+                                    
+          //Intermediario1                                   
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Ziban_i",null);                                           
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zbic_i",null);                                            
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcoordest_i",null);                                       
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zdenbanca_i",null);                                       
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zclearsyst_i",null);                                      
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zstras_i",null);                                          
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcivico_i",null);                                         
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zort01_i",null);                                          
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zregio_i",null);                                          
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zpstlz_i",null);                                          
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zland1_i",null);
+          
           var idWizardZdesctipodisp3 = self.getView().byId("idWizardZdesctipodisp3");
           var idWizardFipos = self.getView().byId("idWizardFipos");
           var idWizardStras = self.getView().byId("idWizardStras");
@@ -3151,6 +3485,7 @@ sap.ui.define(
           self.getView().getModel(DataSON_MODEL).setProperty("/Zzamministr", null);
           self.getView().getModel(DataSON_MODEL).setProperty("/PayMode", []);
           self.getView().getModel(DataSON_MODEL).setProperty("/NewPayMode", []); 
+          self.getView().getModel(DataSON_MODEL).setProperty("/FlagFruttifero", []);           
         },
 
         closeWizardPanel:function(){
@@ -3274,19 +3609,79 @@ sap.ui.define(
               PayMode: data.Zwels,
               ZZcausaleval: data.ZCausaleval,
               Zwels:data.Zwels,
-              ZCausaleval:data.ZCausaleval
-              });
-              return oWizardModel;
+              ZCausaleval:data.ZCausaleval,
+
+              //nuovi modalità pagamento
+              Zalias:data.Zalias,
+              AccTypeId:data.AccTypeId,
+              RegioSosp:data.RegioSosp,
+              ZaccText:data.ZaccText,
+              Zzposfinent:data.Zzposfinent,
+              Zpurpose:data.Zpurpose,
+              Zcausben:data.Zcausben,
+              Zflagfrutt:data.Zflagfrutt,
+
+              //sezione Versante
+              Zcodprov:data.Zcodprov,
+              Zcodvers:data.Zcodvers,
+              Zcfcommit:data.Zcfcommit,
+              Zcfvers:data.Zcfvers,
+              Zcodtrib:data.Zcodtrib,
+              Zperiodrifda:data.Zperiodrifda,
+              Zperiodrifa:data.Zperiodrifa,
+              Zcodinps:data.Zcodinps,
+              Zdescvers:data.Zdescvers,
+              Zdatavers:data.Zdatavers,
+              Zsedevers:data.Zsedevers,
+              Zprovvers:data.Zprovvers,
+
+              //Banca Accredito  
+              Ziban_b: data.Zibanb,
+              Zbic_b:data.Zbicb,
+              Zcoordest_b:data.Zcoordestb,
+              Zdenbanca_b:data.Zdenbanca,
+              Zclearsyst_b:data.Zclearsyst,
+              Stras_b:data.Stras,
+              Zcivico_b:data.Zcivico,
+              Ort01_b:data.Ort01,
+              Regio_b:data.Regio,
+              Pstlz_b:data.Pstlz,
+              Land1_b:data.Land1,
+
+              //Intermediario1
+              Ziban_i:data.Zibani,
+              Zbic_i:data.Zbici,
+              Zcoordest_i:data.Zcoordesti,
+              Zdenbanca_i:data.Zdenbancai,
+              Zclearsyst_i:data.Zclearsysti,
+              Zstras_i:data.Zstrasi,
+              Zcivico_i:data.Zcivicoi,
+              Zort01_i:data.Zort01i,
+              Zregio_i:data.Zregioi,
+              Zpstlz_i:data.Zpstlzi,
+              Zland1_i:data.Zland1i
+            });
+            return oWizardModel;
           },
 
           fillWizard: function (oItem) {
             var self = this,
                 oWizardModel,
+                fruttiferoSet=[],
                 oDataModel=self.getModel();
-            self.getView().setBusy(true);
+            
+                self.getView().setBusy(true);
             self.payMode=[];
             console.log("hello", oItem);
             
+            self.getFruttiferoInfruttifero(function(callback){
+              if(!callback.error){
+                fruttiferoSet = callback.data;
+              }
+              else 
+                fruttiferoSet = callback.data;
+            });
+
             var path = self.getModel().createKey(SON_SET, {
                 Bukrs: oItem.Bukrs,
                 Gjahr: oItem.Gjahr,
@@ -3294,7 +3689,7 @@ sap.ui.define(
                 Zstep: oItem.Zstep,
                 Ztipososp: oItem.Ztipososp
             });
-
+            
             self.getModel().metadataLoaded().then(function () {
                 oDataModel.read("/" + path, {
                     success: function (data, oResponse) {
@@ -3306,7 +3701,7 @@ sap.ui.define(
                             else 
                               self.payMode = [];
                           });
-  
+                          
                         self.getSedeBeneficiario(data.Lifnr, data.Zidsede);
                         oWizardModel = self.setWizardModel(data);
 
@@ -3327,6 +3722,8 @@ sap.ui.define(
                             oWizardModel.getData().TaxnumPiva= self._beneficiario ? self._beneficiario.TaxnumPiva :"";
                             oWizardModel.getData().Zdenominazione= self._beneficiario ? self._beneficiario.Zdenominazione :"";
 
+                            //todo metti il flag fruttifero se ce a db.
+
                             var oDataSONModel = new JSONModel({
                                 ZstatoSop: data.ZstatoSop,
                                 Gjahr: data.Gjahr,
@@ -3346,6 +3743,7 @@ sap.ui.define(
                                 TaxnumCf: self._beneficiario ? self._beneficiario.TaxnumCf:"",
                                 Zzamministr: self._amministrazione.Value,
                                 PayMode: self.payMode,
+                                FlagFruttifero: fruttiferoSet,
                                 NewPayMode:[]
                             });    
 
@@ -3358,7 +3756,9 @@ sap.ui.define(
                                         oWizardModel.getData().Iban = oWizardModel.getData().Iban === "" ? record.Iban : oWizardModel.getData().Iban;
                                         oWizardModel.getData().Swift = oWizardModel.getData().Swift === "" ? record.Swift : oWizardModel.getData().Swift;
                                         oWizardModel.getData().Zcoordest = oWizardModel.getData().Zcoordest === "" ? record.ZcoordEst : oWizardModel.getData().Zcoordest;                                
-                                    }
+                                        
+                                        oWizardModel.getData().Zcodprov = oWizardModel.getData().Zcodprov === "" ? record.Zcodprov : oWizardModel.getData().Zcodprov;
+                                      }
                                     }
                                 });                              
                             } 
@@ -3422,6 +3822,23 @@ sap.ui.define(
                   },
               });
           });
+        },
+
+        getFruttiferoInfruttifero:function(callback){
+          var self =this,
+            oDataModel = self.getModel();
+          
+            self.getModel().metadataLoaded().then(function () {
+              oDataModel.read("/FlagFruttiferoSet", {
+                  success: function (data, oResponse) {
+                    callback({error:false, data:data.results});
+                  },
+                  error: function (error) {
+                    console.log(error);
+                    callback({error:true, data:[]});
+                  },
+              });
+          });  
         },
 
         fillWorkflow: function (oItem) {
@@ -3492,6 +3909,13 @@ sap.ui.define(
           var value = oEvent.getParameter("newValue");
           value =self.formatter.formatStringForDate(value);
           wizardModel.setProperty("/Zdataprot", value);
+        },
+
+        onFlagFruttiferoChange:function(oEvent){
+          var self =this,
+            wizardModel = self.getModel(WIZARD_MODEL),
+            value=oEvent.getSource().getSelectedKey();
+          wizardModel.setProperty("/Zflagfrutt", value);
         },
 
         onChangeSON:function(oEvent){
@@ -3640,7 +4064,37 @@ sap.ui.define(
                                       self.formatter.formateDateForDeep(wizardModel.getProperty("/Zdatarichann")):
                                       null,
                   Zchiaveopi:wizardModel.getProperty("/Zchiaveopi"),
-                  Zinvioricann:wizardModel.getProperty("/Zinvioricann")
+                  Zinvioricann:wizardModel.getProperty("/Zinvioricann"),
+
+                  /*Modalità pagamento - campi nuovi*/  
+                  Zalias:wizardModel.getProperty("/Zalias"),
+                  AccTypeId:wizardModel.getProperty("/AccTypeId"),
+                  RegioSosp:wizardModel.getProperty("/RegioSosp"),
+                  ZaccText:wizardModel.getProperty("/ZaccText"),
+                  Zzposfinent:wizardModel.getProperty("/Zzposfinent"),
+                  Zpurpose:wizardModel.getProperty("/Zpurpose"),
+                  Zcausben:wizardModel.getProperty("/Zcausben"),
+                  Zflagfrutt:wizardModel.getProperty("/Zflagfrutt"),
+
+                  //Sezione Versante
+                  Zcodprov:wizardModel.getProperty("/Zcodprov"),
+                  Zcfcommit:wizardModel.getProperty("/Zcfcommit"),
+                  Zcodtrib:wizardModel.getProperty("/Zcodtrib"),
+                  Zperiodrifda:wizardModel.getProperty("/Zperiodrifda") && wizardModel.getProperty("/Zperiodrifda") !== null && wizardModel.getProperty("/Zperiodrifda")!= "" ? 
+                    self.formatter.formateDateForDeep(wizardModel.getProperty("/Zperiodrifda")):
+                    null,
+                  Zperiodrifa:wizardModel.getProperty("/Zperiodrifa") && wizardModel.getProperty("/Zperiodrifa") !== null && wizardModel.getProperty("/Zperiodrifa")!= "" ? 
+                    self.formatter.formateDateForDeep(wizardModel.getProperty("/Zperiodrifa")):
+                    null,
+                  Zcodinps:wizardModel.getProperty("/Zcodinps"),
+                  Zcodvers:wizardModel.getProperty("/Zcodvers"),
+                  Zcfvers:wizardModel.getProperty("/Zcfvers"),
+                  Zdescvers:wizardModel.getProperty("/Zdescvers"),
+                  Zdatavers:wizardModel.getProperty("/Zdatavers") && wizardModel.getProperty("/Zdatavers") !== null && wizardModel.getProperty("/Zdatavers")!= "" ? 
+                    self.formatter.formateDateForDeep(wizardModel.getProperty("/Zdatavers")):
+                    null,
+                  Zprovvers:wizardModel.getProperty("/Zprovvers"),
+                  Zsedevers:wizardModel.getProperty("/Zsedevers")
               }
             ],
           };

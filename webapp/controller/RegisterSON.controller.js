@@ -72,92 +72,12 @@ sap.ui.define(
         formatter: formatter,
         _indexClassificazioneSON:0,
         onInit: function () {
+          var self =this;
           var oWizardModel, oDataSONModel, Step3List;
-          oWizardModel = new JSONModel({
-            btnBackVisible:false,
-            btnNextVisible:true,
-            btnFinishVisible:false,
-            isInChange: true,
-            Step3TableTitle: null,
-            //step4
-            ZE2e: null,
-            Zcausale: null,
-            Znumprot: null,
-            Zdataprot: null,
-            Zlocpag: null,
-            Zzonaint: null,
-            StrasList: null,
-            FirstKeyStras: null,
-            Zidsede: null,
-            Ort01: null,
-            Regio: null,
-            Pstlz: null,
-            Land1: null,
-            //step3
-            Zimptotcos: null,
-
-            Zimpcos: null,
-            Zcos: null,
-            //step1
-            Gjahr: null,
-            ZufficioCont: null,
-            ZvimDescrufficio: null,
-            Zdesctipodisp3: null,
-            Ztipodisp3: null,
-            Ztipodisp3List: null,
-            FiposList: null,
-            Fipos: null,
-            Fistl: null,
-            Kostl: null,
-            Ltext: null,
-            Skat: null,
-            Saknr: null,
-            Zimptot: null,
-            ZimptotDivisa: null,
-            Trbtr: null,
-            Twaer: null,
-            //step2
-            Lifnr: null,
-            TaxnumCf: null,
-            NameFirst: null,
-            ZzragSoc: null,
-            Zsede: null,
-            Type: true, //radio btn
-            Taxnumxl: null,
-            NameLast: null,
-            TaxnumPiva: null,
-            Zdenominazione: null,
-            Banks: null,
-            Iban: null,
-            Zcoordest: null,
-            isZcoordestEditable: false,
-            isZZcausalevalEditable:false,
-            isIbanEditable:false,
-            isBicEditable:false,
-            Swift: null,
-            PayMode: null,
-            ZZcausaleval: null,
-          });
-          oDataSONModel = new JSONModel({
-            Gjahr: null,
-            ZufficioCont: null,
-            Zdesctipodisp3: null,
-            FiposList: null,
-            Fipos: null,
-            Fistl: null,
-            Kostl: null,
-            Saknr: null,
-            Lifnr: null,
-            NameFirst: null,
-            NameLast: null,
-            Zimptot: null,
-            TaxnumPiva: null,
-            ZzragSoc: null,
-            ZimptotDivisa: null,
-            TaxnumCf: null,
-            Zzamministr: null,
-            PayMode:[]
-          });
+          var oWizardModel = new JSONModel(self.loadWizardModel());
+          
+          oDataSONModel = new JSONModel(self.loadDataSONModel()); 
+           
           Step3List = new JSONModel([
             {
               Zcos: null,
@@ -210,32 +130,51 @@ sap.ui.define(
             dataSONModel = self.getModel(DataSON_MODEL),
             oDataModel = self.getModel(),
             oView = self.getView();
+            self.getView().getModel(WIZARD_MODEL).setProperty("/isInChange",true);
             oView.setBusy(true);
-            
+
             if(!self.getModelGlobal(self.AUTHORITY_CHECK_SON) || self.getModelGlobal(self.AUTHORITY_CHECK_SON) === null){
               self.getAuthorityCheck(self.FILTER_SON_OBJ, function(callback){
                 if(callback){
-                  self.getAmministrazione();
-                  self.getUfficioAction(); 
-                  self.getFistl();          
-
-
-                  setTimeout(() => {                
-                    oView.setBusy(false);
-                  },2000);
+                  // setTimeout(() => {                
+                  //   oView.setBusy(false);
+                  // },2000);
                 }
                 else{
-                  self.getRouter().navTo("notAuth", {mex: self.getResourceBundle().getText("notAuthText")});
+                  oView.setBusy(false);
+                  self.getRouter().navTo("notAuth", {mex: self.getResourceBundle().getText("notAuthText")});                  
                 }
               });
             }
+
+            self.getInitialParams(function(callback){
+              self.getView().setBusy(false);
+              if(!callback.success){
+                sap.m.MessageBox.warning(callback.message,{
+                  title: oBundle.getText("titleDialogWarning"),
+                  onClose: function (oAction) {
+                    self.getView().getModel(WIZARD_MODEL).setProperty("/Zzamministr",null);
+                    self.getView().getModel(WIZARD_MODEL).setProperty("/ZufficioCont",null);
+                    self.getView().getModel(WIZARD_MODEL).setProperty("/ZvimDescrufficio",null);
+                    self.getView().getModel(WIZARD_MODEL).setProperty("/Fistl",null);
+                    return false;
+                  },
+                });
+                return false;
+              }
+              self.getView().getModel(WIZARD_MODEL).setProperty("/Zzamministr",callback.data.Zzamministr);
+              self.getView().getModel(WIZARD_MODEL).setProperty("/ZufficioCont",callback.data.ZufficioCont);
+              self.getView().getModel(WIZARD_MODEL).setProperty("/ZvimDescrufficio",callback.data.ZvimDescrufficio);
+              self.getView().getModel(WIZARD_MODEL).setProperty("/Fistl",callback.data.Fistl);
+            });
         },
 
-        getAmministrazione:function(){
+        getInitialParams:function(callback){
           var self =this,
             oDataModel = self.getModel();
-          var path = self.getModel().createKey(Zzamministr_SET, {
-            Name: "PRC",
+          var path = self.getModel().createKey("PrevalorizzazioneW1Set", {
+            TvarvcParam: "COSPR3FIORIE040_FISTL",
+            UserParam: "PRC"
           });
           self
             .getModel()
@@ -243,56 +182,83 @@ sap.ui.define(
             .then(function () {
               oDataModel.read("/" + path, {
                 success: function (data, oResponse) {
-                  console.log(data);
-                  self.getView().getModel(DataSON_MODEL).setProperty("/Zzamministr",data.Value);
+                  var message = oResponse.headers["sap-message"] && oResponse.headers["sap-message"] !== "" ? JSON.parse(oResponse.headers["sap-message"]) : null;
+                  if(message && message.severity === "error"){
+                    callback({success:false,message:message.message, data:null});
+                  }
+                  else
+                    callback({success:true,message:null, data:data});
                 },
                 error: function (error) {
-                  // oView.setBusy(false);
+                  console.log(error);
+                  callback({success:false,message:"Caricamento parametri non riuscito", data:null});
                 },
               });
             });
         },
 
-        getUfficioAction:function(){
-            var self= this,
-                oDataModel = self.getModel();
+        // getAmministrazione:function(){
+        //   var self =this,
+        //     oDataModel = self.getModel();
+        //   var path = self.getModel().createKey(Zzamministr_SET, {
+        //     Name: "PRC",
+        //   });
+        //   self
+        //     .getModel()
+        //     .metadataLoaded()
+        //     .then(function () {
+        //       oDataModel.read("/" + path, {
+        //         success: function (data, oResponse) {
+        //           console.log(data);
+        //           self.getView().getModel(DataSON_MODEL).setProperty("/Zzamministr",data.Value);
+        //         },
+        //         error: function (error) {
+        //           // oView.setBusy(false);
+        //         },
+        //       });
+        //     });
+        // },
 
-            var path = self.getModel().createKey(UfficioContMc_SET, {
-                ZufficioCont: "",
-            });
+        // getUfficioAction:function(){
+        //     var self= this,
+        //         oDataModel = self.getModel();
 
-            self.getModel().metadataLoaded().then(function () {
-                oDataModel.read("/" + path, {
-                    success: function (data, oResponse) {                      
-                        self.getView().getModel(WIZARD_MODEL).setProperty("/ZufficioCont",data.ZufficioCont);
-                        self.getView().getModel(WIZARD_MODEL).setProperty("/ZvimDescrufficio",data.ZvimDescrufficio);
-                    },
-                    error: function (error) {
-                        console.log(error);
-                    },
-                });
-            });
-        },
+        //     var path = self.getModel().createKey(UfficioContMc_SET, {
+        //         ZufficioCont: "",
+        //     });
 
-        getFistl:function(){
-          var self= this,
-              oDataModel = self.getModel();
+        //     self.getModel().metadataLoaded().then(function () {
+        //         oDataModel.read("/" + path, {
+        //             success: function (data, oResponse) {                      
+        //                 self.getView().getModel(WIZARD_MODEL).setProperty("/ZufficioCont",data.ZufficioCont);
+        //                 self.getView().getModel(WIZARD_MODEL).setProperty("/ZvimDescrufficio",data.ZvimDescrufficio);
+        //             },
+        //             error: function (error) {
+        //                 console.log(error);
+        //             },
+        //         });
+        //     });
+        // },
 
-            var path = self.getModel().createKey(FistlMc_SET, {
-                Name: "COSPR3FIORIE040_FISTL",
-            });
+        // getFistl:function(){
+        //   var self= this,
+        //       oDataModel = self.getModel();
 
-            self.getModel().metadataLoaded().then(function () {
-                oDataModel.read("/" + path, {
-                    success: function (data, oResponse) {                      
-                        self.getView().getModel(WIZARD_MODEL).setProperty("/Fistl",data.Value);
-                    },
-                    error: function (error) {
-                        console.log(error);
-                    },
-                });
-            });
-        },
+        //     var path = self.getModel().createKey(FistlMc_SET, {
+        //         Name: "COSPR3FIORIE040_FISTL",
+        //     });
+
+        //     self.getModel().metadataLoaded().then(function () {
+        //         oDataModel.read("/" + path, {
+        //             success: function (data, oResponse) {                      
+        //                 self.getView().getModel(WIZARD_MODEL).setProperty("/Fistl",data.Value);
+        //             },
+        //             error: function (error) {
+        //                 console.log(error);
+        //             },
+        //         });
+        //     });
+        // },
 
         onSubmitZcos: function (oEvent) {
           var self = this,

@@ -3,6 +3,7 @@
     xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core"
     xmlns:zcontrolPosFin="zsap.com.r3.cobi.s4.custposfin.z_s4_zposfinlink.controls"
+    xmlns:zcontrollinkSar="custlinksar.custlinksar.controls" 
 >
     <VBox >
         <items>
@@ -100,7 +101,9 @@
                 <HBox >
                     <items>
                         <Label text="{i18n>wizardSONDataFistl}" class="sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
-                        <Text  text="{DataModel>/Fistl}" />
+                        <zcontrollinkSar:LinkSar id="linkSarBilancio" anno="{DataModel>/Gjahr}" eos="E" fikrs="S001" fase="GEST" SEM_OBJ="" reale="R" 
+                            versione="D" bilancio="" fictr="{DataModel>/Fistl}" datbis="99991231" text="{DataModel>/Fistl}"/>
+                        <!-- <Text  text="{DataModel>/Fistl}" /> -->
                     </items>
                     <layoutData><l:GridData span="XL3 L4 M6 S12"/></layoutData>
                 </HBox> 	

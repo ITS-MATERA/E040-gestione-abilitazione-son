@@ -105,3 +105,8 @@ div.middleFormAdd > div > div > section {
 .panel-border-bottom-none>div.sapMPanelContent{
   border-bottom:0px!important;
 }
+
+.sapUiRespGridSpanInvisible{
+  margin-bottom:0;
+  min-height: 0px!important;
+}

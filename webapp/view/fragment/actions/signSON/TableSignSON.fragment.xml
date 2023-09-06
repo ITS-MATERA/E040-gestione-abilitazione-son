@@ -3,6 +3,7 @@
 	xmlns:c="sap.ui.core"
     xmlns:l="sap.ui.layout"
 	xmlns:zcontrolPosFin="zsap.com.r3.cobi.s4.custposfin.z_s4_zposfinlink.controls"
+	xmlns:zcontrollinkSar="custlinksar.custlinksar.controls"
 >
 
 
@@ -70,7 +71,9 @@
 					<zcontrolPosFin:LinkPosizioneFinanziaria id="linkPosFinSpesaSign" anno="{checkList>Gjahr}" eos="S" fikrs="S001" fase="GEST" 
                         reale="R" versione="D" fipex="{checkList>Fipos}" 
                         datbis="99991231" text="{checkList>Fipos}" semanticObject="ESAMINAMODIFICA"/>
-					<Text  text="{checkList>Fistl}" />
+					<zcontrollinkSar:LinkSar  anno="{checkList>Gjahr}" eos="E" fikrs="S001" fase="GEST" SEM_OBJ="" reale="R" 
+                            versione="D" bilancio="" fictr="{checkList>Fistl}" datbis="99991231" text="{checkList>Fistl}"/>
+					<!-- <Text  text="{checkList>Fistl}" /> -->
 					<!-- <Text  text="{checkList>Zimptot}" /> -->
 					<Text  text="{
 							path: 'checkList>Zimptot',

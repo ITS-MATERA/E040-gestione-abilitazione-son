@@ -108,7 +108,7 @@
                                               visible="{= ${wizardModel>/PayMode} === 'ID3' ? true : false }" >
                                                 <layoutData><l:GridData span="XL6 L6 M4 S12" /></layoutData>
                                             </Label>
-                                           <Input  value="{wizardModel>/AliasRGS}" editable="{= ${wizardModel>/isInChange} &amp;&amp; ${wizardModel>/PayMode} === 'ID3' }" 
+                                           <Input  value="{wizardModel>/Zalias}" editable="{= ${wizardModel>/isInChange} &amp;&amp; ${wizardModel>/PayMode} === 'ID3' }" 
                                               visible="{= ${wizardModel>/PayMode} === 'ID3' ? true : false }" >
                                                 <layoutData>
                                                     <l:GridData span="XL5 L5 M6 S12"  />
@@ -129,7 +129,7 @@
                                             <Label  design="Bold" width="100%" text="{i18n>wizardFieldTipoConto}" wrapping="true" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData><l:GridData span="XL6 L6 M4 S12" /></layoutData>
                                             </Label>
-                                           <Input  value="{wizardModel>/TipoConto}" enabled="false" visible="{= ${wizardModel>/PayMode} === 'ID3' ? true : false }" >
+                                           <Input  value="{wizardModel>/AccTypeId}" enabled="false" visible="{= ${wizardModel>/PayMode} === 'ID3' ? true : false }" >
                                                 <layoutData>
                                                     <l:GridData span="XL5 L5 M6 S12"  />
                                                 </layoutData>
@@ -149,7 +149,7 @@
                                             <Label  design="Bold" width="100%" text="{i18n>wizardFieldProvincia}" wrapping="true" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData><l:GridData span="XL6 L6 M4 S12" /></layoutData>
                                             </Label>
-                                           <Input  value="{wizardModel>/Provincia}" enabled="false" visible="{= ${wizardModel>/PayMode} === 'ID3' ? true : false }" >
+                                           <Input  value="{wizardModel>/RegioSosp}" enabled="false" visible="{= ${wizardModel>/PayMode} === 'ID3' ? true : false }" >
                                                 <layoutData>
                                                     <l:GridData span="XL5 L5 M6 S12"  />
                                                 </layoutData>
@@ -169,7 +169,7 @@
                                             <Label  design="Bold" width="100%" text="{i18n>wizardFieldDescrizioneConto}" wrapping="true" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData><l:GridData span="XL6 L6 M4 S12" /></layoutData>
                                             </Label>
-                                           <Input  value="{wizardModel>/DescrizioneConto}" enabled="false" visible="{= ${wizardModel>/PayMode} === 'ID3' ? true : false }" >
+                                           <Input  value="{wizardModel>/ZaccText}" enabled="false" visible="{= ${wizardModel>/PayMode} === 'ID3' ? true : false }" >
                                                 <layoutData>
                                                     <l:GridData span="XL5 L5 M6 S12"  />
                                                 </layoutData>
@@ -224,15 +224,15 @@
 
                       <!-- campi nuovi AF 1.2 -->
 
-                      <VBox visible="{= ${wizardModel>/PayMode} === 'ID4' ? true : false }" >
+                      <VBox visible="{= ${wizardModel>/PayMode} === 'ID4' ? true : false }"  >
                           <items>
                               <FlexBox width="100%" alignItems="Center" class="labelWidth sapUiTinyMarginTop sapUiTinyMarginBottom" >
                                   <items>
-                                      <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0">	
+                                      <l:Grid  defaultSpan="XL12 L12 M12 S12" vSpacing="0" >	
                                           <Label  design="Bold" width="100%" text="{i18n>wizardFieldPosizioneFinanziariaEntrante}" wrapping="true" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                               <layoutData><l:GridData span="XL6 L6 M4 S12" /></layoutData>
                                           </Label>
-                                          <Input  value="{wizardModel>/PosizioneFinanziariaEntrante}" editable="{= ${wizardModel>/isInChange} &amp;&amp; ${wizardModel>/PayMode} === 'ID4' }"
+                                          <Input  value="{wizardModel>/Zzposfinent}" editable="{= ${wizardModel>/isInChange} &amp;&amp; ${wizardModel>/PayMode} === 'ID4' }"
                                             visible="{= ${wizardModel>/PayMode} === 'ID4' ? true : false }" >
                                               <layoutData>
                                                   <l:GridData span="XL5 L5 M6 S12"  />
@@ -284,9 +284,8 @@
                                               items="{
                                                       path: 'DataModel>/FlagFruttifero'
                                                 }"
-                                              selectedKey="{wizardModel>/FlagFruttifero}"
-                                              >
-                                              <core:Item  key="{DataModel>Zwels}" text="{DataModel>ZdescWels}" />
+                                              selectedKey="{wizardModel>/Zflagfrutt}">
+                                              <core:Item  key="{DataModel>Zflagfrutt}" text="{DataModel>Descrizione}" />
                                               <layoutData><l:GridData span="XL5 L5 M6 S12"  /></layoutData>
                                           </ComboBox>	
                                       </l:Grid>
@@ -304,7 +303,7 @@
                                           <Label  design="Bold" width="100%" text="{i18n>wizardFieldCausaleBeneficiario}" wrapping="true" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                               <layoutData><l:GridData span="XL6 L6 M4 S12" /></layoutData>
                                           </Label>
-                                          <Input  value="{wizardModel>/CausaleBeneficiario}" enabled="false" 
+                                          <Input  value="{wizardModel>/Zcausben}" enabled="false" 
                                             visible="{= ${wizardModel>/PayMode} === 'ID3' ? true : false }" >
                                               <layoutData>
                                                   <l:GridData span="XL5 L5 M6 S12"  />

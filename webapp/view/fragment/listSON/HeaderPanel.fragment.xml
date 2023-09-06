@@ -303,8 +303,10 @@
 					<items>
 						<Label  design="Bold" text="{i18n>filterNameFistl}"></Label>
 							<FlexBox  alignItems="Start">	
-								<zcontrolMatchSar:GestioneLogUser eos="S" id="idFilterStruttAmmResp" fase="GEST" entrata="X" reale="R" 
-									anno="{listSONModel>/filterGjahr}" SEM_OBJ="Z_TEST_LIB"  versione="D" width="100%" placeholder="Scegli struttura amministrativa"/>					
+								<zcontrolMatchSar:GestioneLogUser eos="S" id="fFistl" fase="GEST" entrata="X" reale="R" 
+									anno="{listSONModel>/filterGjahr}" SEM_OBJ="Z_TEST_LIB"  versione="D" width="100%" 
+									placeholder="Scegli struttura amministrativa"
+									app:searchPropertyModel="Fistl"/>					
 							</FlexBox>
 					</items>
 					<layoutData><l:GridData  span="XL3 L4 M6 S12"/></layoutData>

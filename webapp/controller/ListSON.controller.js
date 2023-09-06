@@ -363,7 +363,20 @@ sap.ui.define(
                 urlParameters: obj,
                 filters: headerObject.filters,
                 success: function (data, oResponse) {
-                  console.log("data", data.results);
+
+                  var message = oResponse.headers["sap-message"] && oResponse.headers["sap-message"] !== "" ? JSON.parse(oResponse.headers["sap-message"]) : null;
+                  if(message && message.severity === "error"){
+                    oView.setBusy(false);
+                    MessageBox.warning(message.message,{
+                      title: oBundle.getText("titleDialogWarning"),
+                      onClose: function (oAction) {
+                        return false;
+                      }
+                    });
+                    return false;
+                  }
+
+                  console.log("data", data.results);//TODO:Da canc
                   if (getKey) {
                     var response = oResponse.headers["sap-message"];
                     var mess = !response ? 0 : response;

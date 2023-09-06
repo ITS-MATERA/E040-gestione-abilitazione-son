@@ -23,61 +23,93 @@
                 columnsL="1"
                 singleContainerFullSize="false">
                 <f:content>
-                    <Label design="Bold" text="{i18n>wizardFieldZcodprov}" class="sapUiSmallMarginBottom"/>
-                    <Input  editable="false">
+                  <Label design="Bold" text="{i18n>wizardFieldZcodprov}" class="sapUiSmallMarginBottom"/>
+                    <Input  editable="false" value="{wizardModel>/Zcodprov}">
                         <layoutData>
                             <l:GridData span="XL6 L6 M6 S12"  />
                         </layoutData>
                     </Input>
                     <Label design="Bold" text="{i18n>wizardFieldZperiodrifida}" class="sapUiSmallMarginBottom"/>
-                    <Input  editable="false">
+                    <Input  editable="false" value="{wizardModel>/Zperiodrifda}">
                         <layoutData>
                             <l:GridData span="XL6 L6 M6 S12"  />
                         </layoutData>
                     </Input>   
                     <Label design="Bold" text="{i18n>wizardFieldZcodvers}" class="sapUiSmallMarginBottom"/>
-                    <Input  editable="false" >
+                    <Input  editable="{wizardModel>/isInChange}" value="{wizardModel>/Zcodvers}" >
                         <layoutData>
                             <l:GridData span="XL6 L6 M6 S12"  />
                         </layoutData>
-                    </Input>                             
+                    </Input>    
+                    <Label design="Bold" text="{i18n>wizardFieldDescrizioneVersante}" class="sapUiSmallMarginBottom"/>
+                    <Input  editable="{wizardModel>/isInChange}" value="{wizardModel>/Zdescvers}" >
+                        <layoutData>
+                            <l:GridData span="XL6 L6 M6 S12"  />
+                        </layoutData>
+                    </Input>  
+                    <Label design="Bold" text="{i18n>wizardFieldSedeVersante}" class="sapUiSmallMarginBottom"/>
+                    <Input  editable="{wizardModel>/isInChange}" value="{wizardModel>/Zsedevers}" >
+                        <layoutData>
+                            <l:GridData span="XL6 L6 M6 S12"  />
+                        </layoutData>
+                    </Input> 
                     <core:Title text="" />
                     <Label design="Bold" text="{i18n>wizardFieldZcfcommit}" class="sapUiSmallMarginBottom"/>
-                    <Input  editable="false" >
+                    <Input  editable="{= ${wizardModel>/Zcodprov} !== '' &amp;&amp; ${wizardModel>/isInChange} ? true : false }"  value="{wizardModel>/Zcfcommit}" >
                         <layoutData>
                             <l:GridData span="XL6 L6 M6 S12"  />
                         </layoutData>
                     </Input>
                     <Label design="Bold" text="{i18n>wizardFieldZperiodrifia}" class="sapUiSmallMarginBottom"/>
-                    <Input  editable="false" >
+                    <Input  editable="false" value="{wizardModel>/Zperiodrifa}">
                         <layoutData>
                             <l:GridData span="XL6 L6 M6 S12"  />
                         </layoutData>
                     </Input>      
                     <Label design="Bold" text="{i18n>wizardFieldZcfvers}" class="sapUiSmallMarginBottom"/>
-                    <Input  editable="false" >
+                    <Input  editable="{wizardModel>/isInChange}" value="{wizardModel>/Zcfvers}" >
                         <layoutData>
                             <l:GridData span="XL6 L6 M6 S12"  />
                         </layoutData>
-                    </Input>                                
-					 <core:Title text="" />
+                    </Input>       
+
+                    <Label design="Bold" text="{i18n>wizardFieldDataVersamento}" class="sapUiSmallMarginBottom"/>
+                    <DatePicker							     
+                        class="sapUiTinyMarginBottom"	
+                        valueFormat="dd.MM.yyyy"
+                        displayFormat="dd.MM.yyyy"
+                        editable="{wizardModel>/isInChange}"
+                        value="{
+                                path: 'wizardModel>/Zdatavers',
+                                type: 'sap.ui.model.type.Date',
+                                formatOptions: {
+                                    pattern: 'dd.MM.yyyy'
+                                    }
+                                }"
+                        change="onChangeUpdateDate">	          
+                        <layoutData><l:GridData span="XL6 L6 M6 S12"  /></layoutData>                
+                    </DatePicker>
+					          <core:Title text="" />
                     <Label design="Bold" text="{i18n>wizardFieldZcodtrib}" class="sapUiSmallMarginBottom"/>
-                    <Input  editable="false">
+                    <Input  editable="{= ${wizardModel>/Zcodprov} !== '' &amp;&amp; ${wizardModel>/isInChange} ? true : false }" value="{wizardModel>/Zcodtrib}">
                         <layoutData>
                             <l:GridData span="XL6 L6 M6 S12"  />
                         </layoutData>
                     </Input>  
                     <Label design="Bold" text="{i18n>wizardFieldZcodinps}" class="sapUiSmallMarginBottom"/>
-                    <Input   editable="false">
+                    <Input   editable="false" value="{wizardModel>/Zcodinps}">
                         <layoutData>
                             <l:GridData span="XL6 L6 M6 S12"  />
                         </layoutData>
-                    </Input>                          
+                    </Input>  
+                    <Label design="Bold" text="{i18n>wizardFieldProvinciaVersante}" class="sapUiSmallMarginBottom"/>
+                    <Input  editable="{wizardModel>/isInChange}" value="{wizardModel>/Zprovvers}">
+                        <layoutData>
+                            <l:GridData span="XL6 L6 M6 S12"  />
+                        </layoutData>
+                    </Input>                         
                 </f:content>
             </f:SimpleForm>
 	    </content>
 	</Panel>
-
-    
-             
 </core:FragmentDefinition>
