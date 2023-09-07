@@ -135,11 +135,7 @@ sap.ui.define(
 
             if(!self.getModelGlobal(self.AUTHORITY_CHECK_SON) || self.getModelGlobal(self.AUTHORITY_CHECK_SON) === null){
               self.getAuthorityCheck(self.FILTER_SON_OBJ, function(callback){
-                if(callback){
-                  // setTimeout(() => {                
-                  //   oView.setBusy(false);
-                  // },2000);
-                }
+                if(callback){                }
                 else{
                   oView.setBusy(false);
                   self.getRouter().navTo("notAuth", {mex: self.getResourceBundle().getText("notAuthText")});                  
@@ -279,7 +275,6 @@ sap.ui.define(
 
           var Zcos = oEvent.getParameter("value");
 
-          console.log("ff", oEvent.getParameter("value"));
           if (Zcos !== null && Gjahr !== null) {
             oView.setBusy(true);
             var path = self.getModel().createKey(Zcos_SET, {
@@ -678,7 +673,7 @@ sap.ui.define(
           self.resetStep3(); 
           self.closeWizardPanel();
         },
-
+/*
         resetDataSONModel: function () {
           var self = this;
           self.getView().getModel(DataSON_MODEL).setProperty("/Gjahr", null);
@@ -722,8 +717,8 @@ sap.ui.define(
             .setProperty("/Zzamministr", null);
           self.getView().getModel(DataSON_MODEL).setProperty("/PayMode", []);
 
-        },
-
+        },*/
+/*
         resetWizardModel: function () {
           var self = this;
 
@@ -872,7 +867,7 @@ sap.ui.define(
           if (idWizardStras) {
             idWizardStras.setSelectedKey("");
           }
-        },
+        },*/
 
         resetLog: function () {
           var self = this;
@@ -881,7 +876,7 @@ sap.ui.define(
           self.setModel(oModelJson, LOG_MODEL);
           self.setModel(oModelJson, MESSAGE_MODEL);
         },
-
+/*
         resetStep3: function () {
           var self = this;
 
@@ -892,7 +887,7 @@ sap.ui.define(
           var oModelJsonCS = new sap.ui.model.json.JSONModel();
           oModelJsonCS.setData([]);
           self.setModel(oModelJsonCS, CLASSIFICAZIONE_SON_DEEP);
-        },
+        },*/
 
         onCancelRow: function (oEvent) {
           var self = this,
