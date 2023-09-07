@@ -1402,6 +1402,7 @@ sap.ui.define(
         
         goToFour: function (oEvent) {
           var self = this,
+            oBundle =self.getResourceBundle(),
             wizardId = oEvent.getSource().getParent().getId(),
             wizard = self.getView().byId(wizardId),
             wizardType = wizard.data("wizardType");
@@ -1416,41 +1417,53 @@ sap.ui.define(
 
           var len = Step3List.length;
           if (len <= 0) {
-            self._setMessage("titleDialogError", "msgNoRequiredField", "error");
-            return false;
-          }
-
-          console.log("Zimptot", Zimptot);
-          var oParam = {
-            Zimptot: !Zimptot || Zimptot === null ? 0 : Zimptot,
-            Zimptotcos: !Zimptotcos || Zimptotcos === null ? 0 : Zimptotcos,
-          };
-
-          console.log(oParam);
-
-          var url =
-            wizardType === WIZARD_TYPE_DETAIL
-              ? URL_VALIDATION_D3
-              : URL_VALIDATION_3;
-          self.getView().setBusy(true);
-          oDataModel.callFunction("/" + url, {
-            method: "GET",
-            urlParameters: oParam,
-            success: function (oData, response) {
-              console.log(oData);
-              self.getView().setBusy(false);
-              var arrayMessage = oData.results;
-              if (!self.isErrorInLog(arrayMessage)) {
+            sap.m.MessageBox.error(oBundle.getText("msgNoRequiredField"),{
+              title: oBundle.getText("titleDialogError"),
+              onClose: function (oAction) {
                 wizard.previousStep();
                 self.handleButtonsVisibility(2);
-              }
-            },
-            error: function (oError) {
-              self.getView().setBusy(false);
-              wizard.previousStep();
-              self.handleButtonsVisibility(2);
-            },
-          });
+                return false;
+              },
+            });
+            return false;
+            // self._setMessage("titleDialogError", "msgNoRequiredField", "error");
+            // wizard.previousStep();
+            // self.handleButtonsVisibility(2);            
+          }
+          else{
+
+            console.log("Zimptot", Zimptot);
+            var oParam = {
+              Zimptot: !Zimptot || Zimptot === null ? 0 : Zimptot,
+              Zimptotcos: !Zimptotcos || Zimptotcos === null ? 0 : Zimptotcos,
+            };
+
+            console.log(oParam);
+
+            var url =
+              wizardType === WIZARD_TYPE_DETAIL
+                ? URL_VALIDATION_D3
+                : URL_VALIDATION_3;
+            self.getView().setBusy(true);
+            oDataModel.callFunction("/" + url, {
+              method: "GET",
+              urlParameters: oParam,
+              success: function (oData, response) {
+                console.log(oData);
+                self.getView().setBusy(false);
+                var arrayMessage = oData.results;
+                if (!self.isErrorInLog(arrayMessage)) {
+                  wizard.previousStep();
+                  self.handleButtonsVisibility(2);
+                }
+              },
+              error: function (oError) {
+                self.getView().setBusy(false);
+                wizard.previousStep();
+                self.handleButtonsVisibility(2);
+              },
+            });
+          }
         },
         
         goToFinish:function(wizardId, callback){
@@ -1690,6 +1703,52 @@ sap.ui.define(
                 wizardModel.setProperty("/Iban", data.Iban);
                 wizardModel.setProperty("/Swift", data.Swift);
                 wizardModel.setProperty("/Zcoordest", data.ZcoordEst);
+                wizardModel.setProperty("/Zcodprov", data.Zcodprov);
+
+                switch(data.Zwels.toUpperCase()){
+                  case 'ID3':
+                    wizardModel.setProperty("/isZcoordestEditable", false);
+                    wizardModel.setProperty("/isZZcausalevalEditable", false);
+                    wizardModel.setProperty("/isIbanEditable", false);
+                    wizardModel.setProperty("/isBicEditable", false);
+                    wizardModel.setProperty("/ZZcausaleval", "");
+                    wizardModel.setProperty("/Swift", null);
+                    break;
+                  case 'ID4':
+                    wizardModel.setProperty("/isZcoordestEditable", false);
+                    wizardModel.setProperty("/isZZcausalevalEditable", false);
+                    wizardModel.setProperty("/isIbanEditable", true);
+                    wizardModel.setProperty("/isBicEditable", false);
+                    wizardModel.setProperty("/ZZcausaleval", "");
+                    wizardModel.setProperty("/Swift", null);
+                    break;                    
+                  case 'ID5':
+                    wizardModel.setProperty("/isZcoordestEditable", false);
+                    wizardModel.setProperty("/isZZcausalevalEditable", false);
+                    wizardModel.setProperty("/isIbanEditable", true);
+                    wizardModel.setProperty("/isBicEditable", false);
+                    wizardModel.setProperty("/ZZcausaleval", "");
+                    wizardModel.setProperty("/Swift", null);
+                    break;
+                  case 'ID6':
+                    wizardModel.setProperty("/isZcoordestEditable", true);
+                    wizardModel.setProperty("/isZZcausalevalEditable", true);
+                    wizardModel.setProperty("/isIbanEditable", false);
+                    wizardModel.setProperty("/isBicEditable", true);
+                    wizardModel.setProperty("/Iban", null);
+                    break;
+                  case 'ID10':
+                    wizardModel.setProperty("/isZcoordestEditable", true);
+                    wizardModel.setProperty("/isZZcausalevalEditable", false);
+                    wizardModel.setProperty("/isIbanEditable", true);
+                    wizardModel.setProperty("/isBicEditable", true);
+                    wizardModel.setProperty("/ZZcausaleval", "");
+                    break;
+                }  
+
+
+
+/*
 
                 if (data.Zwels.toUpperCase() === "ID6") {
                   wizardModel.setProperty("/isZcoordestEditable", true);
@@ -1700,14 +1759,18 @@ sap.ui.define(
                 } else {
                   wizardModel.setProperty("/isIbanEditable", true);
                   wizardModel.setProperty("/isBicEditable", false);
-                  wizardModel.setProperty("/Iban", null);
+                  wizardModel.setProperty("/Iban", wizardModel.getProperty("/Iban") && wizardModel.getProperty("/Iban") !== "" 
+                    ? wizardModel.getProperty("/Iban") 
+                    : null);
                   wizardModel.setProperty("/Swift", null);
 
-                  wizardModel.setProperty("/Zcoordest", "");
+                  wizardModel.setProperty("/Zcoordest", wizardModel.getProperty("/Zcoordest") && wizardModel.getProperty("/Zcoordest") !== "" 
+                    ? wizardModel.getProperty("/Zcoordest") 
+                    : null);
                   wizardModel.setProperty("/isZcoordestEditable", false);
                   wizardModel.setProperty("/ZZcausaleval", "");
                   wizardModel.setProperty("/isZZcausalevalEditable", false);
-                }
+                }*/
               },
               error: function(error){
                 self.getView().setBusy(false);
@@ -1855,7 +1918,7 @@ sap.ui.define(
         },
 
         setIntermediario:function(entity){
-          //Intermediario1                                   
+          var self =this;                   
           self.getView().getModel(WIZARD_MODEL).setProperty("/Ziban_i",entity === null ? entity : entity.Zibani);                                           
           self.getView().getModel(WIZARD_MODEL).setProperty("/Zbic_i",entity === null ? entity : entity.Zbici);                                            
           self.getView().getModel(WIZARD_MODEL).setProperty("/Zcoordest_i",entity === null ? entity : entity.Zcoordest);                                       
@@ -1932,6 +1995,60 @@ sap.ui.define(
                 oView.setBusy(false);
                 if (data.results.length > 0) {
                   self.getView().getModel(DataSON_MODEL).setProperty("/PayMode",data.results);
+                  var pay = data.results[0];
+
+                  wizardModel.setProperty("/PayMode", pay.Zwels);
+                  wizardModel.setProperty("/Banks", pay.Banks);
+                  wizardModel.setProperty("/Iban", pay.Iban);
+                  wizardModel.setProperty("/Swift", pay.Swift);
+                  wizardModel.setProperty("/Zcoordest", pay.ZcoordEst);
+                  wizardModel.setProperty("/Zcodprov", pay.Zcodprov);
+
+                  switch(pay.Zwels.toUpperCase()){
+                    case 'ID3':
+                      wizardModel.setProperty("/isZcoordestEditable", false);
+                      wizardModel.setProperty("/isZZcausalevalEditable", false);
+                      wizardModel.setProperty("/isIbanEditable", false);
+                      wizardModel.setProperty("/isBicEditable", false);
+                      wizardModel.setProperty("/ZZcausaleval", "");
+                      wizardModel.setProperty("/Swift", null);
+                      break;
+                    case 'ID4':
+                      wizardModel.setProperty("/isZcoordestEditable", false);
+                      wizardModel.setProperty("/isZZcausalevalEditable", false);
+                      wizardModel.setProperty("/isIbanEditable", true);
+                      wizardModel.setProperty("/isBicEditable", false);
+                      wizardModel.setProperty("/ZZcausaleval", "");
+                      wizardModel.setProperty("/Swift", null);
+                      break;                    
+                    case 'ID5':
+                      wizardModel.setProperty("/isZcoordestEditable", false);
+                      wizardModel.setProperty("/isZZcausalevalEditable", false);
+                      wizardModel.setProperty("/isIbanEditable", true);
+                      wizardModel.setProperty("/isBicEditable", false);
+                      wizardModel.setProperty("/ZZcausaleval", "");
+                      wizardModel.setProperty("/Swift", null);
+                      break;
+                    case 'ID6':
+                      wizardModel.setProperty("/isZcoordestEditable", true);
+                      wizardModel.setProperty("/isZZcausalevalEditable", true);
+                      if(pay.Banks.toUpperCase() === 'IT')
+                        wizardModel.setProperty("/isZZcausalevalEditable", false);
+                      wizardModel.setProperty("/isIbanEditable", false);
+                      wizardModel.setProperty("/isBicEditable", true);
+                      wizardModel.setProperty("/Iban", null);
+                      break;
+                    case 'ID10':
+                      wizardModel.setProperty("/isZcoordestEditable", true);
+                      wizardModel.setProperty("/isZZcausalevalEditable", false);
+                      wizardModel.setProperty("/isIbanEditable", true);
+                      wizardModel.setProperty("/isBicEditable", true);
+                      wizardModel.setProperty("/ZZcausaleval", "");
+                      break;
+                  }  
+
+/*
+
                   wizardModel.setProperty("/PayMode", data.results[0].Zwels);
                   wizardModel.setProperty("/Banks", data.results[0].Banks);
                   wizardModel.setProperty("/Iban", data.results[0].Iban);
@@ -1942,18 +2059,28 @@ sap.ui.define(
                     wizardModel.setProperty("/isZZcausalevalEditable", true);
                   }else{
                     wizardModel.setProperty("/isZZcausalevalEditable", false);
-                  }
+                  }*/
                 }
                 else{
                   self.getView().getModel(DataSON_MODEL).setProperty("/PayMode",[]);
-                  wizardModel.setProperty("/Banks", "");
-                  wizardModel.setProperty("/Iban", "");
-                  wizardModel.setProperty("/Swift", "");
-                  wizardModel.setProperty("/Zcoordest", "");
+                  wizardModel.setProperty("/Banks", null);
+                  wizardModel.setProperty("/Iban", null);
+                  wizardModel.setProperty("/Swift", null);
+                  wizardModel.setProperty("/Zcoordest", null);
+                  wizardModel.setProperty("/Zcodprov", null);
                   wizardModel.setProperty("/isZZcausalevalEditable", false);
                   wizardModel.setProperty("/isZcoordestEditable", false);
                   wizardModel.setProperty("/isIbanEditable", false);
                   wizardModel.setProperty("/isBicEditable", false);
+
+                  // wizardModel.setProperty("/Banks", "");
+                  // wizardModel.setProperty("/Iban", "");
+                  // wizardModel.setProperty("/Swift", "");
+                  // wizardModel.setProperty("/Zcoordest", "");
+                  // wizardModel.setProperty("/isZZcausalevalEditable", false);
+                  // wizardModel.setProperty("/isZcoordestEditable", false);
+                  // wizardModel.setProperty("/isIbanEditable", false);
+                  // wizardModel.setProperty("/isBicEditable", false);
                 }                
               },
               error: function (error) {

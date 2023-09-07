@@ -157,6 +157,7 @@ sap.ui.define(
                     self.getView().getModel(WIZARD_MODEL).setProperty("/ZufficioCont",null);
                     self.getView().getModel(WIZARD_MODEL).setProperty("/ZvimDescrufficio",null);
                     self.getView().getModel(WIZARD_MODEL).setProperty("/Fistl",null);
+                    self.getView().getModel(DataSON_MODEL).setProperty("/Zzamministr",null);
                     return false;
                   },
                 });
@@ -166,6 +167,15 @@ sap.ui.define(
               self.getView().getModel(WIZARD_MODEL).setProperty("/ZufficioCont",callback.data.ZufficioCont);
               self.getView().getModel(WIZARD_MODEL).setProperty("/ZvimDescrufficio",callback.data.ZvimDescrufficio);
               self.getView().getModel(WIZARD_MODEL).setProperty("/Fistl",callback.data.Fistl);
+              self.getView().getModel(DataSON_MODEL).setProperty("/Zzamministr",callback.data.Zzamministr);
+            });
+
+            self.getFruttiferoInfruttifero(function(callback){
+              if(!callback.error){
+                self.getView().getModel(DataSON_MODEL).setProperty("/FlagFruttifero",callback.data);
+              }
+              else 
+                self.getView().getModel(DataSON_MODEL).setProperty("/FlagFruttifero",callback.data);
             });
         },
 
@@ -509,7 +519,7 @@ sap.ui.define(
             Zdataprot = wizardModel.getProperty("/Zdataprot") && wizardModel.getProperty("/Zdataprot") !== null && wizardModel.getProperty("/Zdataprot") !== "" ?
                         self.formatter.formateDateForDeep(wizardModel.getProperty("/Zdataprot")):
                         null;
-        
+                                
           var arrayClassificazioneSonList=[];
           for(var i=0;i<classificazioneSonList.length;i++){
               var item = classificazioneSonList[i];
@@ -558,7 +568,39 @@ sap.ui.define(
                 ZE2e: !ZE2e || ZE2e === null ? "" : ZE2e,
                 ZimptotDivisa: !ZimptotDivisa || ZimptotDivisa === null ? null :ZimptotDivisa,
                 Trbtr: !Trbtr || Trbtr === null ? null :Trbtr,
-                Twaer: !Twaer || Twaer === null ? null :Twaer
+                Twaer: !Twaer || Twaer === null ? null :Twaer,
+
+                /*Modalità pagamento - campi nuovi*/  
+                Zalias:!wizardModel.getProperty("/Zalias") || wizardModel.getProperty("/Zalias") === null ? null : wizardModel.getProperty("/Zalias"),
+                AccTypeId:!wizardModel.getProperty("/AccTypeId") || wizardModel.getProperty("/AccTypeId") === null ? null : wizardModel.getProperty("/AccTypeId"),
+                RegioSosp:!wizardModel.getProperty("/RegioSosp") || wizardModel.getProperty("/RegioSosp") === null ? null : wizardModel.getProperty("/RegioSosp"),
+                ZaccText:!wizardModel.getProperty("/ZaccText") || wizardModel.getProperty("/ZaccText") === null ? null : wizardModel.getProperty("/ZaccText"),
+                Zzposfinent:!wizardModel.getProperty("/Zzposfinent") || wizardModel.getProperty("/Zzposfinent") === null ? null : wizardModel.getProperty("/Zzposfinent"),
+                Zpurpose:!wizardModel.getProperty("/Zpurpose") || wizardModel.getProperty("/Zpurpose") === null ? null : wizardModel.getProperty("/Zpurpose"),
+                Zcausben:!wizardModel.getProperty("/Zcausben") || wizardModel.getProperty("/Zcausben") === null ? null : wizardModel.getProperty("/Zcausben"),
+                Zflagfrutt:!wizardModel.getProperty("/Zflagfrutt") || wizardModel.getProperty("/Zflagfrutt") === null ? null : wizardModel.getProperty("/Zflagfrutt"),
+
+                //Sezione Versante
+                Zcodprov:!wizardModel.getProperty("/Zcodprov") || wizardModel.getProperty("/Zcodprov") === null ? null : wizardModel.getProperty("/Zcodprov"),
+                Zcfcommit:!wizardModel.getProperty("/Zcfcommit") || wizardModel.getProperty("/Zcfcommit") === null ? null : wizardModel.getProperty("/Zcfcommit"),
+                Zcodtrib:!wizardModel.getProperty("/Zcodtrib") || wizardModel.getProperty("/Zcodtrib") === null ? null : wizardModel.getProperty("/Zcodtrib"),             
+                Zperiodrifda:wizardModel.getProperty("/Zperiodrifda") && wizardModel.getProperty("/Zperiodrifda") !== null && wizardModel.getProperty("/Zperiodrifda")!= "" ? 
+                  self.formatter.formateDateForDeep(wizardModel.getProperty("/Zperiodrifda")):
+                  null,
+                Zperiodrifa:wizardModel.getProperty("/Zperiodrifa") && wizardModel.getProperty("/Zperiodrifa") !== null && wizardModel.getProperty("/Zperiodrifa")!= "" ? 
+                  self.formatter.formateDateForDeep(wizardModel.getProperty("/Zperiodrifa")):
+                  null,
+                Zcodinps:!wizardModel.getProperty("/Zcodinps") || wizardModel.getProperty("/Zcodinps") === null ? null : wizardModel.getProperty("/Zcodinps"),
+                Zcodvers:!wizardModel.getProperty("/Zcodvers") || wizardModel.getProperty("/Zcodvers") === null ? null : wizardModel.getProperty("/Zcodvers"),
+                Zcfvers:!wizardModel.getProperty("/Zcfvers") || wizardModel.getProperty("/Zcfvers") === null ? null : wizardModel.getProperty("/Zcfvers"),
+                Zdescvers:!wizardModel.getProperty("/Zdescvers") || wizardModel.getProperty("/Zdescvers") === null ? null : wizardModel.getProperty("/Zdescvers"),
+
+                Zdatavers:wizardModel.getProperty("/Zdatavers") && wizardModel.getProperty("/Zdatavers") !== null && wizardModel.getProperty("/Zdatavers")!= "" ? 
+                  self.formatter.formateDateForDeep(wizardModel.getProperty("/Zdatavers")):
+                  null,
+                Zprovvers:!wizardModel.getProperty("/Zprovvers") || wizardModel.getProperty("/Zprovvers") === null ? null : wizardModel.getProperty("/Zprovvers"),
+                Zsedevers:!wizardModel.getProperty("/Zsedevers") || wizardModel.getProperty("/Zsedevers") === null ? null : wizardModel.getProperty("/Zsedevers")
+
               },
             ],
           };

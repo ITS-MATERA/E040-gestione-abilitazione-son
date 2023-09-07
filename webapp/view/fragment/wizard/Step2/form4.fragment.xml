@@ -55,7 +55,7 @@
                     </Input> 
                     <core:Title text="" />
                     <Label design="Bold" text="{i18n>wizardFieldZcfcommit}" class="sapUiSmallMarginBottom"/>
-                    <Input  editable="{= ${wizardModel>/Zcodprov} !== '' &amp;&amp; ${wizardModel>/isInChange} ? true : false }"  value="{wizardModel>/Zcfcommit}" >
+                    <Input  editable="{= ${wizardModel>/Zcodprov} !== null &amp;&amp; ${wizardModel>/Zcodprov} !== '' &amp;&amp; ${wizardModel>/isInChange} ? true : false }"  value="{wizardModel>/Zcfcommit}" >
                         <layoutData>
                             <l:GridData span="XL6 L6 M6 S12"  />
                         </layoutData>
@@ -91,7 +91,7 @@
                     </DatePicker>
 					          <core:Title text="" />
                     <Label design="Bold" text="{i18n>wizardFieldZcodtrib}" class="sapUiSmallMarginBottom"/>
-                    <Input  editable="{= ${wizardModel>/Zcodprov} !== '' &amp;&amp; ${wizardModel>/isInChange} ? true : false }" value="{wizardModel>/Zcodtrib}">
+                    <Input  editable="{= ${wizardModel>/Zcodprov} !== null &amp;&amp; ${wizardModel>/Zcodprov} !== '' &amp;&amp; ${wizardModel>/isInChange} ? true : false }" value="{wizardModel>/Zcodtrib}">
                         <layoutData>
                             <l:GridData span="XL6 L6 M6 S12"  />
                         </layoutData>

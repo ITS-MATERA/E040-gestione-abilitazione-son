@@ -253,7 +253,7 @@
                                           <Label  design="Bold" width="100%" text="{i18n>wizardFieldPurpose}" wrapping="true" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                               <layoutData><l:GridData span="XL6 L6 M4 S12" /></layoutData>
                                           </Label>
-                                          <Input  value="{wizardModel>/Purpose}" 
+                                          <Input  value="{wizardModel>/Zpurpose}" 
                                             editable="{= ${wizardModel>/isInChange} &amp;&amp; ( ${wizardModel>/PayMode} === 'ID6' || ${wizardModel>/PayMode} === 'ID10' ) }"
                                             visible="{= ${wizardModel>/PayMode} === 'ID6' || ${wizardModel>/PayMode} === 'ID10' ? true : false }" >
                                               <layoutData>
