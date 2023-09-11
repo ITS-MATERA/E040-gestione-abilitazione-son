@@ -92,6 +92,7 @@ sap.ui.define(
     const OPERATION_TYPE_RETTIFICA ="RET";
     const DETAIL_MODEL = "detailModel";
     const HEADER_ACTION_MODEL = "headerActionModel";
+    const COS = "COS";
 
     return Controller.extend(
       "gestioneabilitazioneeson.controller.BaseController",
