@@ -66,7 +66,7 @@
 					<Text  text="{checkList>Fipos}" />
 					<Text  text="{checkList>Fistl}" />
 					<Text  text="{checkList>Zimptot}" />
-					<Text  text="{checkList>Ztipodisp3}" />
+					<Text  text="{checkList>Zdesctipodisp3}" />
 					<Text  text="{
 							path: 'checkList>ZstatoSop',
 							formatter: '.formatter.formatZstatoSop'

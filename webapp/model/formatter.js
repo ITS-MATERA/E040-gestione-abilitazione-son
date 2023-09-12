@@ -145,8 +145,20 @@ sap.ui.define([], function () {
           case "11":
             sDesc = bundle.getText("ZstatoSop11");
             break;
+          case "14":
+            sDesc = bundle.getText("ZstatoSop14");
+            break;
+          case "15":
+            sDesc = bundle.getText("ZstatoSop15");
+            break;
           case "16":
               sDesc = bundle.getText("ZstatoSop16");
+              break;  
+          case "17":
+              sDesc = bundle.getText("ZstatoSop17");
+              break;  
+          case "18":
+              sDesc = bundle.getText("ZstatoSop18");
               break;  
           default:
             sDesc = bundle.getText("ZstatoDefault");

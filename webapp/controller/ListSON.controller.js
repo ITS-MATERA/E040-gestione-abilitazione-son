@@ -1249,6 +1249,11 @@ sap.ui.define(
                 "09": oBundle.getText("ZstatoSop09"),
                 "10": oBundle.getText("ZstatoSop10"),
                 "11": oBundle.getText("ZstatoSop11"),
+                "14": oBundle.getText("ZstatoSop14"),
+                "15": oBundle.getText("ZstatoSop15"),
+                "16": oBundle.getText("ZstatoSop16"),
+                "17": oBundle.getText("ZstatoSop17"),
+                "18": oBundle.getText("ZstatoSop18"),
               },
             },
           ];

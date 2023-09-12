@@ -173,7 +173,7 @@ sap.ui.define(
             var tab = self.getView().byId("idIconTabBar");
             var key = tab.getSelectedKey();
             if(key===oBundle.getText("btnDeleteCancelSON")){
-                self.getView().getModel(DETAIL_MODEL).setProperty("/buttonText",oBundle.getText("btnDeleteCancel"));
+                self.getView().getModel(DETAIL_MODEL).setProperty("/buttonText",oBundle.getText("btnTextDeleteCancel"));
                 self.getView().getModel(DETAIL_MODEL).setProperty("/buttonVisible",true);
                 self.getView().getModel(DETAIL_MODEL).setProperty("/buttonEnabled",self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z09Enabled);
             }
@@ -181,10 +181,14 @@ sap.ui.define(
                 self.getView().getModel(DETAIL_MODEL).setProperty("/buttonEnabled",true);
 
             var checkList = self.getModelGlobal(CHECKLIST_MODEL).getData();
+            if(checkList && checkList.length === 1){
+                self.getView().getModel(DETAIL_MODEL).setProperty("/headerVisible", true);
+                self.fillWizard(checkList[0]);
+            }
             setTimeout(() => {                
                 detailModel.setProperty("/checkList", checkList);
                 detailModel.setProperty("/total", checkList.length);
-                if(checkList.length === 1){
+                if(checkList && checkList.length === 1){
                     self.getView().getModel(HEADER_ACTION_MODEL).setProperty("/Zcdr",checkList[0].Fistl);
                 }else  
                     self.getView().getModel(HEADER_ACTION_MODEL).setProperty("/Zcdr","");      
@@ -227,9 +231,13 @@ sap.ui.define(
             self.getView().getModel(DETAIL_MODEL).setProperty("/buttonEnabled",true);
             switch (key) {
                 case oBundle.getText("btnDeleteCancelSON"):
-                    self.getView().getModel(DETAIL_MODEL).setProperty("/buttonText",oBundle.getText("btnDeleteCancel"));
+                    self.getView().getModel(DETAIL_MODEL).setProperty("/buttonText",oBundle.getText("btnTextDeleteCancel"));
                     self.getView().getModel(DETAIL_MODEL).setProperty("/buttonVisible",true);
                     self.getView().getModel(DETAIL_MODEL).setProperty("/buttonEnabled",self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z09Enabled);
+                    if(totalRows === 1){
+                        self.getView().getModel(DETAIL_MODEL).setProperty("/headerVisible",true);
+                        self.fillWizard(checkList[0]);
+                    } 
                     break;
                 case oBundle.getText("btnWorkflow"):
                     self.getView().getModel(DETAIL_MODEL).setProperty("/buttonText",oBundle.getText("btnStart"));
