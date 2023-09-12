@@ -241,11 +241,13 @@ sap.ui.define(
                     } 
                     break;
                 case oBundle.getText("btnWorkflow"):
+                    self.getView().getModel(DETAIL_MODEL).setProperty("/showSelection", true);
                     self.getView().getModel(DETAIL_MODEL).setProperty("/buttonText",oBundle.getText("btnStart"));
-                    self.getView().getModel(DETAIL_MODEL).setProperty("/buttonVisible",totalRows > 1 ? true : false);
-                    if(totalRows === 1){                        
-                        self.fillWorkflow(checkList[0]);
-                    }
+                    self.getView().getModel(DETAIL_MODEL).setProperty("/buttonVisible", true);
+                    // self.getView().getModel(DETAIL_MODEL).setProperty("/buttonVisible",totalRows > 1 ? true : false);
+                    // if(totalRows === 1){                        
+                    //     self.fillWorkflow(checkList[0]);
+                    // }
                     break;
                 case oBundle.getText("btnDetail"):      
                     self._detailShowed=true;             

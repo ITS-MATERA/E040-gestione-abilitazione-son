@@ -188,11 +188,13 @@ function (BaseController, JSONModel, formatter, MessageBox, History,library,
                     self.getView().getModel(DETAIL_MODEL).setProperty("/buttonEnabled",self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z07Enabled);
                     break;
                 case oBundle.getText("btnWorkflow"):
+                    self.getView().getModel(DETAIL_MODEL).setProperty("/showSelection", true);
                     self.getView().getModel(DETAIL_MODEL).setProperty("/buttonText",oBundle.getText("btnStart"));
-                    self.getView().getModel(DETAIL_MODEL).setProperty("/buttonVisible",totalRows > 1 ? true : false);                    
-                    if(totalRows === 1){                        
-                        self.fillWorkflow(checkList[0]);
-                    }
+                    self.getView().getModel(DETAIL_MODEL).setProperty("/buttonVisible", true);                    
+                    // self.getView().getModel(DETAIL_MODEL).setProperty("/buttonVisible",totalRows > 1 ? true : false);                    
+                    // if(totalRows === 1){                        
+                    //     self.fillWorkflow(checkList[0]);
+                    // }
                     break;
                 case oBundle.getText("btnFake"):
                     self.getView().getModel(WIZARD_MODEL).setProperty("/isInChange",false);                    
