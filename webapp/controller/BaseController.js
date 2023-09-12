@@ -106,6 +106,8 @@ sap.ui.define(
         AUTHORITY_CHECK_SON:"AuthorityCheckSON",
         payMode:[],
 
+        referInputId:null,
+
         getRouter: function () {
           return UIComponent.getRouterFor(this);
         },
@@ -1542,7 +1544,7 @@ sap.ui.define(
               var oModelJson = new sap.ui.model.json.JSONModel();
               oModelJson.setData(array);
               self.getView().setModel(oModelJson,STEP3_LIST);
-              self.getView().getModel(oModelJson,CLASSIFICAZIONE_SON_DEEP);
+              self.getView().setModel(oModelJson,CLASSIFICAZIONE_SON_DEEP);
               self.getView().getModel(WIZARD_MODEL).setProperty("/Zimptotcos", sum.toFixed(2));
             },
             error: function (e) {
@@ -4390,7 +4392,9 @@ sap.ui.define(
           var self = this,
             oDataModel = self.getModel(),
             wizardModel = self.getModel(WIZARD_MODEL),
-            Gjahr = wizardModel.getProperty("/Gjahr");
+            Gjahr = wizardModel.getProperty("/Gjahr"),
+            inputContextPath = oEvent.getSource().getBindingInfo("value").binding.getContext().getPath();
+            
           var inputId = oEvent.getSource().data().id;
           var fragmentName = oEvent.getSource().data().fragmentName;
           var path = oEvent.getSource().data().datapathmodel;
@@ -4415,6 +4419,9 @@ sap.ui.define(
                   console.log(dialogName);
                   oTable.setModel(oModelJson, pathName);
                   console.log(inputId);
+                  if(inputContextPath && inputContextPath!== null && inputContextPath!=="")
+                    self.referInputId = inputContextPath;
+
                   oTable.data("inputId", inputId);
                   oDialog.open();
                 },
@@ -4478,14 +4485,30 @@ sap.ui.define(
             return;
           }
 
-          var self = this,
-            step3List = self.getModel(STEP3_LIST).getData();
-          step3List[step3List.length-1].Zcos = oSelectedItem.getCells()[0].getTitle();
-          step3List[step3List.length-1].ZcosDesc = oSelectedItem.getCells()[1].getText()
-          var oModelJson = new sap.ui.model.json.JSONModel();
-          oModelJson.setData(step3List);
-          console.log(step3List);
-          self.setModel(oModelJson, STEP3_LIST);
+          var self = this;
+          self.getModel(STEP3_LIST).setProperty(self.referInputId + "/Zcos",oSelectedItem.getCells()[0].getTitle());
+          self.getModel(STEP3_LIST).setProperty(self.referInputId + "/ZcosDesc",oSelectedItem.getCells()[1].getText());
+
+          var currentItem = self.getModel(STEP3_LIST).getProperty(self.referInputId);
+          var array = self.getModel(CLASSIFICAZIONE_SON_DEEP).getData();
+
+          var item = array.filter(x=> x.Id === currentItem.Id);
+          if(item && item.length>0){
+            item[0].Zcos = self.getModel(STEP3_LIST).getProperty(self.referInputId + "/Zcos");
+            item[0].ZcosDesc = self.getModel(STEP3_LIST).getProperty(self.referInputId + "/ZcosDesc");
+          }
+
+          //   step3List = self.getModel(STEP3_LIST).getData();
+          // step3List[step3List.length-1].Zcos = oSelectedItem.getCells()[0].getTitle();
+          // step3List[step3List.length-1].ZcosDesc = oSelectedItem.getCells()[1].getText();
+
+          // self.getModel(STEP3_LIST).setProperty(self.referInputId + "/Zcos",oSelectedItem.getCells()[0].getTitle());
+          // self.getModel(STEP3_LIST).setProperty(self.referInputId + "/ZcosDesc",oSelectedItem.getCells()[1].getText());
+
+          // var oModelJson = new sap.ui.model.json.JSONModel();
+          // oModelJson.setData(step3List);
+          // console.log(step3List);
+          // self.setModel(oModelJson, STEP3_LIST);
           self.closeDialog();
         },
 

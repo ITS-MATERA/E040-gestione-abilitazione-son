@@ -310,42 +310,42 @@ sap.ui.define(
           } else return false;
         },
 
-        onValueHelpRequestedZcos: function (oEvent) {
-          var self = this,
-            oDataModel = self.getModel(),
-            wizardModel = self.getModel(WIZARD_MODEL),
-            Gjahr = wizardModel.getProperty("/Gjahr");
-          var inputId = oEvent.getSource().data().id;
-          var fragmentName = oEvent.getSource().data().fragmentName;
-          var path = oEvent.getSource().data().datapathmodel;
-          var pathName = oEvent.getSource().data().pathName;
-          var dialogName = oEvent.getSource().data().dialogName;
-          var oDialog = self.openDialog(
-            "gestioneabilitazioneeson.view.fragment.valueHelp.ValueHelp" +
-              fragmentName
-          );
-          console.log(oDialog);
-          self
-            .getModel()
-            .metadataLoaded()
-            .then(function () {
-              oDataModel.read("/" + path, {
-                urlParameters: { Gjahr: Gjahr },
-                success: function (data, oResponse) {
-                  var oModelJson = new sap.ui.model.json.JSONModel();
-                  console.log("data", data);
-                  oModelJson.setData(data.results);
-                  var oTable = sap.ui.getCore().byId(dialogName);
-                  console.log(dialogName);
-                  oTable.setModel(oModelJson, pathName);
-                  console.log(inputId);
-                  oTable.data("inputId", inputId);
-                  oDialog.open();
-                },
-                error: function (error) {},
-              });
-            });
-        },
+        // onValueHelpRequestedZcos: function (oEvent) {
+        //   var self = this,
+        //     oDataModel = self.getModel(),
+        //     wizardModel = self.getModel(WIZARD_MODEL),
+        //     Gjahr = wizardModel.getProperty("/Gjahr");
+        //   var inputId = oEvent.getSource().data().id;
+        //   var fragmentName = oEvent.getSource().data().fragmentName;
+        //   var path = oEvent.getSource().data().datapathmodel;
+        //   var pathName = oEvent.getSource().data().pathName;
+        //   var dialogName = oEvent.getSource().data().dialogName;
+        //   var oDialog = self.openDialog(
+        //     "gestioneabilitazioneeson.view.fragment.valueHelp.ValueHelp" +
+        //       fragmentName
+        //   );
+        //   console.log(oDialog);
+        //   self
+        //     .getModel()
+        //     .metadataLoaded()
+        //     .then(function () {
+        //       oDataModel.read("/" + path, {
+        //         urlParameters: { Gjahr: Gjahr },
+        //         success: function (data, oResponse) {
+        //           var oModelJson = new sap.ui.model.json.JSONModel();
+        //           console.log("data", data);
+        //           oModelJson.setData(data.results);
+        //           var oTable = sap.ui.getCore().byId(dialogName);
+        //           console.log(dialogName);
+        //           oTable.setModel(oModelJson, pathName);
+        //           console.log(inputId);
+        //           oTable.data("inputId", inputId);
+        //           oDialog.open();
+        //         },
+        //         error: function (error) {},
+        //       });
+        //     });
+        // },
 
         onAddRow: function (oEvent) {
           var self = this,
@@ -396,25 +396,25 @@ sap.ui.define(
           self.setModel(oModelJsonCS, CLASSIFICAZIONE_SON_DEEP);
         },
 
-        handleHeaderClose: function (oEvent) {
-          var self = this;
-          var oSelectedItem = oEvent.getParameter("selectedItem");
+        // handleHeaderClose: function (oEvent) {
+        //   var self = this;
+        //   var oSelectedItem = oEvent.getParameter("selectedItem");
 
-          if (!oSelectedItem) {
-            self.closeDialog();
-            return;
-          }
+        //   if (!oSelectedItem) {
+        //     self.closeDialog();
+        //     return;
+        //   }
 
-          var self = this,
-            step3List = self.getModel(STEP3_LIST).getData();
-          step3List[step3List.length-1].Zcos = oSelectedItem.getCells()[0].getTitle();
-          step3List[step3List.length-1].ZcosDesc = oSelectedItem.getCells()[1].getText()
-          var oModelJson = new sap.ui.model.json.JSONModel();
-          oModelJson.setData(step3List);
-          console.log(step3List);
-          self.setModel(oModelJson, STEP3_LIST);
-          self.closeDialog();
-        },
+        //   var self = this,
+        //     step3List = self.getModel(STEP3_LIST).getData();
+        //   step3List[step3List.length-1].Zcos = oSelectedItem.getCells()[0].getTitle();
+        //   step3List[step3List.length-1].ZcosDesc = oSelectedItem.getCells()[1].getText()
+        //   var oModelJson = new sap.ui.model.json.JSONModel();
+        //   oModelJson.setData(step3List);
+        //   console.log(step3List);
+        //   self.setModel(oModelJson, STEP3_LIST);
+        //   self.closeDialog();
+        // },
 
         onSaveAll: function (oEvent) {
           console.log("Validazione 4");
