@@ -6,8 +6,7 @@
     <VBox >
  
 	    <Wizard id="WizardForDetail" showNextButton="false"  finishButtonText="{= ${wizardModel>/isInChange} === true ? 'Rettifica SON' : 'Fine' }" 
-            class="sapUiResponsivePadding--header sapUiResponsivePadding--content" app:wizardType="Detail"
-								>
+            class="sapUiResponsivePadding--header sapUiResponsivePadding--content" app:wizardType="Detail">
                 <WizardStep id="idWizardStep1"
                             title="{i18n>wizardStep1Title}"
                             validated="true"

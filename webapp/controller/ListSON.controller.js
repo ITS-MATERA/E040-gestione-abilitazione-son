@@ -750,9 +750,10 @@ sap.ui.define(
         onStart: function () {
           var self = this;
           self.getView().setBusy(true); 
-
+          self.resetList();
           //var reloadModel = self.getModelGlobal(self.RELOAD_MODEL);
           self._setEntityProperties();
+
         },
 
         resetList: function () {

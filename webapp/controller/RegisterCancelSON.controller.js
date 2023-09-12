@@ -183,6 +183,7 @@ sap.ui.define(
 
             var checkList = self.getModelGlobal(CHECKLIST_MODEL).getData();
             if(checkList && checkList.length === 1){
+                self.getView().setBusy(true);   
                 self.getView().getModel(DETAIL_MODEL).setProperty("/headerVisible", true);
                 self.fillWizard(checkList[0]);
             }
