@@ -9,7 +9,6 @@
             <c:Timeline
                 id="idTimeline"
                 showHeaderBar="false"
-                enableModelFilter="false"
                 sort="false"
                 noDataText="No text"
                 content="{

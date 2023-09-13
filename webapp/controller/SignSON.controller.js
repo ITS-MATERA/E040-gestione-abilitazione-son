@@ -464,8 +464,10 @@ sap.ui.define(
             ClassificazioneSonSet: [],
             OperationType: operationType,
             SonSet: checklist,
-            SonMessageSet: [],
+            SonMessageSet: []
           };
+          if(documentoFirmato && documentoFirmato.DocumentoFirmato.Content && documentoFirmato.DocumentoFirmato.Content)
+            entityRequestBody.SonSet.ZxmlFirmato = documentoFirmato.DocumentoFirmato.Content;
 
           self.getView().setBusy(true);
           oDataModel.create("/" + URL_DEEP, entityRequestBody, {
