@@ -13,8 +13,10 @@
 				<ToolbarSpacer />
 				<!-- press="newModalitaPagamentoDialogPress"
 				press="newAnagraficaBeneficiarioPress" -->
-				<Button   enabled="{wizardModel>/isInChange}"  text="{i18n>btnInsertPayMethod}" type="Emphasized" ></Button>
-				<Button enabled="{wizardModel>/isInChange}"  text="{i18n>btnCreateDataBeneficary}" type="Emphasized" ></Button>
+				<!-- <Button   enabled="{wizardModel>/isInChange}"  text="{i18n>btnInsertPayMethod}" type="Emphasized" ></Button> -->
+				<!-- <Button enabled="{wizardModel>/isInChange}"  text="{i18n>btnCreateDataBeneficary}" type="Emphasized" ></Button> -->
+				<Button   enabled="false"  text="{i18n>btnInsertPayMethod}" type="Emphasized" ></Button>
+				<Button enabled="false"  text="{i18n>btnCreateDataBeneficary}" type="Emphasized" ></Button>
 			</OverflowToolbar>
 		</headerToolbar>
 		<content>

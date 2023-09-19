@@ -19,7 +19,8 @@
 		
 		<headerToolbar>
 			<OverflowToolbar >
-			 	<Title text="{detailModel>/detailTableTitle}"  class="sapUiTinyMargin titleSize"></Title>
+			 	<Title text="{i18n>listSONPageTitle}"  class="sapUiTinyMargin titleSize"></Title>
+			 	<!-- <Title text="{detailModel>/detailTableTitle}"  class="sapUiTinyMargin titleSize"></Title> -->
 				<ToolbarSpacer/>
 
 			</OverflowToolbar>

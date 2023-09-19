@@ -165,6 +165,11 @@ sap.ui.define(
                 self.getView().getModel(DETAIL_MODEL).setProperty("/buttonEnabled",true);
 
             var checkList = self.getModelGlobal(CHECKLIST_MODEL).getData();
+            if (checkList && checkList.length === 1) {
+                self.getView().setBusy(true);
+                self.getView().getModel(DETAIL_MODEL).setProperty("/headerVisible", true);
+                self.fillWizard(checkList[0]);
+              }
             setTimeout(() => {                
                 detailModel.setProperty("/checkList", checkList);
                 detailModel.setProperty("/total", checkList.length);
@@ -188,6 +193,11 @@ sap.ui.define(
                     self.getView().getModel(DETAIL_MODEL).setProperty("/buttonText",oBundle.getText("btnTextDeleteSign"));
                     self.getView().getModel(DETAIL_MODEL).setProperty("/buttonVisible",true);
                     self.getView().getModel(DETAIL_MODEL).setProperty("/buttonEnabled",self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z27Enabled);
+                    if(totalRows === 1){
+                        self.getView().setBusy(true);
+                        self.getView().getModel(DETAIL_MODEL).setProperty("/headerVisible",true);
+                        self.fillWizard(checkList[0]);
+                    }
                     break;
                 case oBundle.getText("btnWorkflow"):
                     self.getView().getModel(DETAIL_MODEL).setProperty("/showSelection", true);
