@@ -330,6 +330,7 @@ sap.ui.define(
                   urlParameters: { ZufficioCont: ZufficioCont },
                   success: function (data, oResponse) {
                     oView.setBusy(false);
+                    data.results.splice(0,1)
                     addAuthModel.setProperty("/Ztipodisp3List", data.results);
                   },
                   error: function (error) {
