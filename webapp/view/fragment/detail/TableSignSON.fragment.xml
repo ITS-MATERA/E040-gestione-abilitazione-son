@@ -1,86 +1,128 @@
 <c:FragmentDefinition
 	xmlns="sap.m"
 	xmlns:c="sap.ui.core"
-    xmlns:l="sap.ui.layout"
+	xmlns:l="sap.ui.layout"
 >
-
-
-  <Table  	
-	
-			contextualWidth="Auto"
-			growing="true"
-			selectionChange="onSelectedItem"
-			updateFinished="onUpdateFinishedDetail"
-				items="{
-				path: 'listTable>/'
-			}"
-		>
-		
+	<Table
+		contextualWidth="Auto"
+		growing="true"
+		selectionChange="onSelectedItem"
+		updateFinished="onUpdateFinishedDetail"
+		items="{
+			path: 'listTable>/'
+		}"
+	>
 		<headerToolbar>
-			<OverflowToolbar >
-			 	<Title text="{detailModel>/detailTableTitle}"  class="sapUiTinyMargin titleSize"></Title>
+			<OverflowToolbar>
+				<Title
+					text="{detailModel>/detailTableTitle}"
+					class="sapUiTinyMargin titleSize"
+				/>
 				<ToolbarSpacer/>
-				
 			</OverflowToolbar>
 		</headerToolbar>
 		<columns>
-		<Column minScreenWidth="Tablet" demandPopin="true">
-				<header><Text text="{i18n>columnNameZchiavesop}" /></header>
-		</Column>
-		<Column minScreenWidth="Tablet" demandPopin="true">
-				<header><Text text="{i18n>columnNameZdatasop}" /></header>
-		</Column>
-		<Column minScreenWidth="Tablet" demandPopin="true">
-				<header><Text text="{i18n>columnNameLifnr}" /></header>
-		</Column>
-		<Column minScreenWidth="Tablet" demandPopin="true">
-				<header><Text text="{i18n>columnNameFipos}" /></header>
-		</Column>
-		<Column minScreenWidth="Tablet" demandPopin="true">
-				<header><Text text="{i18n>columnNameFistl}" /></header>
-		</Column>
-		<Column minScreenWidth="Tablet" demandPopin="true">
-				<header><Text text="{i18n>columnNameZimptot}" /></header>
-		</Column>
-		<Column minScreenWidth="Tablet" demandPopin="true">
-				<header><Text text="{i18n>columnNameZtipodisp3}" /></header>
-		</Column>
-
-		<Column minScreenWidth="Tablet" demandPopin="true" visible="{detailModel>/otherColumn}" >
-				<header><Text text="{i18n>filterNameZnumprot}" /></header>
-		</Column>
-		<Column minScreenWidth="Tablet" demandPopin="true" visible="{detailModel>/otherColumn}">
-				<header><Text text="{i18n>filterNameZdataprot}" /></header>
-		</Column>		
+			<Column
+				minScreenWidth="Tablet"
+				demandPopin="true"
+			>
+				<header>
+					<Text text="{i18n>columnNameZchiavesop}"/>
+				</header>
+			</Column>
+			<Column
+				minScreenWidth="Tablet"
+				demandPopin="true"
+			>
+				<header>
+					<Text text="{i18n>columnNameZdatasop}"/>
+				</header>
+			</Column>
+			<Column
+				minScreenWidth="Tablet"
+				demandPopin="true"
+			>
+				<header>
+					<Text text="{i18n>columnNameLifnr}"/>
+				</header>
+			</Column>
+			<Column
+				minScreenWidth="Tablet"
+				demandPopin="true"
+			>
+				<header>
+					<Text text="{i18n>columnNameFipos}"/>
+				</header>
+			</Column>
+			<Column
+				minScreenWidth="Tablet"
+				demandPopin="true"
+			>
+				<header>
+					<Text text="{i18n>columnNameFistl}"/>
+				</header>
+			</Column>
+			<Column
+				minScreenWidth="Tablet"
+				demandPopin="true"
+			>
+				<header>
+					<Text text="{i18n>columnNameZimptot}"/>
+				</header>
+			</Column>
+			<Column
+				minScreenWidth="Tablet"
+				demandPopin="true"
+			>
+				<header>
+					<Text text="{i18n>columnNameZtipodisp3}"/>
+				</header>
+			</Column>
+			<Column
+				minScreenWidth="Tablet"
+				demandPopin="true"
+				visible="{detailModel>/otherColumn}"
+			>
+				<header>
+					<Text text="{i18n>filterNameZnumprot}"/>
+				</header>
+			</Column>
+			<Column
+				minScreenWidth="Tablet"
+				demandPopin="true"
+				visible="{detailModel>/otherColumn}"
+			>
+				<header>
+					<Text text="{i18n>filterNameZdataprot}"/>
+				</header>
+			</Column>
 		</columns>
 		<items>
 			<ColumnListItem vAlign="Middle">
 				<cells>
-					<Text  text="{listTable>Zchiavesop}" />
-					<Text   text="{
-								path: 'listTable>Zdatasop',
-								type: 'sap.ui.model.type.Date',
-								formatOptions: {
-									pattern: 'dd.MM.yyyy'
-									}
-							}"/>					
-					<Text  text="{listTable>Beneficiario}" />
-					<Text  text="{listTable>Fipos}" />
-					<Text  text="{listTable>Fistl}" />
-					<Text  text="{listTable>Zimptot}" />
-					<Text  text="{listTable>Zdesctipodisp3}" />
-										
-					<Text  text="{listTable>Znumprot}"/>	
-						<Text   text="{
-								path: 'listTable>Zdataprot',
-								type: 'sap.ui.model.type.Date',
-								formatOptions: {
-									pattern: 'dd.MM.yyyy'
-									}
-							}" />											
+					<Text text="{listTable>Zchiavesop}"/>
+					<Text text="{
+						path: 'listTable>Zdatasop',
+						type: 'sap.ui.model.type.Date',
+						formatOptions: {
+							pattern: 'dd.MM.yyyy'
+						}
+					}"/>
+					<Text text="{listTable>Beneficiario}"/>
+					<Text text="{listTable>Fipos}"/>
+					<Text text="{listTable>Fistl}"/>
+					<Text text="{listTable>Zimptot}"/>
+					<Text text="{listTable>Zdesctipodisp3}"/>
+					<Text text="{listTable>Znumprot}"/>
+					<Text text="{
+						path: 'listTable>Zdataprot',
+						type: 'sap.ui.model.type.Date',
+						formatOptions: {
+							pattern: 'dd.MM.yyyy'
+						}
+					}"/>
 				</cells>
 			</ColumnListItem>
 		</items>
 	</Table>
-	
 </c:FragmentDefinition>

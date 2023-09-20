@@ -70,41 +70,50 @@ sap.ui.define(
 
         _onObjectMatched: function () {
           var self = this,
-              authModel = self.getModelGlobal(self.AUTHORITY_CHECK_ABILITAZIONE);
-           
-          if(!authModel || authModel === null){
-            self.getAuthorityCheck(self.FILTER_AUTH_OBJ, function(callback){
-              if(callback){
+            authModel = self.getModelGlobal(self.AUTHORITY_CHECK_ABILITAZIONE);
+
+          if (!authModel || authModel === null) {
+            self.getAuthorityCheck(self.FILTER_AUTH_OBJ, function (callback) {
+              if (callback) {
                 self.getFistl();
-              }
-              else{
-                self.getRouter().navTo("notAuth", {mex: self.getResourceBundle().getText("notAuthText")});
+              } else {
+                self
+                  .getRouter()
+                  .navTo("notAuth", {
+                    mex: self.getResourceBundle().getText("notAuthText"),
+                  });
               }
             });
-          }   
+          }
         },
-        
-        getFistl:function(){
-          var self= this,
-                oDataModel = self.getModel();
 
-            var path = self.getModel().createKey(FistlMc_SET, {
-                Name: "COSPR3FIORIE040_FISTL",
-            });
+        getFistl: function () {
+          var self = this,
+            oDataModel = self.getModel();
 
-            self.getModel().metadataLoaded().then(function () {
-                oDataModel.read("/" + path, {
-                    success: function (data, oResponse) {  
-                        if(data && data.Value !== null && data.Value !== ""){
-                          self.getView().getModel("addAuhModel").setProperty("/Fistl",data.Value);
-                        }
-                        else
-                          self.getView().getModel("addAuhModel").setProperty("/Fistl","");
-                      },
-                    error: function (error) {
-                        console.log(error);
-                    },
-                });
+          var path = self.getModel().createKey(FistlMc_SET, {
+            Name: "COSPR3FIORIE040_FISTL",
+          });
+
+          self
+            .getModel()
+            .metadataLoaded()
+            .then(function () {
+              oDataModel.read("/" + path, {
+                success: function (data, oResponse) {
+                  if (data && data.Value !== null && data.Value !== "") {
+                    self
+                      .getView()
+                      .getModel("addAuhModel")
+                      .setProperty("/Fistl", data.Value);
+                  } else
+                    self
+                      .getView()
+                      .getModel("addAuhModel")
+                      .setProperty("/Fistl", "");
+                },
+                error: function (error) {},
+              });
             });
         },
 
@@ -330,7 +339,7 @@ sap.ui.define(
                   urlParameters: { ZufficioCont: ZufficioCont },
                   success: function (data, oResponse) {
                     oView.setBusy(false);
-                    data.results.splice(0,1)
+                    data.results.splice(0, 1);
                     addAuthModel.setProperty("/Ztipodisp3List", data.results);
                   },
                   error: function (error) {
@@ -361,17 +370,34 @@ sap.ui.define(
             oDataModel = self.getModel(),
             oView = self.getView(),
             addAuthModel = self.getModel(ADD_AUTH_MODEL),
-            oControlFilterBarPosFinSpesa = self.getView().byId("filterBarPosFinSpesa"),
-            oControlIdFilterStruttAmmResp = self.getView().byId("idFilterStruttAmmResp"),
-                        
+            oControlFilterBarPosFinSpesa = self
+              .getView()
+              .byId("filterBarPosFinSpesa"),
+            oControlIdFilterStruttAmmResp = self
+              .getView()
+              .byId("idFilterStruttAmmResp"),
             Gjahr = addAuthModel.getProperty("/Gjahr"),
-            Fipos = oControlFilterBarPosFinSpesa.getValue() && oControlFilterBarPosFinSpesa.getValue() !== "" ? oControlFilterBarPosFinSpesa.getValue() : "",
-            Fistl = oControlIdFilterStruttAmmResp.getValue() && oControlIdFilterStruttAmmResp.getValue() !== "" ? oControlIdFilterStruttAmmResp.getValue() : "",
+            Fipos =
+              oControlFilterBarPosFinSpesa.getValue() &&
+              oControlFilterBarPosFinSpesa.getValue() !== ""
+                ? oControlFilterBarPosFinSpesa.getValue()
+                : "",
+            Fistl =
+              oControlIdFilterStruttAmmResp.getValue() &&
+              oControlIdFilterStruttAmmResp.getValue() !== ""
+                ? oControlIdFilterStruttAmmResp.getValue()
+                : "",
             // Fipos = addAuthModel.getProperty("/Fipos"),
             // Fistl = addAuthModel.getProperty("/Fistl"),
-            Fikrs = self.getModelGlobal(self.AUTHORITY_CHECK_ABILITAZIONE).getData().FIKRS,
-            AgrName = self.getModelGlobal(self.AUTHORITY_CHECK_ABILITAZIONE).getData().AGR_NAME,
-            Prctr = self.getModelGlobal(self.AUTHORITY_CHECK_ABILITAZIONE).getData().PRCTR;
+            Fikrs = self
+              .getModelGlobal(self.AUTHORITY_CHECK_ABILITAZIONE)
+              .getData().FIKRS,
+            AgrName = self
+              .getModelGlobal(self.AUTHORITY_CHECK_ABILITAZIONE)
+              .getData().AGR_NAME,
+            Prctr = self
+              .getModelGlobal(self.AUTHORITY_CHECK_ABILITAZIONE)
+              .getData().PRCTR;
 
           if (Fipos !== null && Fistl !== null) {
             var oParam = {
@@ -418,10 +444,22 @@ sap.ui.define(
             Gjahr = addAuthModel.getProperty("/Gjahr"),
             // Fipos = addAuthModel.getProperty("/Fipos"),
             // Fistl = addAuthModel.getProperty("/Fistl"),
-            oControlFilterBarPosFinSpesa = self.getView().byId("filterBarPosFinSpesa"),
-            oControlIdFilterStruttAmmResp = self.getView().byId("idFilterStruttAmmResp"),
-            Fipos = oControlFilterBarPosFinSpesa.getValue() && oControlFilterBarPosFinSpesa.getValue() !== "" ? oControlFilterBarPosFinSpesa.getValue() : "",
-            Fistl = oControlIdFilterStruttAmmResp.getValue() && oControlIdFilterStruttAmmResp.getValue() !== "" ? oControlIdFilterStruttAmmResp.getValue() : "",
+            oControlFilterBarPosFinSpesa = self
+              .getView()
+              .byId("filterBarPosFinSpesa"),
+            oControlIdFilterStruttAmmResp = self
+              .getView()
+              .byId("idFilterStruttAmmResp"),
+            Fipos =
+              oControlFilterBarPosFinSpesa.getValue() &&
+              oControlFilterBarPosFinSpesa.getValue() !== ""
+                ? oControlFilterBarPosFinSpesa.getValue()
+                : "",
+            Fistl =
+              oControlIdFilterStruttAmmResp.getValue() &&
+              oControlIdFilterStruttAmmResp.getValue() !== ""
+                ? oControlIdFilterStruttAmmResp.getValue()
+                : "",
             Ztipodisp3 = addAuthModel.getProperty("/Ztipodisp3"),
             Datab = addAuthModel.getProperty("/Datab"),
             Datbi = addAuthModel.getProperty("/Datbi");

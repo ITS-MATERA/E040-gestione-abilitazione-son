@@ -7,8 +7,8 @@ sap.ui.define(
     "sap/ui/export/Spreadsheet",
     "sap/m/library",
     // "sap/ui/core/Fragment",
-    // "sap/ui/model/Filter",
-    // "sap/ui/model/FilterOperator",
+    "sap/ui/model/Filter",
+    "sap/ui/model/FilterOperator",
     "sap/m/MessageBox",
     "../model/formatter",
     "sap/m/MessageItem",
@@ -17,7 +17,7 @@ sap.ui.define(
     "sap/m/Dialog",
     "sap/m/Bar",
     "sap/m/Input",
-    "sap/ui/core/library"
+    "sap/ui/core/library",
   ],
   function (
     Controller,
@@ -26,6 +26,8 @@ sap.ui.define(
     library,
     Spreadsheet,
     mobileLibrary,
+    Filter,
+    FilterOperator,
     MessageBox,
     formatter,
     MessageItem,
@@ -77,19 +79,19 @@ sap.ui.define(
     const WIZARD_TYPE_DETAIL = "Detail";
     const OPERATION_TYPE_INSERT = "INS";
     const RELOAD_MODEL = "reloadModel";
-    const IbanBeneficiario_SET ="ListaIbanSet";
+    const IbanBeneficiario_SET = "ListaIbanSet";
     const RELOAD_MODEL_AUTH = "reloadModelAuth";
-    const CLASSIFICAZIONE_SON_DEEP="classificazioneSonModel";
+    const CLASSIFICAZIONE_SON_DEEP = "classificazioneSonModel";
     const FILTER_SEM_OBJ = "ZS4_SOSPAUTPERMANENTE_SRV";
-    
+
     const AUTHORITY_CHECK_ABILITAZIONE = "AuthorityCheckAbilitazione";
-    const AUTHORITY_CHECK_SON ="AuthorityCheckSON";
+    const AUTHORITY_CHECK_SON = "AuthorityCheckSON";
 
     const COSPR3E027_TIPOFIRMA = "COSPR3E027_TIPOFIRMA";
     const S_TYPE_2 = "2";
     const SON_SET = "SonSet";
     const WORKFLOW_SET = "SonWfSet";
-    const OPERATION_TYPE_RETTIFICA ="RET";
+    const OPERATION_TYPE_RETTIFICA = "RET";
     const DETAIL_MODEL = "detailModel";
     const HEADER_ACTION_MODEL = "headerActionModel";
     const COS = "COS";
@@ -100,13 +102,13 @@ sap.ui.define(
         formatter: formatter,
         RELOAD_MODEL: "reloadModel",
         RELOAD_MODEL_AUTH: "reloadModelAuth",
-        FILTER_AUTH_OBJ:"Z_GEST_ABI",
+        FILTER_AUTH_OBJ: "Z_GEST_ABI",
         FILTER_SON_OBJ: "Z_GEST_SON",
-        AUTHORITY_CHECK_ABILITAZIONE:"AuthorityCheckAbilitazione",
-        AUTHORITY_CHECK_SON:"AuthorityCheckSON",
-        payMode:[],
+        AUTHORITY_CHECK_ABILITAZIONE: "AuthorityCheckAbilitazione",
+        AUTHORITY_CHECK_SON: "AuthorityCheckSON",
+        payMode: [],
 
-        referInputId:null,
+        referInputId: null,
 
         getRouter: function () {
           return UIComponent.getRouterFor(this);
@@ -154,14 +156,9 @@ sap.ui.define(
           oView.setModel(oModelJson, nameModel);
         },
 
-        
-
-
-
         // ----------------------------- START-----------------------------  //
 
         openDialog: function (dialogPath) {
-          console.log(dialogPath);
           if (!this.__dialog) {
             this.__dialog = sap.ui.xmlfragment(dialogPath, this);
             this.getView().addDependent(this.__dialog);
@@ -182,37 +179,60 @@ sap.ui.define(
         // ----------------------------- DIALOG END-----------------------------  //
 
         // ----------------------------- FOR ACTIVITY CHECK START -----------------------------  //
-        getAuthorityCheck:function(object, callback){
+        getAuthorityCheck: function (object, callback) {
           var self = this,
-              oAuthModel = self.getOwnerComponent().getModel("ZSS4_CA_CONI_VISIBILITA_SRV"),
-              aFilters = [];
+            oAuthModel = self
+              .getOwnerComponent()
+              .getModel("ZSS4_CA_CONI_VISIBILITA_SRV"),
+            aFilters = [];
 
           aFilters.push(self.setFilterEQWithKey("SEM_OBJ", FILTER_SEM_OBJ));
           aFilters.push(self.setFilterEQWithKey("AUTH_OBJ", object));
 
-          if(object === self.FILTER_AUTH_OBJ){
-            self.getOwnerComponent().getModel("ZSS4_CA_CONI_VISIBILITA_SRV")
-            .metadataLoaded().then(function () {
-              oAuthModel.read("/ZES_CONIAUTH_SET", {
-                filters: aFilters,
-                success: function (data) {
-                  console.log(data.results);
-                  var model = new JSONModel({
+          if (object === self.FILTER_AUTH_OBJ) {
+            self
+              .getOwnerComponent()
+              .getModel("ZSS4_CA_CONI_VISIBILITA_SRV")
+              .metadataLoaded()
+              .then(function () {
+                oAuthModel.read("/ZES_CONIAUTH_SET", {
+                  filters: aFilters,
+                  success: function (data) {
+                    var model = new JSONModel({
                       AGR_NAME: data.results[0].AGR_NAME,
                       FIKRS: data.results[0].FIKRS,
                       BUKRS: data.results[0].BUKRS,
                       PRCTR: data.results[0].PRCTR,
-                      Z33Enabled: self.isIncluded(data.results, "ACTV_4", "Z33"),
-                      Z01Enabled: self.isIncluded(data.results, "ACTV_1", "Z01"),
-                      Z02Enabled: self.isIncluded(data.results, "ACTV_2", "Z02"),
-                      Z14Enabled: self.isIncluded(data.results, "ACTV_4", "Z14")                      
-                  }); 
-                  self.setModelGlobal(model, self.AUTHORITY_CHECK_ABILITAZIONE);
-                  callback(true);
-                  return;
-                },
-                error:function(error){
-                  var model = new JSONModel({
+                      Z33Enabled: self.isIncluded(
+                        data.results,
+                        "ACTV_4",
+                        "Z33"
+                      ),
+                      Z01Enabled: self.isIncluded(
+                        data.results,
+                        "ACTV_1",
+                        "Z01"
+                      ),
+                      Z02Enabled: self.isIncluded(
+                        data.results,
+                        "ACTV_2",
+                        "Z02"
+                      ),
+                      Z14Enabled: self.isIncluded(
+                        data.results,
+                        "ACTV_4",
+                        "Z14"
+                      ),
+                    });
+                    self.setModelGlobal(
+                      model,
+                      self.AUTHORITY_CHECK_ABILITAZIONE
+                    );
+                    callback(true);
+                    return;
+                  },
+                  error: function (error) {
+                    var model = new JSONModel({
                       AGR_NAME: null,
                       FIKRS: null,
                       BUKRS: null,
@@ -220,104 +240,151 @@ sap.ui.define(
                       Z33Enabled: false,
                       Z01Enabled: false,
                       Z02Enabled: false,
-                      Z14Enabled: false                      
-                  }); 
-                  self.setModelGlobal(model, self.AUTHORITY_CHECK_ABILITAZIONE);
-                  callback(false);
-                  return;
-                }
-              })
-            });
-          } 
-          else if(object === self.FILTER_SON_OBJ){
-            self.getOwnerComponent().getModel("ZSS4_CA_CONI_VISIBILITA_SRV")
-            .metadataLoaded().then(function () {             
+                      Z14Enabled: false,
+                    });
+                    self.setModelGlobal(
+                      model,
+                      self.AUTHORITY_CHECK_ABILITAZIONE
+                    );
+                    callback(false);
+                    return;
+                  },
+                });
+              });
+          } else if (object === self.FILTER_SON_OBJ) {
+            self
+              .getOwnerComponent()
+              .getModel("ZSS4_CA_CONI_VISIBILITA_SRV")
+              .metadataLoaded()
+              .then(function () {
                 oAuthModel.read("/ZES_CONIAUTH_SET", {
                   filters: aFilters,
                   success: function (data) {
                     var model = new JSONModel({
-                        AGR_NAME: data.results[0].AGR_NAME,
-                        FIKRS: data.results[0].FIKRS,
-                        BUKRS: data.results[0].BUKRS,
-                        PRCTR: data.results[0].PRCTR,
-                        Z34Enabled: self.isIncluded(data.results, "ACTV_4", "Z34"),
-                        Z01Enabled: self.isIncluded(data.results, "ACTV_1", "Z01"),
-                        Z03Enabled: self.isIncluded(data.results, "ACTV_3", "Z03"),
-                        Z02Enabled: self.isIncluded(data.results, "ACTV_2", "Z02"),
-                        Z07Enabled: self.isIncluded(data.results, "ACTV_4", "Z07"),
-                        Z04Enabled: self.isIncluded(data.results, "ACTV_4", "Z04"),
-                        Z05Enabled: self.isIncluded(data.results, "ACTV_4", "Z05"),
-                        Z06Enabled: self.isIncluded(data.results, "ACTV_4", "Z06"),
-                        Z27Enabled: self.isIncluded(data.results, "ACTV_4", "Z27"),
-                        Z08Enabled: self.isIncluded(data.results, "ACTV_4", "Z08"),
-                        Z09Enabled: self.isIncluded(data.results, "ACTV_4", "Z09"),           
-                    }); 
-                    console.log(model.getData());
+                      AGR_NAME: data.results[0].AGR_NAME,
+                      FIKRS: data.results[0].FIKRS,
+                      BUKRS: data.results[0].BUKRS,
+                      PRCTR: data.results[0].PRCTR,
+                      Z34Enabled: self.isIncluded(
+                        data.results,
+                        "ACTV_4",
+                        "Z34"
+                      ),
+                      Z01Enabled: self.isIncluded(
+                        data.results,
+                        "ACTV_1",
+                        "Z01"
+                      ),
+                      Z03Enabled: self.isIncluded(
+                        data.results,
+                        "ACTV_3",
+                        "Z03"
+                      ),
+                      Z02Enabled: self.isIncluded(
+                        data.results,
+                        "ACTV_2",
+                        "Z02"
+                      ),
+                      Z07Enabled: self.isIncluded(
+                        data.results,
+                        "ACTV_4",
+                        "Z07"
+                      ),
+                      Z04Enabled: self.isIncluded(
+                        data.results,
+                        "ACTV_4",
+                        "Z04"
+                      ),
+                      Z05Enabled: self.isIncluded(
+                        data.results,
+                        "ACTV_4",
+                        "Z05"
+                      ),
+                      Z06Enabled: self.isIncluded(
+                        data.results,
+                        "ACTV_4",
+                        "Z06"
+                      ),
+                      Z27Enabled: self.isIncluded(
+                        data.results,
+                        "ACTV_4",
+                        "Z27"
+                      ),
+                      Z08Enabled: self.isIncluded(
+                        data.results,
+                        "ACTV_4",
+                        "Z08"
+                      ),
+                      Z09Enabled: self.isIncluded(
+                        data.results,
+                        "ACTV_4",
+                        "Z09"
+                      ),
+                    });
+
                     self.setModelGlobal(model, self.AUTHORITY_CHECK_SON);
                     callback(true);
                     return;
                   },
-                  error:function(error){
+                  error: function (error) {
                     var model = new JSONModel({
-                        AGR_NAME: null,
-                        FIKRS: null,
-                        BUKRS: null,
-                        PRCTR: null,
-                        Z34Enabled: false,
-                        Z01Enabled: false,
-                        Z03Enabled: false,
-                        Z02Enabled: false,
-                        Z07Enabled: false,
-                        Z04Enabled: false,
-                        Z05Enabled: false,
-                        Z06Enabled: false,
-                        Z27Enabled: false,
-                        Z08Enabled: false,
-                        Z09Enabled: false,           
-                    }); 
+                      AGR_NAME: null,
+                      FIKRS: null,
+                      BUKRS: null,
+                      PRCTR: null,
+                      Z34Enabled: false,
+                      Z01Enabled: false,
+                      Z03Enabled: false,
+                      Z02Enabled: false,
+                      Z07Enabled: false,
+                      Z04Enabled: false,
+                      Z05Enabled: false,
+                      Z06Enabled: false,
+                      Z27Enabled: false,
+                      Z08Enabled: false,
+                      Z09Enabled: false,
+                    });
                     self.setModelGlobal(model, self.AUTHORITY_CHECK_SON);
                     callback(false);
                     return;
-                  }
+                  },
                 });
-            })
-          }
-          else{
-              var model = new JSONModel({
-                  AGR_NAME: null,
-                  FIKRS: null,
-                  BUKRS: null,
-                  PRCTR: null,
-                  Z33Enabled: false,
-                  Z01Enabled: false,
-                  Z02Enabled: false,
-                  Z14Enabled: false                      
-              }); 
-              self.setModelGlobal(model, self.AUTHORITY_CHECK_ABILITAZIONE);
+              });
+          } else {
+            var model = new JSONModel({
+              AGR_NAME: null,
+              FIKRS: null,
+              BUKRS: null,
+              PRCTR: null,
+              Z33Enabled: false,
+              Z01Enabled: false,
+              Z02Enabled: false,
+              Z14Enabled: false,
+            });
+            self.setModelGlobal(model, self.AUTHORITY_CHECK_ABILITAZIONE);
 
-              model = new JSONModel({
-                AGR_NAME: null,
-                FIKRS: null,
-                BUKRS: null,
-                PRCTR: null,
-                Z34Enabled: false,
-                Z01Enabled: false,
-                Z03Enabled: false,
-                Z02Enabled: false,
-                Z07Enabled: false,
-                Z04Enabled: false,
-                Z05Enabled: false,
-                Z06Enabled: false,
-                Z27Enabled: false,
-                Z08Enabled: false,
-                Z09Enabled: false,           
-            }); 
+            model = new JSONModel({
+              AGR_NAME: null,
+              FIKRS: null,
+              BUKRS: null,
+              PRCTR: null,
+              Z34Enabled: false,
+              Z01Enabled: false,
+              Z03Enabled: false,
+              Z02Enabled: false,
+              Z07Enabled: false,
+              Z04Enabled: false,
+              Z05Enabled: false,
+              Z06Enabled: false,
+              Z27Enabled: false,
+              Z08Enabled: false,
+              Z09Enabled: false,
+            });
             self.setModelGlobal(model, self.AUTHORITY_CHECK_SON);
             callback(false);
             return;
           }
         },
-
 
         isIncluded: function (array, param, value) {
           return array.filter((x) => x[param] === value).length > 0;
@@ -325,91 +392,6 @@ sap.ui.define(
 
         // ----------------------------- FOR ACTIVITY CHECK END -----------------------------  //
 
-        // ----------------------------- START PAGINATION-----------------------------  //
-        getChangePage: function (sNameModel, maxPage) {
-          var self = this,
-            bFirst = false,
-            bLast = false,
-            paginatorModel = self.getModel(sNameModel),
-            numRecordsForPage = paginatorModel.getProperty("/stepInputDefault"),
-            currentPage = paginatorModel.getProperty("/currentPage");
-
-          if (currentPage === 0) {
-            return;
-          }
-
-          paginatorModel.setProperty(
-            "/paginatorSkip",
-            (currentPage - 1) * numRecordsForPage
-          );
-
-          if (currentPage === maxPage) {
-            bFirst = true;
-            bLast = false;
-            if (currentPage === 1) {
-              bFirst = false;
-            }
-          } else if (currentPage === 1) {
-            bFirst = false;
-            if (currentPage < maxPage) {
-              bLast = true;
-            }
-          } else if (currentPage > maxPage) {
-            bFirst = false;
-            bLast = false;
-          } else {
-            if (currentPage > 1) {
-              bFirst = true;
-            }
-            bLast = true;
-          }
-          paginatorModel.setProperty("/btnLastEnabled", bLast);
-          paginatorModel.setProperty("/btnFirstEnabled", bFirst);
-        },
-        getLastPaginator: function (sNameModel) {
-          var self = this,
-            paginatorModel = self.getModel(sNameModel),
-            numRecordsForPage = paginatorModel.getProperty("/stepInputDefault");
-
-          paginatorModel.setProperty("/btnLastEnabled", false);
-          paginatorModel.setProperty("/btnFirstEnabled", true);
-          var paginatorClick = self.paginatorTotalPage;
-
-          paginatorModel.setProperty("/paginatorClick", paginatorClick);
-          paginatorModel.setProperty(
-            "/paginatorSkip",
-            (paginatorClick - 1) * numRecordsForPage
-          );
-
-          paginatorModel.setProperty(
-            "/currentPage",
-            self.paginatorTotalPage === 0 ? 1 : self.paginatorTotalPage
-          );
-        },
-        getFirstPaginator: function (sNameModel) {
-          var self = this,
-            paginatorModel = self.getModel(sNameModel);
-
-          paginatorModel.setProperty("/btnLastEnabled", true);
-          paginatorModel.setProperty("/btnFirstEnabled", false);
-          paginatorModel.setProperty("/paginatorClick", 0);
-          paginatorModel.setProperty("/paginatorSkip", 0);
-          paginatorModel.setProperty("/currentPage", 1);
-        },
-        resetPaginator: function (sNameModel) {
-          var self = this,
-            paginatorModel = self.getModel(sNameModel);
-          paginatorModel.setProperty("/btnFirstEnabled", false);
-          paginatorModel.setProperty("/btnNextEnabled", false);
-          paginatorModel.setProperty("/btnLastEnabled", false);
-          paginatorModel.setProperty("/recordForPageEnabled", false);
-          paginatorModel.setProperty("/currentPageEnabled", true);
-          paginatorModel.setProperty("/currentPage", 1);
-          paginatorModel.setProperty("/maxPage", 1);
-          paginatorModel.setProperty("/paginatorClick", 0);
-          paginatorModel.setProperty("/paginatorSkip", 0);
-        },
-        // ----------------------------- END PAGINATION-----------------------------  //
         // ----------------------------- START FILTERS -----------------------------  //
         _setFilterEQValue: function (aFilters, sInput) {
           if (sInput && sInput.getValue()) {
@@ -418,24 +400,6 @@ sap.ui.define(
                 sInput.data("searchPropertyModel"),
                 EQ,
                 sInput.getValue()
-              )
-            );
-          }
-        },
-
-        _setFilterBTValue: function (aFilters, sInputFrom, sInputTo) {
-          if (
-            sInputFrom &&
-            sInputFrom.getValue() &&
-            sInputTo &&
-            sInputTo.getValue()
-          ) {
-            aFilters.push(
-              new FILTER(
-                sInputFrom.data("searchPropertyModel"),
-                BT,
-                sInputFrom.getValue(),
-                sInputTo.getValue()
               )
             );
           }
@@ -451,19 +415,6 @@ sap.ui.define(
               )
             );
           }
-        },
-
-        _isOneValueEmpty: function (sValue1, sValue2) {
-          if (
-            (sValue1.getValue() !== null &&
-              sValue1.getValue() !== "" &&
-              (sValue2.getValue() === null || sValue2.getValue() === "")) ||
-            (sValue2.getValue() !== null &&
-              sValue2.getValue() !== "" &&
-              (sValue1.getValue() === null || sValue1.getValue() === ""))
-          )
-            return true;
-          else return false;
         },
 
         getHeaderFilterSON: function () {
@@ -489,52 +440,43 @@ sap.ui.define(
             sFiposTo = oView.byId("fFiposTo"),
             sFistl = oView.byId("fFistl");
 
-          console.log(sZdataprot.getValue());
-
           /*START Validation*/
           object.isValidate = true;
 
-          if(!sGjahr.getValue() || sGjahr.getValue() === null || sGjahr.getValue() === "" ){
+          if (
+            !sGjahr.getValue() ||
+            sGjahr.getValue() === null ||
+            sGjahr.getValue() === ""
+          ) {
             object.isValidate = false;
             object.validationMessage = "msgNoRequiredField";
             return object;
           }
 
-          if(!sZufficioCont.getValue() || sZufficioCont.getValue() === null || sZufficioCont.getValue() === "" ){
+          if (
+            !sZufficioCont.getValue() ||
+            sZufficioCont.getValue() === null ||
+            sZufficioCont.getValue() === ""
+          ) {
             object.isValidate = false;
             object.validationMessage = "msgNoRequiredField";
             return object;
           }
 
-          /*Znumsop*/
-          if (self._isOneValueEmpty(sZnumsopFrom, sZnumsopTo)) {
-            object.isValidate = false;
-            object.validationMessage = "msgZnumsopRequiredBoth";
-            return object;
-          }
-
-          /*Zdatadop*/
-          if (self._isOneValueEmpty(sZdatasopFrom, sZdatasopTo)) {
-            object.isValidate = false;
-            object.validationMessage = "msgZdatasopRequiredBoth";
-            return object;
-          }
-
-          /*Fipos*/
-          if (self._isOneValueEmpty(sFiposFrom, sFiposTo)) {
-            object.isValidate = false;
-            object.validationMessage = "msgFiposRequiredBoth";
-            return object;
-          }
-
-          if(sCapitolo && sCapitolo.getValue() !== null && sCapitolo.getValue() !== "" &&
-            sFiposFrom && sFiposFrom.getValue() !== null && sFiposFrom.getValue() !== ""){
-              var substr = sFiposFrom.getValue().substring(4,8);
-              if(sCapitolo.getValue() !== substr){
-                object.isValidate = false;
-                object.validationMessage = "msgFiposCapitoloNotValid";
-                return object;
-              }
+          if (
+            sCapitolo &&
+            sCapitolo.getValue() !== null &&
+            sCapitolo.getValue() !== "" &&
+            sFiposFrom &&
+            sFiposFrom.getValue() !== null &&
+            sFiposFrom.getValue() !== ""
+          ) {
+            var substr = sFiposFrom.getValue().substring(4, 8);
+            if (sCapitolo.getValue() !== substr) {
+              object.isValidate = false;
+              object.validationMessage = "msgFiposCapitoloNotValid";
+              return object;
+            }
           }
           /*STOP Validation*/
 
@@ -545,7 +487,7 @@ sap.ui.define(
           self._setFilterEQValue(filters, sZzamministr);
           self._setFilterEQValue(filters, sCapitolo);
           self._setFilterEQValue(filters, sZufficioCont);
-          self._setFilterBTValue(filters, sZnumsopFrom, sZnumsopTo);
+
           sZstatoSop.getSelectedKey() !== "Tutti"
             ? self._setFilterEQKey(filters, sZstatoSop)
             : "";
@@ -562,17 +504,50 @@ sap.ui.define(
                 new FILTER(sZricann.data("searchPropertyModel"), EQ, 0)
               );
 
-          self._setFilterBTValue(filters, sZdatasopFrom, sZdatasopTo);
           self._setFilterEQValue(filters, sZdataprot);
           self._setFilterEQValue(filters, sZnumprot);
           self._setFilterEQValue(filters, sBeneficiario);
-          self._setFilterBTValue(filters, sFiposFrom, sFiposTo);
           self._setFilterEQValue(filters, sFistl);
 
-          console.log(filters);
+          self.setFilterBT(
+            filters,
+            "Znumsop",
+            sZnumsopFrom?.getValue(),
+            sZnumsopTo?.getValue()
+          );
+          self.setFilterBT(
+            filters,
+            "Zdatasop",
+            sZdatasopFrom?.getValue(),
+            sZdatasopTo?.getValue()
+          );
+          self.setFilterBT(
+            filters,
+            "Fipos",
+            sFiposFrom?.getValue(),
+            sFiposTo?.getValue()
+          );
 
           object.filters = filters;
           return object;
+        },
+
+        setFilterEQ: function (aFilters, sPropertyModel, sValue) {
+          if (sValue) {
+            aFilters.push(new Filter(sPropertyModel, EQ, sValue));
+          }
+        },
+
+        setFilterBT: function (aFilters, sPropertyModel, sValueFrom, sValueTo) {
+          if (sValueFrom && sValueTo) {
+            aFilters.push(new Filter(sPropertyModel, BT, sValueFrom, sValueTo));
+            return;
+          }
+          if (sValueFrom || sValueTo) {
+            this.setFilterEQ(aFilters, sPropertyModel, sValueFrom);
+            this.setFilterEQ(aFilters, sPropertyModel, sValueTo);
+            return;
+          }
         },
 
         createFilter: function (key, operator, value, useToLower) {
@@ -632,7 +607,6 @@ sap.ui.define(
           var self = this;
           var sHighestSeverityIcon;
           var aMessages = self.getView().getModel(LOG_MODEL).getData();
-          console.log("buttonTypeFormatter", aMessages);
 
           aMessages.forEach(function (sMessage) {
             switch (sMessage.type) {
@@ -659,7 +633,7 @@ sap.ui.define(
                 break;
             }
           });
-          console.log("sHighestSeverityIcon", sHighestSeverityIcon);
+
           return sHighestSeverityIcon;
         },
 
@@ -691,12 +665,11 @@ sap.ui.define(
             .getModel(LOG_MODEL)
             .getData()
             .reduce(function (iNumberOfMessages, oMessageItem) {
-              console.log(iNumberOfMessages, oMessageItem);
               return oMessageItem.type === sHighestSeverityMessageType
                 ? ++iNumberOfMessages
                 : iNumberOfMessages;
             }, 0);
-          console.log(self.getView().getModel(LOG_MODEL).getData().length);
+
           return result + " " + oBundle.getText("msgTitleHandler");
         },
 
@@ -705,7 +678,7 @@ sap.ui.define(
           var self = this;
           var sIcon;
           var aMessages = self.getView().getModel(LOG_MODEL).getData();
-          console.log("buttonIconFormatter", aMessages);
+
           aMessages.forEach(function (sMessage) {
             switch (sMessage.type) {
               case "Error":
@@ -726,7 +699,7 @@ sap.ui.define(
                 break;
             }
           });
-          console.log("sIcon", sIcon);
+
           return sIcon;
         },
 
@@ -737,10 +710,9 @@ sap.ui.define(
             oModel = new JSONModel();
           if (sValue && sValue.trim().length > 0) {
             var array = messageModel.filter((el) => {
-              console.log("subtitle", el.subtitle);
               return el.subtitle.includes(sValue);
             });
-            console.log("array", array);
+
             if (array.length > 0) {
               oModel.setData(array);
             } else {
@@ -772,14 +744,12 @@ sap.ui.define(
           var self = this;
           var oModel = new JSONModel();
           var logModel = [];
-          console.log("pasasaa");
-          console.log("array", array);
+
           if (array.length > 0) {
             array.forEach((el) => {
               logModel.unshift(self.formatMessage(el));
             });
 
-            console.log("logModel UUUUUUU", logModel);
             oModel.setData(logModel);
 
             self.getView().setModel(oModel, LOG_MODEL);
@@ -794,7 +764,7 @@ sap.ui.define(
             return true;
           } else {
             oModel.setData([]);
-            console.log("oModel vuoto", oModel);
+
             self.getView().setModel(oModel, LOG_MODEL);
             self.oMessageView.setModel(oModel, LOG_MODEL);
             return true;
@@ -871,20 +841,20 @@ sap.ui.define(
         //         ZufficioCont:lvZufficioCont,
         //         Ztipodisp3:lvTipoDisp
         //       },
-        //       success: function (data, oResponse) { 
-        //           if(data && data.results && data.results>0)                     
+        //       success: function (data, oResponse) {
+        //           if(data && data.results && data.results>0)
         //             self.getView().getModel(WIZARD_MODEL).setProperty("/Fipos",data.results[0].Fipos);
         //       },
         //       error: function (error) {
-        //           console.log(error);
+
         //       },
         //     });
-        //   });    
+        //   });
         // },
 
         _getIdElement: function (oEvent) {
           var longId = oEvent.getSource().getId();
-          console.log(longId);
+
           var arrayId = longId.split("-");
           var id = arrayId[arrayId.length - 1];
           return id;
@@ -959,15 +929,14 @@ sap.ui.define(
               });
           } else return false;
         },
-        
-        
+
         onLiveChange: function (oEvent) {
           var self = this,
             sNewValue,
             wizardModel = self.getModel(WIZARD_MODEL);
 
           var sInputId = self._getIdElement(oEvent);
-          console.log(sInputId);
+
           var oInput = self.getView().byId(sInputId);
           var sProperty = oInput.data("property");
 
@@ -975,35 +944,42 @@ sap.ui.define(
           wizardModel.setProperty("/" + sProperty, sNewValue);
         },
 
-        onLiveChangeImportoStep1Wizard:function(oEvent) {
+        onLiveChangeImportoStep1Wizard: function (oEvent) {
           var self = this,
             sNewValue,
             oDataModel = self.getModel(),
             wizardModel = self.getModel(WIZARD_MODEL);
 
           var sInputId = self._getIdElement(oEvent);
-          console.log(sInputId);
+
           var oInput = self.getView().byId(sInputId);
           var sProperty = oInput.data("property");
 
           sNewValue = oEvent.getSource().getValue();
           wizardModel.setProperty("/" + sProperty, sNewValue);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/ZimptotDivisa",null);
-          if(sNewValue !== ""){
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/ZimptotDivisa", null);
+          if (sNewValue !== "") {
             var path = self.getModel().createKey("TvarvcParameterSet", {
-                Name: "COSP-R3-FIORI-E018_DIVISA",
+              Name: "COSP-R3-FIORI-E018_DIVISA",
             });
-    
-            self.getModel().metadataLoaded().then(function () {
+
+            self
+              .getModel()
+              .metadataLoaded()
+              .then(function () {
                 oDataModel.read("/" + path, {
-                    success: function (data, oResponse) {                      
-                        self.getView().getModel(WIZARD_MODEL).setProperty("/ZimptotDivisa",data.Value);
-                    },
-                    error: function (error) {
-                        console.log(error);
-                    },
+                  success: function (data, oResponse) {
+                    self
+                      .getView()
+                      .getModel(WIZARD_MODEL)
+                      .setProperty("/ZimptotDivisa", data.Value);
+                  },
+                  error: function (error) {},
                 });
-            });
+              });
           }
         },
 
@@ -1013,18 +989,18 @@ sap.ui.define(
             wizardModel = self.getModel(WIZARD_MODEL);
 
           var sInputId = self._getIdElement(oEvent);
-          console.log(sInputId);
+
           var oInput = self.getView().byId(sInputId);
           var sProperty = oInput.data("property");
 
           sNewValue = oEvent.getSource().getValue();
-          console.log("passa", sProperty);
+
           wizardModel.setProperty("/" + sProperty, sNewValue.toUpperCase());
         },
 
         onSubmitGjahr: function (oEvent) {
           var self = this,
-              wizardModel = self.getModel(WIZARD_MODEL);
+            wizardModel = self.getModel(WIZARD_MODEL);
           self.fillZvimDescrufficio();
           self.fillZtipodisp3List();
           self.fillFipos();
@@ -1049,7 +1025,7 @@ sap.ui.define(
                 oDataModel.read("/" + path, {
                   success: function (data, oResponse) {
                     oView.setBusy(false);
-                    console.log(data);
+
                     wizardModel.setProperty("/Ltext", data.Ltext);
                   },
                   error: function (error) {
@@ -1066,7 +1042,6 @@ sap.ui.define(
             oDataModel = self.getModel(),
             oView = self.getView(),
             Saknr = wizardModel.getProperty("/Saknr");
-          console.log("in sub", Saknr);
           if (Saknr !== null) {
             oView.setBusy(true);
             var path = self.getModel().createKey(ContoCogeSet_SET, {
@@ -1079,7 +1054,7 @@ sap.ui.define(
                 oDataModel.read("/" + path, {
                   success: function (data, oResponse) {
                     oView.setBusy(false);
-                    console.log(data);
+
                     wizardModel.setProperty("/Skat", data.Skat);
                   },
                   error: function (error) {
@@ -1095,7 +1070,7 @@ sap.ui.define(
             wizardModel = self.getModel(WIZARD_MODEL);
           var sNewValue = oEvent.getSource().getSelectedKey();
           var sNewDesc = oEvent.getSource().getValue();
-          wizardModel.setProperty("/Ztipodisp3", sNewValue);//TODO:da verificare
+          wizardModel.setProperty("/Ztipodisp3", sNewValue); //TODO:da verificare
           // wizardModel.setProperty("/Ztipodisp3", sNewDesc);
           wizardModel.setProperty("/Zdesctipodisp3", sNewDesc);
           if (sNewValue !== null) self.fillFipos();
@@ -1103,7 +1078,7 @@ sap.ui.define(
 
         fillFipos: function () {
           var self = this,
-            oBundle=self.getResourceBundle(),
+            oBundle = self.getResourceBundle(),
             wizardModel = self.getModel(WIZARD_MODEL),
             Gjahr = wizardModel.getProperty("/Gjahr"),
             wizardModel = self.getModel(WIZARD_MODEL),
@@ -1112,12 +1087,19 @@ sap.ui.define(
             Ztipodisp3 = wizardModel.getProperty("/Ztipodisp3"),
             ZufficioCont = wizardModel.getProperty("/ZufficioCont");
 
-          if(!Gjahr || Gjahr === null || Gjahr === "" ||
-            !ZufficioCont || ZufficioCont === null || ZufficioCont === "" ||
-            !Ztipodisp3 || Ztipodisp3 === null || Ztipodisp3 === "" )  {
-              return false;
-            }
-          else{
+          if (
+            !Gjahr ||
+            Gjahr === null ||
+            Gjahr === "" ||
+            !ZufficioCont ||
+            ZufficioCont === null ||
+            ZufficioCont === "" ||
+            !Ztipodisp3 ||
+            Ztipodisp3 === null ||
+            Ztipodisp3 === ""
+          ) {
+            return false;
+          } else {
             oView.setBusy(true);
             self
               .getModel()
@@ -1131,9 +1113,13 @@ sap.ui.define(
                   },
                   success: function (data, oResponse) {
                     oView.setBusy(false);
-                    var message = oResponse.headers["sap-message"] && oResponse.headers["sap-message"] !== "" ? JSON.parse(oResponse.headers["sap-message"]) : null;
-                    if(message && message.severity === "error"){
-                      sap.m.MessageBox.warning(message.message,{
+                    var message =
+                      oResponse.headers["sap-message"] &&
+                      oResponse.headers["sap-message"] !== ""
+                        ? JSON.parse(oResponse.headers["sap-message"])
+                        : null;
+                    if (message && message.severity === "error") {
+                      sap.m.MessageBox.warning(message.message, {
                         title: oBundle.getText("titleDialogWarning"),
                         onClose: function (oAction) {
                           wizardModel.setProperty("/Fipos", null);
@@ -1141,13 +1127,14 @@ sap.ui.define(
                         },
                       });
                       return false;
-                    }
-                    else{
+                    } else {
                       oView.setBusy(false);
-                      if(data && data.results && data.results.length>0)
-                        wizardModel.setProperty("/Fipos", data.results[0].Fipos);
-                      else  
-                      wizardModel.setProperty("/Fipos", null);
+                      if (data && data.results && data.results.length > 0)
+                        wizardModel.setProperty(
+                          "/Fipos",
+                          data.results[0].Fipos
+                        );
+                      else wizardModel.setProperty("/Fipos", null);
                     }
                   },
                   error: function (error) {
@@ -1156,7 +1143,7 @@ sap.ui.define(
                   },
                 });
               });
-          } 
+          }
         },
 
         goToTwo: function (oEvent) {
@@ -1169,7 +1156,6 @@ sap.ui.define(
           if (!wizardModel.getProperty("/isInChange")) return;
 
           if (wizardType !== WIZARD_TYPE_DETAIL) {
-            console.log(wizardType);
             var Gjahr = wizardModel.getProperty("/Gjahr"),
               Ztipodisp3 = wizardModel.getProperty("/Ztipodisp3"),
               ZufficioCont = wizardModel.getProperty("/ZufficioCont"),
@@ -1189,20 +1175,21 @@ sap.ui.define(
                 ZufficioCont:
                   !ZufficioCont || ZufficioCont === null ? "" : ZufficioCont,
                 Saknr: !Saknr || Saknr === null ? "" : Saknr, //0012111000
-                AgrName: self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().AGR_NAME,
-                Fikrs:self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().FIKRS,
-                Prctr:self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().PRCTR                
+                AgrName: self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData()
+                  .AGR_NAME,
+                Fikrs: self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData()
+                  .FIKRS,
+                Prctr: self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData()
+                  .PRCTR,
               };
               var oDataModel = self.getModel();
               oDataModel.callFunction("/" + URL_VALIDATION_1, {
                 method: "GET",
                 urlParameters: oParam,
                 success: function (oData, response) {
-                  console.log(oData);
-                  
                   var arrayMessage = oData.results;
-                  if (!self.isErrorInLog(arrayMessage)) {      
-                    wizardModel.setProperty("/btnBackVisible", false);                
+                  if (!self.isErrorInLog(arrayMessage)) {
+                    wizardModel.setProperty("/btnBackVisible", false);
                     wizard.previousStep();
                     self.handleButtonsVisibility(0);
                     self.getView().setBusy(false);
@@ -1226,7 +1213,7 @@ sap.ui.define(
                 },
                 error: function (oError) {
                   self.getView().setBusy(false);
-                  wizardModel.setProperty("/btnBackVisible", false); 
+                  wizardModel.setProperty("/btnBackVisible", false);
                   wizard.previousStep();
                   self.handleButtonsVisibility(0);
                 },
@@ -1256,7 +1243,7 @@ sap.ui.define(
           var self = this,
             wizardId = oEvent.getSource().getParent().getId(),
             wizard = self.getView().byId(wizardId),
-            wizardType = wizard.data("wizardType");            
+            wizardType = wizard.data("wizardType");
 
           var wizardModel = self.getModel(WIZARD_MODEL),
             Zimptot = wizardModel.getProperty("/Zimptot"),
@@ -1277,12 +1264,29 @@ sap.ui.define(
               Lifnr: !Lifnr || Lifnr === null ? "" : Lifnr,
               Zcoordest: !Zcoordest || Zcoordest === null ? "" : Zcoordest,
               Zwels: !Zwels || Zwels === null ? "" : Zwels,
-              ZZcausaleval: !ZZcausaleval || ZZcausaleval === null ? "" : ZZcausaleval,
+              ZZcausaleval:
+                !ZZcausaleval || ZZcausaleval === null ? "" : ZZcausaleval,
               Banks: !Banks || Banks === null ? "" : Banks,
-              AliasRgs: !wizardModel.getProperty("/Zalias") || wizardModel.getProperty("/Zalias") === null ? "" : wizardModel.getProperty("/Zalias"),
-              Flagfruttifero: !wizardModel.getProperty("/Zflagfrutt") || wizardModel.getProperty("/Zflagfrutt") === null ? "" : wizardModel.getProperty("/Zflagfrutt"),
-              Purpose: !wizardModel.getProperty("/Zpurpose") || wizardModel.getProperty("/Zpurpose") === null ? "" : wizardModel.getProperty("/Zpurpose"),
-              Zcodtrib: !wizardModel.getProperty("/Zcodtrib") || wizardModel.getProperty("/Zcodtrib") === null ? "" : wizardModel.getProperty("/Zcodtrib")
+              AliasRgs:
+                !wizardModel.getProperty("/Zalias") ||
+                wizardModel.getProperty("/Zalias") === null
+                  ? ""
+                  : wizardModel.getProperty("/Zalias"),
+              Flagfruttifero:
+                !wizardModel.getProperty("/Zflagfrutt") ||
+                wizardModel.getProperty("/Zflagfrutt") === null
+                  ? ""
+                  : wizardModel.getProperty("/Zflagfrutt"),
+              Purpose:
+                !wizardModel.getProperty("/Zpurpose") ||
+                wizardModel.getProperty("/Zpurpose") === null
+                  ? ""
+                  : wizardModel.getProperty("/Zpurpose"),
+              Zcodtrib:
+                !wizardModel.getProperty("/Zcodtrib") ||
+                wizardModel.getProperty("/Zcodtrib") === null
+                  ? ""
+                  : wizardModel.getProperty("/Zcodtrib"),
             };
           } else {
             url = URL_VALIDATION_2;
@@ -1292,12 +1296,29 @@ sap.ui.define(
               Lifnr: !Lifnr || Lifnr === null ? "" : Lifnr,
               Zcoordest: !Zcoordest || Zcoordest === null ? "" : Zcoordest,
               Zwels: !Zwels || Zwels === null ? "" : Zwels,
-              ZZcausaleval: !ZZcausaleval || ZZcausaleval === null ? "" : ZZcausaleval,
-              Banks: !Banks || Banks === null ? "" : Banks, 
-              AliasRgs: !wizardModel.getProperty("/Zalias") || wizardModel.getProperty("/Zalias") === null ? "" : wizardModel.getProperty("/Zalias"),
-              Flagfruttifero: !wizardModel.getProperty("/Zflagfrutt") || wizardModel.getProperty("/Zflagfrutt") === null ? "" : wizardModel.getProperty("/Zflagfrutt"),
-              Purpose: !wizardModel.getProperty("/Zpurpose") || wizardModel.getProperty("/Zpurpose") === null ? "" : wizardModel.getProperty("/Zpurpose"),
-              Zcodtrib: !wizardModel.getProperty("/Zcodtrib") || wizardModel.getProperty("/Zcodtrib") === null ? "" : wizardModel.getProperty("/Zcodtrib")
+              ZZcausaleval:
+                !ZZcausaleval || ZZcausaleval === null ? "" : ZZcausaleval,
+              Banks: !Banks || Banks === null ? "" : Banks,
+              AliasRgs:
+                !wizardModel.getProperty("/Zalias") ||
+                wizardModel.getProperty("/Zalias") === null
+                  ? ""
+                  : wizardModel.getProperty("/Zalias"),
+              Flagfruttifero:
+                !wizardModel.getProperty("/Zflagfrutt") ||
+                wizardModel.getProperty("/Zflagfrutt") === null
+                  ? ""
+                  : wizardModel.getProperty("/Zflagfrutt"),
+              Purpose:
+                !wizardModel.getProperty("/Zpurpose") ||
+                wizardModel.getProperty("/Zpurpose") === null
+                  ? ""
+                  : wizardModel.getProperty("/Zpurpose"),
+              Zcodtrib:
+                !wizardModel.getProperty("/Zcodtrib") ||
+                wizardModel.getProperty("/Zcodtrib") === null
+                  ? ""
+                  : wizardModel.getProperty("/Zcodtrib"),
             };
           }
 
@@ -1307,10 +1328,9 @@ sap.ui.define(
             method: "GET",
             urlParameters: oParam,
             success: function (oData, response) {
-              console.log(oData);
               self.getView().setBusy(false);
               var arrayMessage = oData.results;
-              if (!self.isErrorInLog(arrayMessage)) {                               
+              if (!self.isErrorInLog(arrayMessage)) {
                 wizard.previousStep();
                 self.handleButtonsVisibility(1);
               } else {
@@ -1347,7 +1367,7 @@ sap.ui.define(
                       urlParameters: {
                         Gjahr: wizardModel.getProperty("/Gjahr"),
                       },
-                      success: function (data, oResponse) {                        
+                      success: function (data, oResponse) {
                         var array = [],
                           sum = 0;
                         // array.push({
@@ -1384,7 +1404,6 @@ sap.ui.define(
                           .setProperty("/Zimptotcos", sum.toFixed(2));
                       },
                       error: function (error) {
-                        console.log(error);
                         var oModelJson = new sap.ui.model.json.JSONModel();
                         oModelJson.setData([]);
                         self.getView().setModel(oModelJson, STEP3_LIST);
@@ -1402,10 +1421,10 @@ sap.ui.define(
             },
           });
         },
-        
+
         goToFour: function (oEvent) {
           var self = this,
-            oBundle =self.getResourceBundle(),
+            oBundle = self.getResourceBundle(),
             wizardId = oEvent.getSource().getParent().getId(),
             wizard = self.getView().byId(wizardId),
             wizardType = wizard.data("wizardType");
@@ -1420,7 +1439,7 @@ sap.ui.define(
 
           var len = Step3List.length;
           if (len <= 0) {
-            sap.m.MessageBox.error(oBundle.getText("msgNoRequiredField"),{
+            sap.m.MessageBox.error(oBundle.getText("msgNoRequiredField"), {
               title: oBundle.getText("titleDialogError"),
               onClose: function (oAction) {
                 wizard.previousStep();
@@ -1431,17 +1450,12 @@ sap.ui.define(
             return false;
             // self._setMessage("titleDialogError", "msgNoRequiredField", "error");
             // wizard.previousStep();
-            // self.handleButtonsVisibility(2);            
-          }
-          else{
-
-            console.log("Zimptot", Zimptot);
+            // self.handleButtonsVisibility(2);
+          } else {
             var oParam = {
               Zimptot: !Zimptot || Zimptot === null ? 0 : Zimptot,
               Zimptotcos: !Zimptotcos || Zimptotcos === null ? 0 : Zimptotcos,
             };
-
-            console.log(oParam);
 
             var url =
               wizardType === WIZARD_TYPE_DETAIL
@@ -1452,7 +1466,6 @@ sap.ui.define(
               method: "GET",
               urlParameters: oParam,
               success: function (oData, response) {
-                console.log(oData);
                 self.getView().setBusy(false);
                 var arrayMessage = oData.results;
                 if (!self.isErrorInLog(arrayMessage)) {
@@ -1468,34 +1481,45 @@ sap.ui.define(
             });
           }
         },
-        
-        goToFinish:function(wizardId, callback){
-          var self = this,
-              wizard = self.getView().byId(wizardId),
-              wizardType = wizard.data("wizardType") && 
-                  wizard.data("wizardType") !== null && 
-                  wizard.data("wizardType") !== "" ? wizard.data("wizardType") : "";
-          
-          var wizardModel = self.getModel(WIZARD_MODEL),
-              oDataModel = self.getModel(),    
-              Zlocpag = wizardModel.getProperty("/Zlocpag"),
-              Zzonaint = wizardModel.getProperty("/Zzonaint"),
-              Zcausale = wizardModel.getProperty("/Zcausale");
 
-          if (!Zlocpag || Zlocpag === null || Zlocpag === "" ||
-              !Zzonaint || Zzonaint === null || Zzonaint === "" ||
-              !Zcausale || Zcausale === null || Zcausale === "" ) {
-            self._setMessage("titleDialogError", "msgNoRequiredField", "error");    
+        goToFinish: function (wizardId, callback) {
+          var self = this,
+            wizard = self.getView().byId(wizardId),
+            wizardType =
+              wizard.data("wizardType") &&
+              wizard.data("wizardType") !== null &&
+              wizard.data("wizardType") !== ""
+                ? wizard.data("wizardType")
+                : "";
+
+          var wizardModel = self.getModel(WIZARD_MODEL),
+            oDataModel = self.getModel(),
+            Zlocpag = wizardModel.getProperty("/Zlocpag"),
+            Zzonaint = wizardModel.getProperty("/Zzonaint"),
+            Zcausale = wizardModel.getProperty("/Zcausale");
+
+          if (
+            !Zlocpag ||
+            Zlocpag === null ||
+            Zlocpag === "" ||
+            !Zzonaint ||
+            Zzonaint === null ||
+            Zzonaint === "" ||
+            !Zcausale ||
+            Zcausale === null ||
+            Zcausale === ""
+          ) {
+            self._setMessage("titleDialogError", "msgNoRequiredField", "error");
             callback("msgNoRequiredField");
             return;
           }
 
-          if(wizardType !== WIZARD_TYPE_DETAIL){
+          if (wizardType !== WIZARD_TYPE_DETAIL) {
             var oParam = {
               Zlocpag: !Zlocpag || Zlocpag === null ? "" : Zlocpag,
               Zzonaint: !Zzonaint || Zzonaint === null ? "" : Zzonaint,
             };
-            
+
             var url = URL_VALIDATION_4;
             self.getView().setBusy(true);
             oDataModel.callFunction("/" + url, {
@@ -1504,7 +1528,7 @@ sap.ui.define(
               success: function (oData, response) {
                 self.getView().setBusy(false);
                 var arrayMessage = oData.results;
-                if (!self.isErrorInLog(arrayMessage)){ 
+                if (!self.isErrorInLog(arrayMessage)) {
                   callback("ValidationError");
                   return;
                 }
@@ -1513,28 +1537,29 @@ sap.ui.define(
               error: function (oError) {
                 self.getView().setBusy(false);
                 callback("ValidationError");
-              }
+              },
             });
-          }
-          else
-            callback("ValidationSuccess");
+          } else callback("ValidationSuccess");
         },
 
-        getClassificazioneFRomFillWizard(wizardModel){
-          var self =this,
-            array=[],
+        getClassificazioneFRomFillWizard(wizardModel) {
+          var self = this,
+            array = [],
             sum = 0,
             oModel = self.getModel();
-          
+
           var filters = [
-            self.setFilterEQWithKey("Bukrs",wizardModel.getProperty("/Bukrs")),
-            self.setFilterEQWithKey("Zchiavesop",wizardModel.getProperty("/Zchiavesop")),
+            self.setFilterEQWithKey("Bukrs", wizardModel.getProperty("/Bukrs")),
+            self.setFilterEQWithKey(
+              "Zchiavesop",
+              wizardModel.getProperty("/Zchiavesop")
+            ),
           ];
 
           oModel.read("/" + CLASSIFICAZIONE_SON_SET, {
             filters: filters,
-            urlParameters: {Gjahr: wizardModel.getProperty("/Gjahr")},
-            success: function (data, oResponse) {   
+            urlParameters: { Gjahr: wizardModel.getProperty("/Gjahr") },
+            success: function (data, oResponse) {
               for (var i = 0; i < data.results.length; i++) {
                 var item = data.results[i];
                 item.Id = i + 1;
@@ -1543,16 +1568,18 @@ sap.ui.define(
               }
               var oModelJson = new sap.ui.model.json.JSONModel();
               oModelJson.setData(array);
-              self.getView().setModel(oModelJson,STEP3_LIST);
-              self.getView().setModel(oModelJson,CLASSIFICAZIONE_SON_DEEP);
-              self.getView().getModel(WIZARD_MODEL).setProperty("/Zimptotcos", sum.toFixed(2));
+              self.getView().setModel(oModelJson, STEP3_LIST);
+              self.getView().setModel(oModelJson, CLASSIFICAZIONE_SON_DEEP);
+              self
+                .getView()
+                .getModel(WIZARD_MODEL)
+                .setProperty("/Zimptotcos", sum.toFixed(2));
             },
             error: function (e) {
-              console.log(e);
               var oModelJson = new sap.ui.model.json.JSONModel();
               oModelJson.setData([]);
-              self.getView().setModel(oModelJson, STEP3_LIST); 
-              self.getView().setModel(oModelJson, CLASSIFICAZIONE_SON_DEEP);                           
+              self.getView().setModel(oModelJson, STEP3_LIST);
+              self.getView().setModel(oModelJson, CLASSIFICAZIONE_SON_DEEP);
             },
           });
         },
@@ -1563,14 +1590,13 @@ sap.ui.define(
           var obj = {
             title: oBundle.getText(sTitle),
             onClose: function (oAction) {
-              if(callPrev !== ""){
+              if (callPrev !== "") {
                 var wizard = self.getView().byId(callPrev);
-                if(wizard){
+                if (wizard) {
                   wizard.previousStep();
                   self.handleButtonsVisibility(0);
                 }
               }
-
             },
           };
           if (sType === "error")
@@ -1600,7 +1626,7 @@ sap.ui.define(
             oView = self.getView();
 
           var filter = [self.setFilterEQWithKey("Lifnr", Lifnr)];
-          console.log("filter", filter);
+
           self
             .getModel()
             .metadataLoaded()
@@ -1609,22 +1635,31 @@ sap.ui.define(
                 filters: filter,
                 success: function (data, oResponse) {
                   oView.setBusy(false);
-                  console.log("sede", data);
+
                   wizardModel.setProperty("/StrasList", data.results);
                   if (data.results.length > 0) {
-                    wizardModel.setProperty("/FirstKeyStras", data.results[0]["Stras"]);
-                    wizardModel.setProperty("/Zidsede",data.results[0]["Zidsede"]);
+                    wizardModel.setProperty(
+                      "/FirstKeyStras",
+                      data.results[0]["Stras"]
+                    );
+                    wizardModel.setProperty(
+                      "/Zidsede",
+                      data.results[0]["Zidsede"]
+                    );
                     wizardModel.setProperty("/Ort01", data.results[0]["Ort01"]);
                     wizardModel.setProperty("/Regio", data.results[0]["Regio"]);
                     wizardModel.setProperty("/Pstlz", data.results[0]["Pstlz"]);
                     wizardModel.setProperty("/Land1", data.results[0]["Land1"]);
-                    wizardModel.setProperty("/Zlocpag", data.results[0].Zlocpag);
+                    wizardModel.setProperty(
+                      "/Zlocpag",
+                      data.results[0].Zlocpag
+                    );
                     // if(data.results[0].Regio && data.results[0].Regio !== null && data.results[0].Regio !== ""){
                     //   wizardModel.setProperty("/Zlocpag", data.results[0].Zlocpag);
                     // }
                   } else {
                     wizardModel.setProperty("/FirstKeyStras", "");
-                    wizardModel.setProperty("/Zidsede",null);
+                    wizardModel.setProperty("/Zidsede", null);
                     wizardModel.setProperty("/Ort01", "");
                     wizardModel.setProperty("/Regio", "");
                     wizardModel.setProperty("/Pstlz", "");
@@ -1649,7 +1684,6 @@ sap.ui.define(
             (el) => el.Stras === oEvent.getParameter("value")
           );
 
-          console.log(array);
           if (Lifnr !== null && array.length > 0) {
             oView.setBusy(true);
             wizardModel.setProperty("/Zidsede", array[0].Zidsede);
@@ -1663,7 +1697,6 @@ sap.ui.define(
               .then(function () {
                 oDataModel.read("/" + path, {
                   success: function (data, oResponse) {
-                    console.log(data);
                     oView.setBusy(false);
                     wizardModel.setProperty("/Ort01", data.Ort01);
                     wizardModel.setProperty("/Regio", data.Regio);
@@ -1682,76 +1715,80 @@ sap.ui.define(
           } else return false;
         },
 
-        onSubmitPayModeChange:function(oEvent){
+        onSubmitPayModeChange: function (oEvent) {
           var self = this,
-              oDataModel = self.getModel(),
-              wizardModel = self.getModel(WIZARD_MODEL),
-              ocontroller = self.getView().byId(oEvent.getParameters().id),
-              selectedKey = ocontroller.getSelectedKey();
+            oDataModel = self.getModel(),
+            wizardModel = self.getModel(WIZARD_MODEL),
+            ocontroller = self.getView().byId(oEvent.getParameters().id),
+            selectedKey = ocontroller.getSelectedKey();
 
-          if(selectedKey === "" || wizardModel.getProperty("/Lifnr") === null || wizardModel.getProperty("/Lifnr") === "")
-            return false;    
+          if (
+            selectedKey === "" ||
+            wizardModel.getProperty("/Lifnr") === null ||
+            wizardModel.getProperty("/Lifnr") === ""
+          )
+            return false;
 
           var path = self.getModel().createKey("ZwelsListSet", {
-              Lifnr: wizardModel.getProperty("/Lifnr"),
-              Zwels: selectedKey
+            Lifnr: wizardModel.getProperty("/Lifnr"),
+            Zwels: selectedKey,
           });
-          
-          self.getModel().metadataLoaded().then( function() {
-            oDataModel.read("/" + path, {
-              success: function(data, oResponse){
-                console.log(data);
-                wizardModel.setProperty("/PayMode", data.Zwels);
-                wizardModel.setProperty("/Banks", data.Banks);
-                wizardModel.setProperty("/Iban", data.Iban);
-                wizardModel.setProperty("/Swift", data.Swift);
-                wizardModel.setProperty("/Zcoordest", data.ZcoordEst);
-                wizardModel.setProperty("/Zcodprov", data.Zcodprov);
 
-                switch(data.Zwels.toUpperCase()){
-                  case 'ID3':
-                    wizardModel.setProperty("/isZcoordestEditable", false);
-                    wizardModel.setProperty("/isZZcausalevalEditable", false);
-                    wizardModel.setProperty("/isIbanEditable", false);
-                    wizardModel.setProperty("/isBicEditable", false);
-                    wizardModel.setProperty("/ZZcausaleval", "");
-                    wizardModel.setProperty("/Swift", null);
-                    break;
-                  case 'ID4':
-                    wizardModel.setProperty("/isZcoordestEditable", false);
-                    wizardModel.setProperty("/isZZcausalevalEditable", false);
-                    wizardModel.setProperty("/isIbanEditable", true);
-                    wizardModel.setProperty("/isBicEditable", false);
-                    wizardModel.setProperty("/ZZcausaleval", "");
-                    wizardModel.setProperty("/Swift", null);
-                    break;                    
-                  case 'ID5':
-                    wizardModel.setProperty("/isZcoordestEditable", false);
-                    wizardModel.setProperty("/isZZcausalevalEditable", false);
-                    wizardModel.setProperty("/isIbanEditable", true);
-                    wizardModel.setProperty("/isBicEditable", false);
-                    wizardModel.setProperty("/ZZcausaleval", "");
-                    wizardModel.setProperty("/Swift", null);
-                    break;
-                  case 'ID6':
-                    wizardModel.setProperty("/isZcoordestEditable", true);
-                    wizardModel.setProperty("/isZZcausalevalEditable", true);
-                    wizardModel.setProperty("/isIbanEditable", false);
-                    wizardModel.setProperty("/isBicEditable", true);
-                    wizardModel.setProperty("/Iban", null);
-                    break;
-                  case 'ID10':
-                    wizardModel.setProperty("/isZcoordestEditable", true);
-                    wizardModel.setProperty("/isZZcausalevalEditable", false);
-                    wizardModel.setProperty("/isIbanEditable", true);
-                    wizardModel.setProperty("/isBicEditable", true);
-                    wizardModel.setProperty("/ZZcausaleval", "");
-                    break;
-                }  
+          self
+            .getModel()
+            .metadataLoaded()
+            .then(function () {
+              oDataModel.read("/" + path, {
+                success: function (data, oResponse) {
+                  wizardModel.setProperty("/PayMode", data.Zwels);
+                  wizardModel.setProperty("/Banks", data.Banks);
+                  wizardModel.setProperty("/Iban", data.Iban);
+                  wizardModel.setProperty("/Swift", data.Swift);
+                  wizardModel.setProperty("/Zcoordest", data.ZcoordEst);
+                  wizardModel.setProperty("/Zcodprov", data.Zcodprov);
 
+                  switch (data.Zwels.toUpperCase()) {
+                    case "ID3":
+                      wizardModel.setProperty("/isZcoordestEditable", false);
+                      wizardModel.setProperty("/isZZcausalevalEditable", false);
+                      wizardModel.setProperty("/isIbanEditable", false);
+                      wizardModel.setProperty("/isBicEditable", false);
+                      wizardModel.setProperty("/ZZcausaleval", "");
+                      wizardModel.setProperty("/Swift", null);
+                      break;
+                    case "ID4":
+                      wizardModel.setProperty("/isZcoordestEditable", false);
+                      wizardModel.setProperty("/isZZcausalevalEditable", false);
+                      wizardModel.setProperty("/isIbanEditable", true);
+                      wizardModel.setProperty("/isBicEditable", false);
+                      wizardModel.setProperty("/ZZcausaleval", "");
+                      wizardModel.setProperty("/Swift", null);
+                      break;
+                    case "ID5":
+                      wizardModel.setProperty("/isZcoordestEditable", false);
+                      wizardModel.setProperty("/isZZcausalevalEditable", false);
+                      wizardModel.setProperty("/isIbanEditable", true);
+                      wizardModel.setProperty("/isBicEditable", false);
+                      wizardModel.setProperty("/ZZcausaleval", "");
+                      wizardModel.setProperty("/Swift", null);
+                      break;
+                    case "ID6":
+                      wizardModel.setProperty("/isZcoordestEditable", true);
+                      wizardModel.setProperty("/isZZcausalevalEditable", true);
+                      wizardModel.setProperty("/isIbanEditable", false);
+                      wizardModel.setProperty("/isBicEditable", true);
+                      wizardModel.setProperty("/Iban", null);
+                      break;
+                    case "ID10":
+                      wizardModel.setProperty("/isZcoordestEditable", true);
+                      wizardModel.setProperty("/isZZcausalevalEditable", false);
+                      wizardModel.setProperty("/isIbanEditable", true);
+                      wizardModel.setProperty("/isBicEditable", true);
+                      wizardModel.setProperty("/ZZcausaleval", "");
+                      break;
+                  }
 
-
-/*
+                  /*
 
                 if (data.Zwels.toUpperCase() === "ID6") {
                   wizardModel.setProperty("/isZcoordestEditable", true);
@@ -1774,19 +1811,19 @@ sap.ui.define(
                   wizardModel.setProperty("/ZZcausaleval", "");
                   wizardModel.setProperty("/isZZcausalevalEditable", false);
                 }*/
-              },
-              error: function(error){
-                self.getView().setBusy(false);
-              }
+                },
+                error: function (error) {
+                  self.getView().setBusy(false);
+                },
+              });
             });
-          });
         },
 
         onSubmitPayMode: function (oEvent) {
           var self = this,
             wizardModel = self.getModel(WIZARD_MODEL),
             PayMode = wizardModel.getProperty("/PayMode");
-           
+
           if (PayMode.toUpperCase() === "ID6") {
             wizardModel.setProperty("/isZcoordestEditable", true);
             wizardModel.setProperty("/isZZcausalevalEditable", true);
@@ -1794,7 +1831,10 @@ sap.ui.define(
             wizardModel.setProperty("/Iban", null);
             wizardModel.setProperty("/isBicEditable", true);
           } else {
-            wizardModel.setProperty("/isIbanEditable", PayMode.toUpperCase() === "ID3" ? false : true);
+            wizardModel.setProperty(
+              "/isIbanEditable",
+              PayMode.toUpperCase() === "ID3" ? false : true
+            );
             wizardModel.setProperty("/isBicEditable", false);
             wizardModel.setProperty("/Iban", null);
             wizardModel.setProperty("/Swift", null);
@@ -1813,47 +1853,54 @@ sap.ui.define(
           self.fillBanks();
 
           self.getView().setBusy(true);
-          self.getBancaAccreditoIntermediario(function(callback){
+          self.getBancaAccreditoIntermediario(function (callback) {
             self.getView().setBusy(false);
           });
         },
-        
+
         onSubmitZcoordest: function (oEvent) {
           var self = this,
             wizardModel = self.getModel(WIZARD_MODEL),
             oDataModel = self.getModel(),
-            oBundle=self.getResourceBundle(),
+            oBundle = self.getResourceBundle(),
             oView = self.getView(),
             Zcoordest = wizardModel.getProperty("/Zcoordest");
 
-          if(!wizardModel.getProperty("/Lifnr") || wizardModel.getProperty("/Lifnr") === null || wizardModel.getProperty("/Lifnr") === "")
+          if (
+            !wizardModel.getProperty("/Lifnr") ||
+            wizardModel.getProperty("/Lifnr") === null ||
+            wizardModel.getProperty("/Lifnr") === ""
+          )
             return false;
 
-          if (Zcoordest !== null ) {
+          if (Zcoordest !== null) {
             oView.setBusy(true);
             var path = self.getModel().createKey(ZcoordestSet_SET, {
-              Zcoordest: Zcoordest
+              Zcoordest: Zcoordest,
             });
             self
               .getModel()
               .metadataLoaded()
               .then(function () {
                 oDataModel.read("/" + path, {
-                  urlParameters: {Lifnr: wizardModel.getProperty("/Lifnr")},
+                  urlParameters: { Lifnr: wizardModel.getProperty("/Lifnr") },
                   success: function (data, oResponse) {
-
-                    var message = oResponse.headers["sap-message"] && oResponse.headers["sap-message"] !== "" ? JSON.parse(oResponse.headers["sap-message"]) : null;
-                    if(message && message.severity === "error"){
+                    var message =
+                      oResponse.headers["sap-message"] &&
+                      oResponse.headers["sap-message"] !== ""
+                        ? JSON.parse(oResponse.headers["sap-message"])
+                        : null;
+                    if (message && message.severity === "error") {
                       sap.m.MessageBox.error(message.message, {
                         title: oBundle.getText("titleDialogError"),
                         onClose: function (oAction) {
                           return;
-                        }
-                      });  
+                        },
+                      });
                     }
-                    console.log(data);//TODO:da canc
+
                     wizardModel.setProperty("/Swift", data.Swift);
-                    self.getBancaAccreditoIntermediario(function(callback){
+                    self.getBancaAccreditoIntermediario(function (callback) {
                       oView.setBusy(false);
                     });
                   },
@@ -1864,75 +1911,198 @@ sap.ui.define(
                   },
                 });
               });
-            self.fillBanks();  
-          } 
-          else 
-            return false;
+            self.fillBanks();
+          } else return false;
         },
 
-        getBancaAccreditoIntermediario:function(callback){
-          var self =this,
+        getBancaAccreditoIntermediario: function (callback) {
+          var self = this,
             oDataModel = self.getModel(),
             wizardModel = self.getModel(WIZARD_MODEL);
-          
-          if(wizardModel.getProperty("/PayMode") !== 'ID6' && wizardModel.getProperty("/PayMode") !== 'ID10')
+
+          if (
+            wizardModel.getProperty("/PayMode") !== "ID6" &&
+            wizardModel.getProperty("/PayMode") !== "ID10"
+          )
             callback(true);
-          else{
+          else {
             var path = self.getModel().createKey("/BancaAccreditoSet", {
-              Lifnr: wizardModel.getProperty("/Lifnr") && wizardModel.getProperty("/Lifnr") !== null ? wizardModel.getProperty("/Lifnr"):"",  
-              Zwels:wizardModel.getProperty("/PayMode") && wizardModel.getProperty("/PayMode") !== null ? wizardModel.getProperty("/PayMode"):"",
-              Iban:wizardModel.getProperty("/Iban") && wizardModel.getProperty("/Iban") !== null ? wizardModel.getProperty("/Iban"):"",
-              Zcoordest: wizardModel.getProperty("/Zcoordest") && wizardModel.getProperty("/Zcoordest") !== null ? wizardModel.getProperty("/Zcoordest"):"",
+              Lifnr:
+                wizardModel.getProperty("/Lifnr") &&
+                wizardModel.getProperty("/Lifnr") !== null
+                  ? wizardModel.getProperty("/Lifnr")
+                  : "",
+              Zwels:
+                wizardModel.getProperty("/PayMode") &&
+                wizardModel.getProperty("/PayMode") !== null
+                  ? wizardModel.getProperty("/PayMode")
+                  : "",
+              Iban:
+                wizardModel.getProperty("/Iban") &&
+                wizardModel.getProperty("/Iban") !== null
+                  ? wizardModel.getProperty("/Iban")
+                  : "",
+              Zcoordest:
+                wizardModel.getProperty("/Zcoordest") &&
+                wizardModel.getProperty("/Zcoordest") !== null
+                  ? wizardModel.getProperty("/Zcoordest")
+                  : "",
             });
-            self.getModel().metadataLoaded().then(function () {
+            self
+              .getModel()
+              .metadataLoaded()
+              .then(function () {
                 oDataModel.read(path, {
-                  urlParameters: {"$expand": "Intermediario1"},
+                  urlParameters: { $expand: "Intermediario1" },
                   success: function (data, oResponse) {
-                    console.log(data);
                     self.setBancaAccredito(data);
                     self.setIntermediario(data.Intermediario1);
                     callback(true);
                   },
                   error: function (error) {
-                    console.log(error);
                     self.setBancaAccredito(null);
                     self.setIntermediario(null);
                     callback(true);
                   },
                 });
               });
-          } 
+          }
         },
 
-        setBancaAccredito:function(entity){
-          var self =this;
-          //Banca Accredito                                  
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Ziban_b",entity === null ? entity : entity.Zibanb);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zbic_b",entity === null ? entity : entity.Zbicb);                                            
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcoordest_b",entity === null ? entity : entity.Zcoordestb);                                       
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zdenbanca_b",entity === null ? entity : entity.Zdenbanca);                                       
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zclearsyst_b ",entity === null ? entity : entity.Zclearsyst);                                     
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Stras_b",entity === null ? entity : entity.Stras);                                          
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcivico_b",entity === null ? entity : entity.Zcivico);                                         
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Ort01_b",entity === null ? entity : entity.Ort01);                                           
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Regio_b",entity === null ? entity : entity.Regio);                                           
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Pstlz_b",entity === null ? entity : entity.Pstlz);                                           
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Land1_b",entity === null ? entity : entity.Land1);    
+        setBancaAccredito: function (entity) {
+          var self = this;
+          //Banca Accredito
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Ziban_b", entity === null ? entity : entity.Zibanb);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Zbic_b", entity === null ? entity : entity.Zbicb);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty(
+              "/Zcoordest_b",
+              entity === null ? entity : entity.Zcoordestb
+            );
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty(
+              "/Zdenbanca_b",
+              entity === null ? entity : entity.Zdenbanca
+            );
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty(
+              "/Zclearsyst_b ",
+              entity === null ? entity : entity.Zclearsyst
+            );
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Stras_b", entity === null ? entity : entity.Stras);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty(
+              "/Zcivico_b",
+              entity === null ? entity : entity.Zcivico
+            );
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Ort01_b", entity === null ? entity : entity.Ort01);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Regio_b", entity === null ? entity : entity.Regio);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Pstlz_b", entity === null ? entity : entity.Pstlz);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Land1_b", entity === null ? entity : entity.Land1);
         },
 
-        setIntermediario:function(entity){
-          var self =this;                   
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Ziban_i",entity === null ? entity : entity.Zibani);                                           
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zbic_i",entity === null ? entity : entity.Zbici);                                            
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcoordest_i",entity === null ? entity : entity.Zcoordest);                                       
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zdenbanca_i",entity === null ? entity : entity.Zdenbancai);                                       
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zclearsyst_i",entity === null ? entity : entity.Zclearsysti);                                      
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zstras_i",entity === null ? entity : entity.Zstrasi);                                          
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcivico_i",entity === null ? entity : entity.Zcivicoi);                                         
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zort01_i",entity === null ? entity : entity.Zort01i);                                          
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zregio_i",entity === null ? entity : entity.Zregioi);                                          
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zpstlz_i",entity === null ? entity : entity.Zpstlzi);                                          
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zland1_i",entity === null ? entity : entity.Zland1i);
+        setIntermediario: function (entity) {
+          var self = this;
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Ziban_i", entity === null ? entity : entity.Zibani);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Zbic_i", entity === null ? entity : entity.Zbici);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty(
+              "/Zcoordest_i",
+              entity === null ? entity : entity.Zcoordest
+            );
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty(
+              "/Zdenbanca_i",
+              entity === null ? entity : entity.Zdenbancai
+            );
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty(
+              "/Zclearsyst_i",
+              entity === null ? entity : entity.Zclearsysti
+            );
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty(
+              "/Zstras_i",
+              entity === null ? entity : entity.Zstrasi
+            );
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty(
+              "/Zcivico_i",
+              entity === null ? entity : entity.Zcivicoi
+            );
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty(
+              "/Zort01_i",
+              entity === null ? entity : entity.Zort01i
+            );
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty(
+              "/Zregio_i",
+              entity === null ? entity : entity.Zregioi
+            );
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty(
+              "/Zpstlz_i",
+              entity === null ? entity : entity.Zpstlzi
+            );
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty(
+              "/Zland1_i",
+              entity === null ? entity : entity.Zland1i
+            );
         },
 
         onSubmitLifnr: function (oEvent) {
@@ -1942,7 +2112,6 @@ sap.ui.define(
             oView = self.getView(),
             Lifnr = wizardModel.getProperty("/Lifnr");
 
-          console.log(Lifnr);
           if (Lifnr !== null) {
             oView.setBusy(true);
             var path = self.getModel().createKey(Beneficiary_SET, {
@@ -1954,7 +2123,6 @@ sap.ui.define(
               .then(function () {
                 oDataModel.read("/" + path, {
                   success: function (data, oResponse) {
-                    console.log(data);
                     wizardModel.setProperty("/TaxnumCf", data.TaxnumCf);
                     wizardModel.setProperty("/Taxnumxl", data.Taxnumxl);
                     wizardModel.setProperty("/NameFirst", data.NameFirst);
@@ -1981,76 +2149,99 @@ sap.ui.define(
           } else return false;
         },
 
-
-        getModalitaPagamento(lifnr){
+        getModalitaPagamento(lifnr) {
           var self = this,
-          wizardModel = self.getModel(WIZARD_MODEL),
-          oDataModel = self.getModel(),
-          oView = self.getView();
+            wizardModel = self.getModel(WIZARD_MODEL),
+            oDataModel = self.getModel(),
+            oView = self.getView();
           oView.setBusy(true);
-          var filter = [self.setFilterEQWithKey("Lifnr", lifnr)];       
-          self.getModel().metadataLoaded().then(function () {
-            oDataModel.read("/ZwelsListSet", {
-              async: true,
-              urlParameters: {IsDistinct:"X"},
-              filters: filter,
-              success: function (data, oResponse) {
-                oView.setBusy(false);
-                if (data.results.length > 0) {
-                  self.getView().getModel(DataSON_MODEL).setProperty("/PayMode",data.results);
-                  var pay = data.results[0];
+          var filter = [self.setFilterEQWithKey("Lifnr", lifnr)];
+          self
+            .getModel()
+            .metadataLoaded()
+            .then(function () {
+              oDataModel.read("/ZwelsListSet", {
+                async: true,
+                urlParameters: { IsDistinct: "X" },
+                filters: filter,
+                success: function (data, oResponse) {
+                  oView.setBusy(false);
+                  if (data.results.length > 0) {
+                    self
+                      .getView()
+                      .getModel(DataSON_MODEL)
+                      .setProperty("/PayMode", data.results);
+                    var pay = data.results[0];
 
-                  wizardModel.setProperty("/PayMode", pay.Zwels);
-                  wizardModel.setProperty("/Banks", pay.Banks);
-                  wizardModel.setProperty("/Iban", pay.Iban);
-                  wizardModel.setProperty("/Swift", pay.Swift);
-                  wizardModel.setProperty("/Zcoordest", pay.ZcoordEst);
-                  wizardModel.setProperty("/Zcodprov", pay.Zcodprov);
+                    wizardModel.setProperty("/PayMode", pay.Zwels);
+                    wizardModel.setProperty("/Banks", pay.Banks);
+                    wizardModel.setProperty("/Iban", pay.Iban);
+                    wizardModel.setProperty("/Swift", pay.Swift);
+                    wizardModel.setProperty("/Zcoordest", pay.ZcoordEst);
+                    wizardModel.setProperty("/Zcodprov", pay.Zcodprov);
 
-                  switch(pay.Zwels.toUpperCase()){
-                    case 'ID3':
-                      wizardModel.setProperty("/isZcoordestEditable", false);
-                      wizardModel.setProperty("/isZZcausalevalEditable", false);
-                      wizardModel.setProperty("/isIbanEditable", false);
-                      wizardModel.setProperty("/isBicEditable", false);
-                      wizardModel.setProperty("/ZZcausaleval", "");
-                      wizardModel.setProperty("/Swift", null);
-                      break;
-                    case 'ID4':
-                      wizardModel.setProperty("/isZcoordestEditable", false);
-                      wizardModel.setProperty("/isZZcausalevalEditable", false);
-                      wizardModel.setProperty("/isIbanEditable", true);
-                      wizardModel.setProperty("/isBicEditable", false);
-                      wizardModel.setProperty("/ZZcausaleval", "");
-                      wizardModel.setProperty("/Swift", null);
-                      break;                    
-                    case 'ID5':
-                      wizardModel.setProperty("/isZcoordestEditable", false);
-                      wizardModel.setProperty("/isZZcausalevalEditable", false);
-                      wizardModel.setProperty("/isIbanEditable", true);
-                      wizardModel.setProperty("/isBicEditable", false);
-                      wizardModel.setProperty("/ZZcausaleval", "");
-                      wizardModel.setProperty("/Swift", null);
-                      break;
-                    case 'ID6':
-                      wizardModel.setProperty("/isZcoordestEditable", true);
-                      wizardModel.setProperty("/isZZcausalevalEditable", true);
-                      if(pay.Banks.toUpperCase() === 'IT')
-                        wizardModel.setProperty("/isZZcausalevalEditable", false);
-                      wizardModel.setProperty("/isIbanEditable", false);
-                      wizardModel.setProperty("/isBicEditable", true);
-                      wizardModel.setProperty("/Iban", null);
-                      break;
-                    case 'ID10':
-                      wizardModel.setProperty("/isZcoordestEditable", true);
-                      wizardModel.setProperty("/isZZcausalevalEditable", false);
-                      wizardModel.setProperty("/isIbanEditable", true);
-                      wizardModel.setProperty("/isBicEditable", true);
-                      wizardModel.setProperty("/ZZcausaleval", "");
-                      break;
-                  }  
+                    switch (pay.Zwels.toUpperCase()) {
+                      case "ID3":
+                        wizardModel.setProperty("/isZcoordestEditable", false);
+                        wizardModel.setProperty(
+                          "/isZZcausalevalEditable",
+                          false
+                        );
+                        wizardModel.setProperty("/isIbanEditable", false);
+                        wizardModel.setProperty("/isBicEditable", false);
+                        wizardModel.setProperty("/ZZcausaleval", "");
+                        wizardModel.setProperty("/Swift", null);
+                        break;
+                      case "ID4":
+                        wizardModel.setProperty("/isZcoordestEditable", false);
+                        wizardModel.setProperty(
+                          "/isZZcausalevalEditable",
+                          false
+                        );
+                        wizardModel.setProperty("/isIbanEditable", true);
+                        wizardModel.setProperty("/isBicEditable", false);
+                        wizardModel.setProperty("/ZZcausaleval", "");
+                        wizardModel.setProperty("/Swift", null);
+                        break;
+                      case "ID5":
+                        wizardModel.setProperty("/isZcoordestEditable", false);
+                        wizardModel.setProperty(
+                          "/isZZcausalevalEditable",
+                          false
+                        );
+                        wizardModel.setProperty("/isIbanEditable", true);
+                        wizardModel.setProperty("/isBicEditable", false);
+                        wizardModel.setProperty("/ZZcausaleval", "");
+                        wizardModel.setProperty("/Swift", null);
+                        break;
+                      case "ID6":
+                        wizardModel.setProperty("/isZcoordestEditable", true);
+                        wizardModel.setProperty(
+                          "/isZZcausalevalEditable",
+                          true
+                        );
+                        if (pay.Banks.toUpperCase() === "IT")
+                          wizardModel.setProperty(
+                            "/isZZcausalevalEditable",
+                            false
+                          );
+                        wizardModel.setProperty("/isIbanEditable", false);
+                        wizardModel.setProperty("/isBicEditable", true);
+                        wizardModel.setProperty("/Iban", null);
+                        break;
+                      case "ID10":
+                        wizardModel.setProperty("/isZcoordestEditable", true);
+                        wizardModel.setProperty(
+                          "/isZZcausalevalEditable",
+                          false
+                        );
+                        wizardModel.setProperty("/isIbanEditable", true);
+                        wizardModel.setProperty("/isBicEditable", true);
+                        wizardModel.setProperty("/ZZcausaleval", "");
+                        break;
+                    }
 
-/*
+                    /*
 
                   wizardModel.setProperty("/PayMode", data.results[0].Zwels);
                   wizardModel.setProperty("/Banks", data.results[0].Banks);
@@ -2063,63 +2254,64 @@ sap.ui.define(
                   }else{
                     wizardModel.setProperty("/isZZcausalevalEditable", false);
                   }*/
-                }
-                else{
-                  self.getView().getModel(DataSON_MODEL).setProperty("/PayMode",[]);
-                  wizardModel.setProperty("/Banks", null);
-                  wizardModel.setProperty("/Iban", null);
-                  wizardModel.setProperty("/Swift", null);
-                  wizardModel.setProperty("/Zcoordest", null);
-                  wizardModel.setProperty("/Zcodprov", null);
-                  wizardModel.setProperty("/isZZcausalevalEditable", false);
-                  wizardModel.setProperty("/isZcoordestEditable", false);
-                  wizardModel.setProperty("/isIbanEditable", false);
-                  wizardModel.setProperty("/isBicEditable", false);
+                  } else {
+                    self
+                      .getView()
+                      .getModel(DataSON_MODEL)
+                      .setProperty("/PayMode", []);
+                    wizardModel.setProperty("/Banks", null);
+                    wizardModel.setProperty("/Iban", null);
+                    wizardModel.setProperty("/Swift", null);
+                    wizardModel.setProperty("/Zcoordest", null);
+                    wizardModel.setProperty("/Zcodprov", null);
+                    wizardModel.setProperty("/isZZcausalevalEditable", false);
+                    wizardModel.setProperty("/isZcoordestEditable", false);
+                    wizardModel.setProperty("/isIbanEditable", false);
+                    wizardModel.setProperty("/isBicEditable", false);
 
-                  // wizardModel.setProperty("/Banks", "");
-                  // wizardModel.setProperty("/Iban", "");
-                  // wizardModel.setProperty("/Swift", "");
-                  // wizardModel.setProperty("/Zcoordest", "");
-                  // wizardModel.setProperty("/isZZcausalevalEditable", false);
-                  // wizardModel.setProperty("/isZcoordestEditable", false);
-                  // wizardModel.setProperty("/isIbanEditable", false);
-                  // wizardModel.setProperty("/isBicEditable", false);
-                }                
-              },
-              error: function (error) {
-                oView.setBusy(false);
-              },
+                    // wizardModel.setProperty("/Banks", "");
+                    // wizardModel.setProperty("/Iban", "");
+                    // wizardModel.setProperty("/Swift", "");
+                    // wizardModel.setProperty("/Zcoordest", "");
+                    // wizardModel.setProperty("/isZZcausalevalEditable", false);
+                    // wizardModel.setProperty("/isZcoordestEditable", false);
+                    // wizardModel.setProperty("/isIbanEditable", false);
+                    // wizardModel.setProperty("/isBicEditable", false);
+                  }
+                },
+                error: function (error) {
+                  oView.setBusy(false);
+                },
+              });
             });
-          });  
         },
-        
-        getIban(lifnr){
+
+        getIban(lifnr) {
           var self = this,
-          wizardModel = self.getModel(WIZARD_MODEL),
-          oDataModel = self.getModel(),
-          oView = self.getView();
+            wizardModel = self.getModel(WIZARD_MODEL),
+            oDataModel = self.getModel(),
+            oView = self.getView();
           oView.setBusy(true);
-        var filter = [self.setFilterEQWithKey("Lifnr", lifnr)];       
-        self
-          .getModel()
-          .metadataLoaded()
-          .then(function () {
-            oDataModel.read("/" + IbanBeneficiario_SET, {
-              filters: filter,
-              success: function (data, oResponse) {
-                oView.setBusy(false);
-                if (data.results.length > 0) {
-                  wizardModel.setProperty("/Iban", data.results[0].Iban);
-                }
-                else{
-                  wizardModel.setProperty("/Iban", "");
-                }                
-              },
-              error: function (error) {
-                oView.setBusy(false);
-              },
+          var filter = [self.setFilterEQWithKey("Lifnr", lifnr)];
+          self
+            .getModel()
+            .metadataLoaded()
+            .then(function () {
+              oDataModel.read("/" + IbanBeneficiario_SET, {
+                filters: filter,
+                success: function (data, oResponse) {
+                  oView.setBusy(false);
+                  if (data.results.length > 0) {
+                    wizardModel.setProperty("/Iban", data.results[0].Iban);
+                  } else {
+                    wizardModel.setProperty("/Iban", "");
+                  }
+                },
+                error: function (error) {
+                  oView.setBusy(false);
+                },
+              });
             });
-          });  
         },
 
         fillBanks: function () {
@@ -2138,7 +2330,7 @@ sap.ui.define(
               Iban: Iban,
               Zwels: Zwels,
               Lifnr: Lifnr,
-              Zcoordest: Zcoordest
+              Zcoordest: Zcoordest,
             });
             self
               .getModel()
@@ -2147,12 +2339,18 @@ sap.ui.define(
                 oDataModel.read("/" + path, {
                   success: function (data, oResponse) {
                     oView.setBusy(false);
-                    console.log(data);
+
                     wizardModel.setProperty("/Banks", data.Banks);
-                    if(data.Banks.toUpperCase() !== 'IT'){
-                      self.getView().getModel(WIZARD_MODEL).setProperty("/isZZcausalevalEditable", true);
-                    }else{
-                      self.getView().getModel(WIZARD_MODEL).setProperty("/isZZcausalevalEditable", false);
+                    if (data.Banks.toUpperCase() !== "IT") {
+                      self
+                        .getView()
+                        .getModel(WIZARD_MODEL)
+                        .setProperty("/isZZcausalevalEditable", true);
+                    } else {
+                      self
+                        .getView()
+                        .getModel(WIZARD_MODEL)
+                        .setProperty("/isZZcausalevalEditable", false);
                     }
                   },
                   error: function (error) {
@@ -2174,10 +2372,12 @@ sap.ui.define(
               item.Zdataprot !== ""
             ) {
               if (item.Zdataprot instanceof Date && !isNaN(item.Zdataprot)) {
-                item.Zdataprot = self.formatter.formateDateForDeep(item.Zdataprot);
+                item.Zdataprot = self.formatter.formateDateForDeep(
+                  item.Zdataprot
+                );
               }
-              if(item.Zdataprot.includes(".000Z")){
-                item.Zdataprot = item.Zdataprot.replace(".000Z","");
+              if (item.Zdataprot.includes(".000Z")) {
+                item.Zdataprot = item.Zdataprot.replace(".000Z", "");
               }
             }
             if (
@@ -2185,11 +2385,16 @@ sap.ui.define(
               item.Zdatarichann !== null &&
               item.Zdatarichann !== ""
             ) {
-              if (item.Zdatarichann instanceof Date && !isNaN(item.Zdatarichann)) {
-                item.Zdatarichann = self.formatter.formateDateForDeep(item.Zdatarichann);
+              if (
+                item.Zdatarichann instanceof Date &&
+                !isNaN(item.Zdatarichann)
+              ) {
+                item.Zdatarichann = self.formatter.formateDateForDeep(
+                  item.Zdatarichann
+                );
               }
-              if(item.Zdatarichann.includes(".000Z")){
-                item.Zdatarichann = item.Zdatarichann.replace(".000Z","");
+              if (item.Zdatarichann.includes(".000Z")) {
+                item.Zdatarichann = item.Zdatarichann.replace(".000Z", "");
               }
             }
             if (
@@ -2198,63 +2403,62 @@ sap.ui.define(
               item.Zdatasop !== ""
             ) {
               if (item.Zdatasop instanceof Date && !isNaN(item.Zdatasop)) {
-                item.Zdatasop = self.formatter.formateDateForDeep(item.Zdatasop);
+                item.Zdatasop = self.formatter.formateDateForDeep(
+                  item.Zdatasop
+                );
               }
-              if(item.Zdatasop.includes(".000Z")){
-                item.Zdatasop = item.Zdatasop.replace(".000Z","");
+              if (item.Zdatasop.includes(".000Z")) {
+                item.Zdatasop = item.Zdatasop.replace(".000Z", "");
               }
             }
           }
           return checklist;
         },
-        
-        onWizardNextButton:function(oEvent){
-          var self =this,
+
+        onWizardNextButton: function (oEvent) {
+          var self = this,
             wizardId = oEvent.getSource().data("dataWizardId"),
             wizard = self.getView().byId(wizardId),
             idStepName = wizard.getCurrentStep(),
             currentStep = self.getView().byId(idStepName);
 
-            if(!currentStep || currentStep === null)
-              return false;
+          if (!currentStep || currentStep === null) return false;
 
-            var stepIndex = currentStep.data("dataWizardStepIndex");
-            var oNextStep = wizard.getSteps()[parseInt(stepIndex) + 1];
+          var stepIndex = currentStep.data("dataWizardStepIndex");
+          var oNextStep = wizard.getSteps()[parseInt(stepIndex) + 1];
 
-            if (currentStep && !currentStep.bLast) {
-              wizard.goToStep(oNextStep, true);
-            } else {
-              wizard.nextStep();
-            }  
+          if (currentStep && !currentStep.bLast) {
+            wizard.goToStep(oNextStep, true);
+          } else {
+            wizard.nextStep();
+          }
 
-            self.handleButtonsVisibility(parseInt(stepIndex)+1);
+          self.handleButtonsVisibility(parseInt(stepIndex) + 1);
         },
 
-        onWizardBackButton:function(oEvent){
-          var self =this,
-              wizardId = oEvent.getSource().data("dataWizardId"),
-              wizard = self.getView().byId(wizardId),
-              idStepName = wizard.getCurrentStep(),
-              currentStep = self.getView().byId(idStepName);
+        onWizardBackButton: function (oEvent) {
+          var self = this,
+            wizardId = oEvent.getSource().data("dataWizardId"),
+            wizard = self.getView().byId(wizardId),
+            idStepName = wizard.getCurrentStep(),
+            currentStep = self.getView().byId(idStepName);
 
-          if(!currentStep || currentStep === null)
-            return false;
+          if (!currentStep || currentStep === null) return false;
 
           var stepIndex = currentStep.data("dataWizardStepIndex");
           var oPrevStep = wizard.getSteps()[parseInt(stepIndex) - 1];
 
           if (oPrevStep) {
             wizard.previousStep();
-          }  
+          }
 
-          self.handleButtonsVisibility(parseInt(stepIndex)-1);
+          self.handleButtonsVisibility(parseInt(stepIndex) - 1);
         },
-        
 
         handleButtonsVisibility: function (index) {
           var self = this,
-              oModel = self.getModel(WIZARD_MODEL);
-          switch (index){
+            oModel = self.getModel(WIZARD_MODEL);
+          switch (index) {
             case 0:
               oModel.setProperty("/btnBackVisible", false);
               oModel.setProperty("/btnNextVisible", true);
@@ -2275,8 +2479,9 @@ sap.ui.define(
               oModel.setProperty("/btnNextVisible", false);
               oModel.setProperty("/btnFinishVisible", true);
               break;
-            default: break;
-          }    
+            default:
+              break;
+          }
         },
 
         downloadFile: function (key) {
@@ -2290,14 +2495,13 @@ sap.ui.define(
           );
         },
 
-        downloadFileFromContent:function(doc) {
-          var self =this,
-              blob = self.Base64toBlob(doc.Content)
+        downloadFileFromContent: function (doc) {
+          var self = this,
+            blob = self.Base64toBlob(doc.Content);
 
           if (window.navigator && window.navigator.msSaveBlob) {
             window.navigator.msSaveBlob(blob, doc.FileName);
-          }
-          else{
+          } else {
             var linkSource = "data:application/pdf;base64," + doc.Content;
             var downloadLink = document.createElement("a");
             downloadLink.href = linkSource;
@@ -2306,267 +2510,353 @@ sap.ui.define(
           }
         },
 
-        Base64toBlob:function(
-            b64Data=null,
-            contentType = "application/pdf",
-            sliceSize = 512
+        Base64toBlob: function (
+          b64Data = null,
+          contentType = "application/pdf",
+          sliceSize = 512
+        ) {
+          const byteCharacters = atob(b64Data);
+          const byteArrays = [];
+
+          for (
+            let offset = 0;
+            offset < byteCharacters.length;
+            offset += sliceSize
           ) {
-            const byteCharacters = atob(b64Data);
-            const byteArrays = [];
-        
-            for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-              const slice = byteCharacters.slice(offset, offset + sliceSize);
-        
-              const byteNumbers = new Array(slice.length);
-              for (let i = 0; i < slice.length; i++) {
-                byteNumbers[i] = slice.charCodeAt(i);
-              }
-        
-              const byteArray = new Uint8Array(byteNumbers);
-              byteArrays.push(byteArray);
+            const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+            const byteNumbers = new Array(slice.length);
+            for (let i = 0; i < slice.length; i++) {
+              byteNumbers[i] = slice.charCodeAt(i);
             }
-        
-            const blob = new Blob(byteArrays, { type: contentType });
-            return blob;        
+
+            const byteArray = new Uint8Array(byteNumbers);
+            byteArrays.push(byteArray);
+          }
+
+          const blob = new Blob(byteArrays, { type: contentType });
+          return blob;
         },
 
         /*WIZARD - END*/
 
+        newAnagraficaBeneficiarioPress: function (oEvent) {
+          var self = this,
+            dataSonModel = self.getView().getModel(DataSON_MODEL);
 
-        newAnagraficaBeneficiarioPress:function(oEvent){
-          var self =this,
-              dataSonModel = self.getView().getModel(DataSON_MODEL);
-
-          var newAbObj={
-            countries:[],
-            catsBen:[],
-            provinces:[],
-            Form:{
-              PaeseCode:null,
-              PaeseDesc:null,
-              ProvinciaCode:null,
-              ProvinciaDesc:null,
-              CategoriaBeneficiario:null,              
-              RagioneSociale:null,
-              Nome:null,
-              Cognome:null,
-              Via:null,
-              Localita:null,
-              Civico:null,
-              Cap:null,
-              SedeLegale:null,
-              CodiceFiscale:null,
-              PartitaIva:null,
-              IdentificativoFiscaleEstero:null
-            }
+          var newAbObj = {
+            countries: [],
+            catsBen: [],
+            provinces: [],
+            Form: {
+              PaeseCode: null,
+              PaeseDesc: null,
+              ProvinciaCode: null,
+              ProvinciaDesc: null,
+              CategoriaBeneficiario: null,
+              RagioneSociale: null,
+              Nome: null,
+              Cognome: null,
+              Via: null,
+              Localita: null,
+              Civico: null,
+              Cap: null,
+              SedeLegale: null,
+              CodiceFiscale: null,
+              PartitaIva: null,
+              IdentificativoFiscaleEstero: null,
+            },
           };
 
-          self.loadABDefaultInfo(function(callback){
-            if(callback.success){          
-              console.log(callback.data); //TODO:da canc
+          self.loadABDefaultInfo(function (callback) {
+            if (callback.success) {
               newAbObj.countries = callback.data.countries;
               newAbObj.catsBen = callback.data.catsBen;
               dataSonModel.setSizeLimit(1000);
-              dataSonModel.setProperty("/NewAB",newAbObj);
-              dataSonModel.setProperty("/NewPayModeButton",self._resetNewModalitaPagamentoButtons());   
+              dataSonModel.setProperty("/NewAB", newAbObj);
+              dataSonModel.setProperty(
+                "/NewPayModeButton",
+                self._resetNewModalitaPagamentoButtons()
+              );
 
               self.getView().setBusy(false);
               var oDialog = self.openDialog(
                 "gestioneabilitazioneeson.view.fragment.anagraficaBeneficiario.NewAnagraficaBeneficiario"
-              );    
-              oDialog.open();  
-            }
-            else{
+              );
+              oDialog.open();
+            } else {
               self.getView().setBusy(false);
             }
           });
         },
 
-        loadABDefaultInfo:function(callback){
-          var self =this,
-              oDataModel = self.getModel();
-          
-          var obj={
-            countries:[],
-            catsBen:[]
-          };    
-          
-          self.getModel().metadataLoaded().then(function () {
-            oDataModel.read("/NabPaeseSet", {
-              success: function (data, oResponse) {
-                obj.countries = data.results.length >0 ? data.results : [];
-                oDataModel.read("/NabCategoriaBeneficiarioSet", {
-                  success:function(data, oResponse){
-                    obj.catsBen = data.results.length >0 ? data.results : [];
-                    callback({success:true,data:obj});
-                  },
-                  error: function (error) {
-                    console.log(error);//TODO:da canc
-                    callback({success:false, data:obj});
-                  }
-                });
-              },
-              error: function (error) {
-                console.log(error);//TODO:da canc
-                callback({success:false, data:obj});
-              }
+        loadABDefaultInfo: function (callback) {
+          var self = this,
+            oDataModel = self.getModel();
+
+          var obj = {
+            countries: [],
+            catsBen: [],
+          };
+
+          self
+            .getModel()
+            .metadataLoaded()
+            .then(function () {
+              oDataModel.read("/NabPaeseSet", {
+                success: function (data, oResponse) {
+                  obj.countries = data.results.length > 0 ? data.results : [];
+                  oDataModel.read("/NabCategoriaBeneficiarioSet", {
+                    success: function (data, oResponse) {
+                      obj.catsBen = data.results.length > 0 ? data.results : [];
+                      callback({ success: true, data: obj });
+                    },
+                    error: function (error) {
+                      console.log(error); //TODO:da canc
+                      callback({ success: false, data: obj });
+                    },
+                  });
+                },
+                error: function (error) {
+                  console.log(error); //TODO:da canc
+                  callback({ success: false, data: obj });
+                },
+              });
             });
-          });    
         },
 
-        onNewABPaeseChange:function(oEvent){
-          var self =this,
+        onNewABPaeseChange: function (oEvent) {
+          var self = this,
             oDataModel = self.getModel(),
             desc = oEvent.getParameters().value,
             oController = sap.ui.getCore().byId(oEvent.getParameters().id),
             key = oController.getSelectedKey();
 
-          if(!key || key=== null || key==="" || desc ===""){
-            self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/provinces",null);
-            self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/PaeseDesc",null);
-            self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/PaeseCode",null);
-            self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/ProvinciaDesc",null);
-            self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/ProvinciaCode",null);
+          if (!key || key === null || key === "" || desc === "") {
+            self
+              .getView()
+              .getModel(DataSON_MODEL)
+              .setProperty("/NewAB/provinces", null);
+            self
+              .getView()
+              .getModel(DataSON_MODEL)
+              .setProperty("/NewAB/Form/PaeseDesc", null);
+            self
+              .getView()
+              .getModel(DataSON_MODEL)
+              .setProperty("/NewAB/Form/PaeseCode", null);
+            self
+              .getView()
+              .getModel(DataSON_MODEL)
+              .setProperty("/NewAB/Form/ProvinciaDesc", null);
+            self
+              .getView()
+              .getModel(DataSON_MODEL)
+              .setProperty("/NewAB/Form/ProvinciaCode", null);
             return false;
           }
-          
-          self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/PaeseDesc",desc);
-          self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/PaeseCode",key);
-          var filters = [self.setFilterEQWithKey("SCountry", key)];  
-          self.getModel().metadataLoaded().then(function () {
-            oDataModel.read("/NabProvinciaSet", {
-              filters:filters,
-              success:function(data, oResponse){
-                self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/provinces",data.results);
-                self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/ProvinciaDesc",null);
-                self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/ProvinciaCode",null);
-              },
-              error: function (error) {
-                console.log(error);//TODO:da canc
-              }
+
+          self
+            .getView()
+            .getModel(DataSON_MODEL)
+            .setProperty("/NewAB/Form/PaeseDesc", desc);
+          self
+            .getView()
+            .getModel(DataSON_MODEL)
+            .setProperty("/NewAB/Form/PaeseCode", key);
+          var filters = [self.setFilterEQWithKey("SCountry", key)];
+          self
+            .getModel()
+            .metadataLoaded()
+            .then(function () {
+              oDataModel.read("/NabProvinciaSet", {
+                filters: filters,
+                success: function (data, oResponse) {
+                  self
+                    .getView()
+                    .getModel(DataSON_MODEL)
+                    .setProperty("/NewAB/provinces", data.results);
+                  self
+                    .getView()
+                    .getModel(DataSON_MODEL)
+                    .setProperty("/NewAB/Form/ProvinciaDesc", null);
+                  self
+                    .getView()
+                    .getModel(DataSON_MODEL)
+                    .setProperty("/NewAB/Form/ProvinciaCode", null);
+                },
+                error: function (error) {
+                  console.log(error); //TODO:da canc
+                },
+              });
             });
-          });
         },
 
-        onNewABProvinciaChange:function(oEvent){
-          var self =this,
+        onNewABProvinciaChange: function (oEvent) {
+          var self = this,
             desc = oEvent.getParameters().value,
             oController = sap.ui.getCore().byId(oEvent.getParameters().id),
             key = oController.getSelectedKey();
 
-          if(!key || key=== null || key==="" || desc ===""){
-            self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/ProvinciaDesc",null);
-            self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/ProvinciaCode",null);
+          if (!key || key === null || key === "" || desc === "") {
+            self
+              .getView()
+              .getModel(DataSON_MODEL)
+              .setProperty("/NewAB/Form/ProvinciaDesc", null);
+            self
+              .getView()
+              .getModel(DataSON_MODEL)
+              .setProperty("/NewAB/Form/ProvinciaCode", null);
             return false;
           }
-          self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/ProvinciaDesc",desc);
-          self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/ProvinciaCode",key);
+          self
+            .getView()
+            .getModel(DataSON_MODEL)
+            .setProperty("/NewAB/Form/ProvinciaDesc", desc);
+          self
+            .getView()
+            .getModel(DataSON_MODEL)
+            .setProperty("/NewAB/Form/ProvinciaCode", key);
         },
 
-        onNewABCategoriaBeneficiarioChange:function(oEvent){
-          var self =this,
+        onNewABCategoriaBeneficiarioChange: function (oEvent) {
+          var self = this,
             desc = oEvent.getParameters().value,
             oController = sap.ui.getCore().byId(oEvent.getParameters().id),
             key = oController.getSelectedKey(),
             comboTipoFirma = sap.ui.getCore().byId("PagamentoTipoFirma");
 
-          self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/Nome",null);
-          self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/Cognome",null);
-          self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/RagioneSociale",null);
+          self
+            .getView()
+            .getModel(DataSON_MODEL)
+            .setProperty("/NewAB/Form/Nome", null);
+          self
+            .getView()
+            .getModel(DataSON_MODEL)
+            .setProperty("/NewAB/Form/Cognome", null);
+          self
+            .getView()
+            .getModel(DataSON_MODEL)
+            .setProperty("/NewAB/Form/RagioneSociale", null);
 
-          if(comboTipoFirma){
+          if (comboTipoFirma) {
             comboTipoFirma.setSelectedKey(null);
           }
 
-          if(!key || key=== null || key==="" || desc ===""){
-            self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/CategoriaBeneficiario",null);
-            self.getView().getModel(DataSON_MODEL).setProperty("/NewPayMode",null);
+          if (!key || key === null || key === "" || desc === "") {
+            self
+              .getView()
+              .getModel(DataSON_MODEL)
+              .setProperty("/NewAB/Form/CategoriaBeneficiario", null);
+            self
+              .getView()
+              .getModel(DataSON_MODEL)
+              .setProperty("/NewPayMode", null);
             return false;
           }
 
-          self.getView().getModel(DataSON_MODEL).setProperty("/NewAB/Form/CategoriaBeneficiario",key);
+          self
+            .getView()
+            .getModel(DataSON_MODEL)
+            .setProperty("/NewAB/Form/CategoriaBeneficiario", key);
 
           var oDataModel = self.getModel(),
-              dataSonModel = self.getView().getModel(DataSON_MODEL);
-          self.getModel().metadataLoaded().then(function () {
+            dataSonModel = self.getView().getModel(DataSON_MODEL);
+          self
+            .getModel()
+            .metadataLoaded()
+            .then(function () {
               oDataModel.read("/NewModalitaPagamentoSet", {
-                urlParameters:{"SType":key},
+                urlParameters: { SType: key },
                 success: function (data, oResponse) {
                   self.getView().setBusy(false);
                   console.log(data.results);
 
-                  dataSonModel.setProperty("/NewPayMode",data.results);  
-                  dataSonModel.setProperty("/NewPayModeButton",self._resetNewModalitaPagamentoButtons());   
-                  self.setNewModalitaPagamentoModel(); 
+                  dataSonModel.setProperty("/NewPayMode", data.results);
+                  dataSonModel.setProperty(
+                    "/NewPayModeButton",
+                    self._resetNewModalitaPagamentoButtons()
+                  );
+                  self.setNewModalitaPagamentoModel();
                 },
                 error: function (error) {
                   self.getView().setBusy(false);
                 },
               });
-          });
-        },
-
-        newModalitaPagamentoDialogPress:function(oEvent){
-          var self =this,
-              oDataModel = self.getModel(),
-              wizardModel = self.getView().getModel(WIZARD_MODEL).getData(),
-              dataSonModel = self.getView().getModel(DataSON_MODEL);
-
-          if(!wizardModel || wizardModel === null || wizardModel.Lifnr === "")  
-            return false;
-
-          self.getView().setBusy(false);
-          var filter = [
-            self.setFilterEQWithKey("Lifnr", wizardModel.Lifnr)
-          ];  
-
-          self.getModel().metadataLoaded().then(function () {
-                oDataModel.read("/NewModalitaPagamentoSet", {
-                  filters: filter,
-                  success: function (data, oResponse) {
-                    self.getView().setBusy(false);
-                    console.log(data.results);
-
-                    // if(!data || data.results.length === 0)
-                    //   return;
-
-                    dataSonModel.setProperty("/NewPayMode",data.results);  
-                    dataSonModel.setProperty("/NewPayModeButton",self._resetNewModalitaPagamentoButtons());   
-                    self.setNewModalitaPagamentoModel(); 
-
-                    var oDialog = self.openDialog(
-                      "gestioneabilitazioneeson.view.fragment.modalitaPagamento.NewModalitaPagamento"
-                    );    
-                    oDialog.open();  
-                  },
-                  error: function (error) {
-                    self.getView().setBusy(false);
-                  },
-                });
             });
         },
 
-        onNewModalitaPagamentoChange:function(oEvent){
-          var self =this,
-            oDataModel=self.getModel(),
+        newModalitaPagamentoDialogPress: function (oEvent) {
+          var self = this,
+            oDataModel = self.getModel(),
+            wizardModel = self.getView().getModel(WIZARD_MODEL).getData(),
+            dataSonModel = self.getView().getModel(DataSON_MODEL);
+
+          if (!wizardModel || wizardModel === null || wizardModel.Lifnr === "")
+            return false;
+
+          self.getView().setBusy(false);
+          var filter = [self.setFilterEQWithKey("Lifnr", wizardModel.Lifnr)];
+
+          self
+            .getModel()
+            .metadataLoaded()
+            .then(function () {
+              oDataModel.read("/NewModalitaPagamentoSet", {
+                filters: filter,
+                success: function (data, oResponse) {
+                  self.getView().setBusy(false);
+                  console.log(data.results);
+
+                  // if(!data || data.results.length === 0)
+                  //   return;
+
+                  dataSonModel.setProperty("/NewPayMode", data.results);
+                  dataSonModel.setProperty(
+                    "/NewPayModeButton",
+                    self._resetNewModalitaPagamentoButtons()
+                  );
+                  self.setNewModalitaPagamentoModel();
+
+                  var oDialog = self.openDialog(
+                    "gestioneabilitazioneeson.view.fragment.modalitaPagamento.NewModalitaPagamento"
+                  );
+                  oDialog.open();
+                },
+                error: function (error) {
+                  self.getView().setBusy(false);
+                },
+              });
+            });
+        },
+
+        onNewModalitaPagamentoChange: function (oEvent) {
+          var self = this,
+            oDataModel = self.getModel(),
             dataSonModel = self.getView().getModel(DataSON_MODEL),
             oController = sap.ui.getCore().byId(oEvent.getParameters().id),
             selectedItem = oController.getSelectedKey(),
             payModeType = oController.getSelectedItem().data("payModeType"),
             comboTipoFirma = sap.ui.getCore().byId("PagamentoTipoFirma");
 
-          if(selectedItem === ""){
-            //TODO azzera il modello della new modalita pagamento 
-            dataSonModel.setProperty("/NewPayModeButton",self._resetNewModalitaPagamentoButtons());
-            if(comboTipoFirma){
+          if (selectedItem === "") {
+            //TODO azzera il modello della new modalita pagamento
+            dataSonModel.setProperty(
+              "/NewPayModeButton",
+              self._resetNewModalitaPagamentoButtons()
+            );
+            if (comboTipoFirma) {
               comboTipoFirma.setSelectedKey(null);
             }
-            return false;    
+            return false;
           }
           self.getView().setBusy(true);
-          
-          dataSonModel.setProperty("/NewPayModeButton",self._resetNewModalitaPagamentoButtons());  
-          if(comboTipoFirma){
+
+          dataSonModel.setProperty(
+            "/NewPayModeButton",
+            self._resetNewModalitaPagamentoButtons()
+          );
+          if (comboTipoFirma) {
             comboTipoFirma.setSelectedKey(null);
           }
 
@@ -2574,281 +2864,419 @@ sap.ui.define(
             self.setFilterEQWithKey("Zwels", selectedItem),
             self.setFilterEQWithKey("Lifnr", ""),
           ];
-          self.getModel().metadataLoaded().then(function () {
-                oDataModel.read("/ZwelsListSet", {
-                  filters: filter,
-                  success: function (data, oResponse) {
-                    self.setNewModalitaPagamentoModel(payModeType);
-                    if (data.results.length>0){
-                      dataSonModel.setProperty("/NewModalitaPagamentoEntity/InizioValidita", data.results[0].ValidFromDats);
-                      dataSonModel.setProperty("/NewModalitaPagamentoEntity/FineValidita", data.results[0].ValidToDats);
-                      dataSonModel.setProperty("/NewModalitaPagamentoEntity/PaeseResidenza", data.results[0].Banks);
-                    }
-                    dataSonModel.setProperty("/NewModalitaPagamentoEntity/PayMode", selectedItem);
-
-                    switch(selectedItem){
-                      case 'ID1':
-                        self.getTipoFirma(COSPR3E027_TIPOFIRMA);
-                        dataSonModel.setProperty("/NewPayModeButton/IbanEnabled",true);
-                        dataSonModel.setProperty("/NewPayModeButton/TipoFirmaEnabled",true);
-                        dataSonModel.setProperty("/NewPayModeButton/btnQuietanzanteEnabled",true);
-                        break;
-                      case 'ID2':
-                        dataSonModel.setProperty("/NewPayModeButton/IbanEnabled",true);
-                        dataSonModel.setProperty("/NewPayModeButton/btnVagliaEnabled",true);
-                        break;
-                      case 'ID3':
-                        dataSonModel.setProperty("/NewPayModeButton/IbanEnabled",true);
-                        dataSonModel.setProperty("/NewPayModeButton/ContoTesoreriaEnabled",true);
-                        break; 
-                      case 'ID4':
-                        dataSonModel.setProperty("/NewPayModeButton/IbanEnabled",true);
-                        dataSonModel.setProperty("/NewPayModeButton/EsercizioEnabled",true);
-                        dataSonModel.setProperty("/NewPayModeButton/CapoEnabled",true);
-                        dataSonModel.setProperty("/NewPayModeButton/CapitoloEnabled",true);
-                        dataSonModel.setProperty("/NewPayModeButton/ArticoloEnabled",true);
-                        break; 
-                      case 'ID5':
-                        dataSonModel.setProperty("/NewPayModeButton/IbanEnabled",true);
-                        dataSonModel.setProperty("/NewPayModeButton/PaeseResidenzaEnabled",true);
-                        break;
-                      case 'ID6':
-                        dataSonModel.setProperty("/NewPayModeButton/PaeseResidenzaEnabled",true);
-                        dataSonModel.setProperty("/NewPayModeButton/BicEnabled",true);
-                        dataSonModel.setProperty("/NewPayModeButton/CoordinateEstereEnabled",true);
-                        break;       
-                      default:
-                        dataSonModel.setProperty("/NewPayModeButton",self._resetNewModalitaPagamentoButtons());
-                        console.log("default");
-                        break;
-                    }
-                    self.getView().setBusy(false);
-                  },
-                  error: function (error) {
-                    console.log(error);
-                    self.getView().setBusy(false);
-                  },
-                });
-            });
-        },
-
-        setNewModalitaPagamentoModel:function(type=null){
-          var self =this,
-              dataSonModel = self.getView().getModel(DataSON_MODEL);
-
-          var obj = {
-            PayMode:null,
-            PayModeType:type,
-            Iban:null,
-            PaeseResidenza:null,
-            TipoFirma:null,
-            Bic:null,
-            CoordinateEstere:null,
-            InizioValidita: null,
-            FineValidita: null,
-            Esercizio:null,
-            Capo:null,
-            Capitolo:null,
-            Articolo:null,
-            ContoTesoreria:null,
-            ContoTesoreriaDescrizione:null,
-            // Gestione Vaglia
-            VCognome:null,
-            VNome:null,
-            VCodiceFiscale:null,
-            VQualifica:null,
-            VDataNascita:null,
-            VLuogoNascita:null,
-            VProvinciaNascita:null,
-            VIndirizzo:null,
-            VCitta:null,
-            VCap:null,
-            VProvinciaResidenza:null,
-            VTelefono:null,
-            //Gestione quietanzante
-            QCognome:null,
-            QNome:null,
-            QCodiceFiscale:null,
-            QQualifica:null,
-            QDataNascita:null,
-            QLuogoNascita:null,
-            QProvinciaNascita:null,
-            QIndirizzo:null,
-            QCitta:null,
-            QCap:null,
-            QProvinciaResidenza:null,
-            QTelefono:null,
-          };
-
-          dataSonModel.setProperty("/NewModalitaPagamentoEntity", obj);
-        },
-
-        onNewTipoFirmaChange:function(oEvent){
-          var self = this,
-            dataSonModel = self.getView().getModel(DataSON_MODEL),
-            oController = sap.ui.getCore().byId(oEvent.getParameters().id),
-            selectedKey = oController.getSelectedKey();
-            dataSonModel.setProperty("/NewModalitaPagamentoEntity/TipoFirma",selectedKey);
-        },
-
-        getPayModeByLifnr:function(lifnr,zwels,IsDistinct=false,callback){
-          var self =this,
-              oDataModel = self.getModel();
-          if(!lifnr || lifnr === null || lifnr === "")
-              return false;
-
-          var filter = [];
-          filter.push(new sap.ui.model.Filter("Lifnr",sap.ui.model.FilterOperator.EQ,lifnr));
-          if(zwels !== ""){
-            filter.push(new sap.ui.model.Filter("Zwels",sap.ui.model.FilterOperator.EQ,zwels));
-          }
-
-          self.getModel().metadataLoaded().then(function () {
-            oDataModel.read("/ZwelsListSet", {
-                async: true,
-                urlParameters: {IsDistinct:IsDistinct ? 'X' : ""},
+          self
+            .getModel()
+            .metadataLoaded()
+            .then(function () {
+              oDataModel.read("/ZwelsListSet", {
                 filters: filter,
                 success: function (data, oResponse) {
-                    console.log(data.results); //TODO:da canc
-                    return callback({data:data.results, error: false});
-                },
-                error: function (error) {
-                  console.log(error)
-                  return callback({data:error, error: true});
-                },
-            });
-          });
-        },
+                  self.setNewModalitaPagamentoModel(payModeType);
+                  if (data.results.length > 0) {
+                    dataSonModel.setProperty(
+                      "/NewModalitaPagamentoEntity/InizioValidita",
+                      data.results[0].ValidFromDats
+                    );
+                    dataSonModel.setProperty(
+                      "/NewModalitaPagamentoEntity/FineValidita",
+                      data.results[0].ValidToDats
+                    );
+                    dataSonModel.setProperty(
+                      "/NewModalitaPagamentoEntity/PaeseResidenza",
+                      data.results[0].Banks
+                    );
+                  }
+                  dataSonModel.setProperty(
+                    "/NewModalitaPagamentoEntity/PayMode",
+                    selectedItem
+                  );
 
-        getTipoFirma: function(name){
-          var self = this,
-              oDataModel = self.getModel(),
-              dataSonModel = self.getView().getModel(DataSON_MODEL); 
-
-          self.getView().setBusy(true);
-          var filter = [self.setFilterEQWithKey("Name", name)];
-          self.getModel().metadataLoaded().then(function () {
-              oDataModel.read("/ZtipofirmaMcSet", {
-                filters: filter,
-                success: function (data, oResponse) {
+                  switch (selectedItem) {
+                    case "ID1":
+                      self.getTipoFirma(COSPR3E027_TIPOFIRMA);
+                      dataSonModel.setProperty(
+                        "/NewPayModeButton/IbanEnabled",
+                        true
+                      );
+                      dataSonModel.setProperty(
+                        "/NewPayModeButton/TipoFirmaEnabled",
+                        true
+                      );
+                      dataSonModel.setProperty(
+                        "/NewPayModeButton/btnQuietanzanteEnabled",
+                        true
+                      );
+                      break;
+                    case "ID2":
+                      dataSonModel.setProperty(
+                        "/NewPayModeButton/IbanEnabled",
+                        true
+                      );
+                      dataSonModel.setProperty(
+                        "/NewPayModeButton/btnVagliaEnabled",
+                        true
+                      );
+                      break;
+                    case "ID3":
+                      dataSonModel.setProperty(
+                        "/NewPayModeButton/IbanEnabled",
+                        true
+                      );
+                      dataSonModel.setProperty(
+                        "/NewPayModeButton/ContoTesoreriaEnabled",
+                        true
+                      );
+                      break;
+                    case "ID4":
+                      dataSonModel.setProperty(
+                        "/NewPayModeButton/IbanEnabled",
+                        true
+                      );
+                      dataSonModel.setProperty(
+                        "/NewPayModeButton/EsercizioEnabled",
+                        true
+                      );
+                      dataSonModel.setProperty(
+                        "/NewPayModeButton/CapoEnabled",
+                        true
+                      );
+                      dataSonModel.setProperty(
+                        "/NewPayModeButton/CapitoloEnabled",
+                        true
+                      );
+                      dataSonModel.setProperty(
+                        "/NewPayModeButton/ArticoloEnabled",
+                        true
+                      );
+                      break;
+                    case "ID5":
+                      dataSonModel.setProperty(
+                        "/NewPayModeButton/IbanEnabled",
+                        true
+                      );
+                      dataSonModel.setProperty(
+                        "/NewPayModeButton/PaeseResidenzaEnabled",
+                        true
+                      );
+                      break;
+                    case "ID6":
+                      dataSonModel.setProperty(
+                        "/NewPayModeButton/PaeseResidenzaEnabled",
+                        true
+                      );
+                      dataSonModel.setProperty(
+                        "/NewPayModeButton/BicEnabled",
+                        true
+                      );
+                      dataSonModel.setProperty(
+                        "/NewPayModeButton/CoordinateEstereEnabled",
+                        true
+                      );
+                      break;
+                    default:
+                      dataSonModel.setProperty(
+                        "/NewPayModeButton",
+                        self._resetNewModalitaPagamentoButtons()
+                      );
+                      console.log("default");
+                      break;
+                  }
                   self.getView().setBusy(false);
-                  dataSonModel.setProperty("/NewPayModeTipoFirma",data.results); 
                 },
                 error: function (error) {
                   console.log(error);
                   self.getView().setBusy(false);
                 },
               });
-          });
+            });
         },
 
-        _resetNewModalitaPagamentoButtons:function(){
-          var self =this;
+        setNewModalitaPagamentoModel: function (type = null) {
+          var self = this,
+            dataSonModel = self.getView().getModel(DataSON_MODEL);
+
+          var obj = {
+            PayMode: null,
+            PayModeType: type,
+            Iban: null,
+            PaeseResidenza: null,
+            TipoFirma: null,
+            Bic: null,
+            CoordinateEstere: null,
+            InizioValidita: null,
+            FineValidita: null,
+            Esercizio: null,
+            Capo: null,
+            Capitolo: null,
+            Articolo: null,
+            ContoTesoreria: null,
+            ContoTesoreriaDescrizione: null,
+            // Gestione Vaglia
+            VCognome: null,
+            VNome: null,
+            VCodiceFiscale: null,
+            VQualifica: null,
+            VDataNascita: null,
+            VLuogoNascita: null,
+            VProvinciaNascita: null,
+            VIndirizzo: null,
+            VCitta: null,
+            VCap: null,
+            VProvinciaResidenza: null,
+            VTelefono: null,
+            //Gestione quietanzante
+            QCognome: null,
+            QNome: null,
+            QCodiceFiscale: null,
+            QQualifica: null,
+            QDataNascita: null,
+            QLuogoNascita: null,
+            QProvinciaNascita: null,
+            QIndirizzo: null,
+            QCitta: null,
+            QCap: null,
+            QProvinciaResidenza: null,
+            QTelefono: null,
+          };
+
+          dataSonModel.setProperty("/NewModalitaPagamentoEntity", obj);
+        },
+
+        onNewTipoFirmaChange: function (oEvent) {
+          var self = this,
+            dataSonModel = self.getView().getModel(DataSON_MODEL),
+            oController = sap.ui.getCore().byId(oEvent.getParameters().id),
+            selectedKey = oController.getSelectedKey();
+          dataSonModel.setProperty(
+            "/NewModalitaPagamentoEntity/TipoFirma",
+            selectedKey
+          );
+        },
+
+        getPayModeByLifnr: function (
+          lifnr,
+          zwels,
+          IsDistinct = false,
+          callback
+        ) {
+          var self = this,
+            oDataModel = self.getModel();
+          if (!lifnr || lifnr === null || lifnr === "") return false;
+
+          var filter = [];
+          filter.push(
+            new sap.ui.model.Filter(
+              "Lifnr",
+              sap.ui.model.FilterOperator.EQ,
+              lifnr
+            )
+          );
+          if (zwels !== "") {
+            filter.push(
+              new sap.ui.model.Filter(
+                "Zwels",
+                sap.ui.model.FilterOperator.EQ,
+                zwels
+              )
+            );
+          }
+
+          self
+            .getModel()
+            .metadataLoaded()
+            .then(function () {
+              oDataModel.read("/ZwelsListSet", {
+                async: true,
+                urlParameters: { IsDistinct: IsDistinct ? "X" : "" },
+                filters: filter,
+                success: function (data, oResponse) {
+                  console.log(data.results); //TODO:da canc
+                  return callback({ data: data.results, error: false });
+                },
+                error: function (error) {
+                  console.log(error);
+                  return callback({ data: error, error: true });
+                },
+              });
+            });
+        },
+
+        getTipoFirma: function (name) {
+          var self = this,
+            oDataModel = self.getModel(),
+            dataSonModel = self.getView().getModel(DataSON_MODEL);
+
+          self.getView().setBusy(true);
+          var filter = [self.setFilterEQWithKey("Name", name)];
+          self
+            .getModel()
+            .metadataLoaded()
+            .then(function () {
+              oDataModel.read("/ZtipofirmaMcSet", {
+                filters: filter,
+                success: function (data, oResponse) {
+                  self.getView().setBusy(false);
+                  dataSonModel.setProperty(
+                    "/NewPayModeTipoFirma",
+                    data.results
+                  );
+                },
+                error: function (error) {
+                  console.log(error);
+                  self.getView().setBusy(false);
+                },
+              });
+            });
+        },
+
+        _resetNewModalitaPagamentoButtons: function () {
+          var self = this;
           return {
-            MainMaskVisible:true,
-            VagliaMaskVisible:false,
-            QuietanzanteMaskVisible:false,
-            btnVagliaVisible:true,
-            btnQuietanzanteVisible:true,
-            IbanEnabled:false,
-            BicEnabled:false,
-            EsercizioEnabled:false,
-            ContoTesoreriaEnabled:false,
-            PaeseResidenzaEnabled:false,
-            CoordinateEstereEnabled:false,
-            CapoEnabled:false,
-            TipoFirmaEnabled:false,
-            CapitoloEnabled:false,
-            ArticoloEnabled:false,
-            btnVagliaEnabled:false,
-            btnQuietanzanteEnabled:false
+            MainMaskVisible: true,
+            VagliaMaskVisible: false,
+            QuietanzanteMaskVisible: false,
+            btnVagliaVisible: true,
+            btnQuietanzanteVisible: true,
+            IbanEnabled: false,
+            BicEnabled: false,
+            EsercizioEnabled: false,
+            ContoTesoreriaEnabled: false,
+            PaeseResidenzaEnabled: false,
+            CoordinateEstereEnabled: false,
+            CapoEnabled: false,
+            TipoFirmaEnabled: false,
+            CapitoloEnabled: false,
+            ArticoloEnabled: false,
+            btnVagliaEnabled: false,
+            btnQuietanzanteEnabled: false,
           };
         },
 
-        onNewVaglia:function(){
+        onNewVaglia: function () {
           var self = this,
-              dataSonModel = self.getView().getModel(DataSON_MODEL);  
+            dataSonModel = self.getView().getModel(DataSON_MODEL);
 
-          dataSonModel.setProperty("/NewPayModeButton/VagliaMaskVisible",true);
-          dataSonModel.setProperty("/NewPayModeButton/MainMaskVisible",false); 
-          dataSonModel.setProperty("/NewPayModeButton/btnVagliaVisible",false);
-          dataSonModel.setProperty("/NewPayModeButton/btnQuietanzanteVisible",false); 
+          dataSonModel.setProperty("/NewPayModeButton/VagliaMaskVisible", true);
+          dataSonModel.setProperty("/NewPayModeButton/MainMaskVisible", false);
+          dataSonModel.setProperty("/NewPayModeButton/btnVagliaVisible", false);
+          dataSonModel.setProperty(
+            "/NewPayModeButton/btnQuietanzanteVisible",
+            false
+          );
           return;
         },
 
-        onNewModalitaPagamentoSave:function(oEvent){
-          var self =this,
+        onNewModalitaPagamentoSave: function (oEvent) {
+          var self = this,
             exit = false,
             oDataModel = self.getModel(),
             oBundle = self.getResourceBundle(),
             dataSonModel = self.getView().getModel(DataSON_MODEL),
             wizardModel = self.getView().getModel(WIZARD_MODEL),
-            entity = !dataSonModel.getProperty("/NewModalitaPagamentoEntity") ? null : dataSonModel.getProperty("/NewModalitaPagamentoEntity");
-          
-          if(!entity || entity === null){
+            entity = !dataSonModel.getProperty("/NewModalitaPagamentoEntity")
+              ? null
+              : dataSonModel.getProperty("/NewModalitaPagamentoEntity");
+
+          if (!entity || entity === null) {
             return false;
           }
 
-          if(!entity.PayMode || entity.PayMode === "")
-            return false;
+          if (!entity.PayMode || entity.PayMode === "") return false;
 
-          var selectedItem = dataSonModel.getProperty("/NewModalitaPagamentoEntity/PayMode");
+          var selectedItem = dataSonModel.getProperty(
+            "/NewModalitaPagamentoEntity/PayMode"
+          );
 
-          switch(selectedItem){
-            case 'ID1':
-              if(!entity.TipoFirma || entity.TipoFirma === null || entity.TipoFirma === ""){
+          switch (selectedItem) {
+            case "ID1":
+              if (
+                !entity.TipoFirma ||
+                entity.TipoFirma === null ||
+                entity.TipoFirma === ""
+              ) {
                 exit = true;
                 sap.m.MessageBox.warning("Tipo firma obbligatorio", {
                   title: oBundle.getText("titleDialogWarning"),
-                  onClose: function (oAction) {}
-                });             
+                  onClose: function (oAction) {},
+                });
               }
 
-              if(entity.PayModeType === S_TYPE_2 && (entity.QNome === null || entity.QNome === "" || entity.QCognome === null || entity.QCognome === "") ){
+              if (
+                entity.PayModeType === S_TYPE_2 &&
+                (entity.QNome === null ||
+                  entity.QNome === "" ||
+                  entity.QCognome === null ||
+                  entity.QCognome === "")
+              ) {
                 exit = true;
-                sap.m.MessageBox.warning("Inserire almeno un quietanzante (Cognome e nome obbligatori)", {
-                  title: oBundle.getText("titleDialogWarning"),
-                  onClose: function (oAction) {}
-                });    
+                sap.m.MessageBox.warning(
+                  "Inserire almeno un quietanzante (Cognome e nome obbligatori)",
+                  {
+                    title: oBundle.getText("titleDialogWarning"),
+                    onClose: function (oAction) {},
+                  }
+                );
               }
               break;
-            case 'ID6':  
-              if(!entity.CoordinateEstere || entity.CoordinateEstere === null || entity.CoordinateEstere === ""){
+            case "ID6":
+              if (
+                !entity.CoordinateEstere ||
+                entity.CoordinateEstere === null ||
+                entity.CoordinateEstere === ""
+              ) {
                 exit = true;
                 sap.m.MessageBox.warning("Coordinate estere obbligatorio", {
                   title: oBundle.getText("titleDialogWarning"),
-                  onClose: function (oAction) {}
-                });             
+                  onClose: function (oAction) {},
+                });
               }
-              if(!entity.VCognome || entity.VCognome === null || entity.VCognome === "" ||
-                !entity.VNome || entity.VNome === null || entity.VNome === "" ||
-                !entity.VIndirizzo || entity.VIndirizzo === null || entity.VIndirizzo === "" ||
-                !entity.VCitta || entity.VCitta === null || entity.VCitta === "" ||
-                !entity.VCap || entity.VCap === null || entity.VCap === "" ||
-                !entity.VProvinciaResidenza || entity.VProvinciaResidenza === null || entity.VProvinciaResidenza === "" 
-              ){
+              if (
+                !entity.VCognome ||
+                entity.VCognome === null ||
+                entity.VCognome === "" ||
+                !entity.VNome ||
+                entity.VNome === null ||
+                entity.VNome === "" ||
+                !entity.VIndirizzo ||
+                entity.VIndirizzo === null ||
+                entity.VIndirizzo === "" ||
+                !entity.VCitta ||
+                entity.VCitta === null ||
+                entity.VCitta === "" ||
+                !entity.VCap ||
+                entity.VCap === null ||
+                entity.VCap === "" ||
+                !entity.VProvinciaResidenza ||
+                entity.VProvinciaResidenza === null ||
+                entity.VProvinciaResidenza === ""
+              ) {
                 exit = true;
-                sap.m.MessageBox.warning("Destinatario Vaglia: inserire i campi obbligatori", {
-                  title: oBundle.getText("titleDialogWarning"),
-                  onClose: function (oAction) {}
-                });             
+                sap.m.MessageBox.warning(
+                  "Destinatario Vaglia: inserire i campi obbligatori",
+                  {
+                    title: oBundle.getText("titleDialogWarning"),
+                    onClose: function (oAction) {},
+                  }
+                );
               }
 
             default:
               console.log("default");
-          }  
+          }
 
-          if(exit)
-            return;
-           
+          if (exit) return;
+
           self.getView().setBusy(true);
-          var entityRequest =self.getEntityModalitaPagamento(entity, wizardModel.getProperty("/Lifnr"));
+          var entityRequest = self.getEntityModalitaPagamento(
+            entity,
+            wizardModel.getProperty("/Lifnr")
+          );
           // var entityRequest = {
           //   Beneficiario: wizardModel.getProperty("/Lifnr"),
           //   ModPagamento:entity.PayMode,
-          //   TipoBeneficiario:entity.PayModeType, 
+          //   TipoBeneficiario:entity.PayModeType,
           //   DatiPagamento:{
-          //     Iban: entity.Iban ? entity.Iban : null, 
+          //     Iban: entity.Iban ? entity.Iban : null,
           //     PaeseResidenza: entity.PaeseResidenza ? entity.PaeseResidenza : null,
           //     TipoFirma: entity.TipoFirma ? entity.TipoFirma : null,
           //     Bic: entity.Bic ? entity.Bic : null,
@@ -2894,34 +3322,36 @@ sap.ui.define(
             success: function (data, oResponse) {
               self.getView().setBusy(false);
               var message = JSON.parse(oResponse.headers["sap-message"]);
-              if(message.severity === "error"){
+              if (message.severity === "error") {
                 sap.m.MessageBox.error(message.message, {
                   title: oBundle.getText("titleDialogError"),
                   onClose: function (oAction) {
                     return;
-                  }
-                });  
-              }
-              else{
+                  },
+                });
+              } else {
                 sap.m.MessageBox.success(message.message, {
                   title: oBundle.getText("titleDialogSuccess"),
                   onClose: function (oAction) {
-                    self.getModalitaPagamento(wizardModel.getProperty("/Lifnr"));
-                    setTimeout(() => {                
-                      self.fiilSedeBeneficiario(wizardModel.getProperty("/Lifnr"));
-                      wizardModel.setProperty("/PayMode",entity.PayMode);
+                    self.getModalitaPagamento(
+                      wizardModel.getProperty("/Lifnr")
+                    );
+                    setTimeout(() => {
+                      self.fiilSedeBeneficiario(
+                        wizardModel.getProperty("/Lifnr")
+                      );
+                      wizardModel.setProperty("/PayMode", entity.PayMode);
                       self.onCloseNewModalitaPagamento();
-                    },2000);
-                  }
-                });  
-
+                    }, 2000);
+                  },
+                });
               }
 
               console.log(data);
               console.log(oResponse);
             },
             error: function (err) {
-              console.log(err)
+              console.log(err);
               self.getView().setBusy(false);
             },
             async: true,
@@ -2929,390 +3359,554 @@ sap.ui.define(
           });
         },
 
-        onNewQuietanzante:function(){
+        onNewQuietanzante: function () {
           var self = this,
-              dataSonModel = self.getView().getModel(DataSON_MODEL);  
+            dataSonModel = self.getView().getModel(DataSON_MODEL);
 
-          dataSonModel.setProperty("/NewPayModeButton/QuietanzanteMaskVisible",true);
-          dataSonModel.setProperty("/NewPayModeButton/MainMaskVisible",false);
-          dataSonModel.setProperty("/NewPayModeButton/btnVagliaVisible",false);
-          dataSonModel.setProperty("/NewPayModeButton/btnQuietanzanteVisible",false);  
+          dataSonModel.setProperty(
+            "/NewPayModeButton/QuietanzanteMaskVisible",
+            true
+          );
+          dataSonModel.setProperty("/NewPayModeButton/MainMaskVisible", false);
+          dataSonModel.setProperty("/NewPayModeButton/btnVagliaVisible", false);
+          dataSonModel.setProperty(
+            "/NewPayModeButton/btnQuietanzanteVisible",
+            false
+          );
           return;
         },
 
         onCloseNewModalitaPagamento: function () {
-          var self = this,      
-              dataSonModel = self.getView().getModel(DataSON_MODEL);     
-          
-          if(dataSonModel.getData().NewPayModeButton.VagliaMaskVisible){
-            dataSonModel.setProperty("/NewPayModeButton/VagliaMaskVisible",false);
-            dataSonModel.setProperty("/NewPayModeButton/MainMaskVisible",true); 
-            dataSonModel.setProperty("/NewPayModeButton/btnVagliaVisible",true);
-            dataSonModel.setProperty("/NewPayModeButton/btnQuietanzanteVisible",true); 
-            return;
-          }    
+          var self = this,
+            dataSonModel = self.getView().getModel(DataSON_MODEL);
 
-          if(dataSonModel.getData().NewPayModeButton.QuietanzanteMaskVisible){
-            dataSonModel.setProperty("/NewPayModeButton/QuietanzanteMaskVisible",false);
-            dataSonModel.setProperty("/NewPayModeButton/MainMaskVisible",true); 
-            dataSonModel.setProperty("/NewPayModeButton/btnVagliaVisible",true);
-            dataSonModel.setProperty("/NewPayModeButton/btnQuietanzanteVisible",true); 
+          if (dataSonModel.getData().NewPayModeButton.VagliaMaskVisible) {
+            dataSonModel.setProperty(
+              "/NewPayModeButton/VagliaMaskVisible",
+              false
+            );
+            dataSonModel.setProperty("/NewPayModeButton/MainMaskVisible", true);
+            dataSonModel.setProperty(
+              "/NewPayModeButton/btnVagliaVisible",
+              true
+            );
+            dataSonModel.setProperty(
+              "/NewPayModeButton/btnQuietanzanteVisible",
+              true
+            );
             return;
-          } 
+          }
+
+          if (dataSonModel.getData().NewPayModeButton.QuietanzanteMaskVisible) {
+            dataSonModel.setProperty(
+              "/NewPayModeButton/QuietanzanteMaskVisible",
+              false
+            );
+            dataSonModel.setProperty("/NewPayModeButton/MainMaskVisible", true);
+            dataSonModel.setProperty(
+              "/NewPayModeButton/btnVagliaVisible",
+              true
+            );
+            dataSonModel.setProperty(
+              "/NewPayModeButton/btnQuietanzanteVisible",
+              true
+            );
+            return;
+          }
 
           dataSonModel.setProperty("/NewModalitaPagamentoEntity", null);
-          dataSonModel.setProperty("/NewPayMode",[]);  
-          dataSonModel.setProperty("/NewPayModeTipoFirma",[]);  
-          dataSonModel.setProperty("/NewPayModeButton",null); 
-          var oDialgoNewModalitaPagamento = sap.ui.getCore().byId("dlgNewModalitaPagamento");
+          dataSonModel.setProperty("/NewPayMode", []);
+          dataSonModel.setProperty("/NewPayModeTipoFirma", []);
+          dataSonModel.setProperty("/NewPayModeButton", null);
+          var oDialgoNewModalitaPagamento = sap.ui
+            .getCore()
+            .byId("dlgNewModalitaPagamento");
           oDialgoNewModalitaPagamento.close();
           self.getView().setBusy(false);
           self.closeDialog();
         },
 
-
         /* ANAGRAFICA BENEFICIARIO - START */
-        onCloseNewAnagraficaBeneficiario:function(oEvent){
-          var self= this,
-              dataSonModel = self.getView().getModel(DataSON_MODEL);  
+        onCloseNewAnagraficaBeneficiario: function (oEvent) {
+          var self = this,
+            dataSonModel = self.getView().getModel(DataSON_MODEL);
 
-          if(dataSonModel.getData().NewPayModeButton.VagliaMaskVisible){
-            dataSonModel.setProperty("/NewPayModeButton/VagliaMaskVisible",false);
-            dataSonModel.setProperty("/NewPayModeButton/MainMaskVisible",true); 
-            dataSonModel.setProperty("/NewPayModeButton/btnVagliaVisible",true);
-            dataSonModel.setProperty("/NewPayModeButton/btnQuietanzanteVisible",true); 
+          if (dataSonModel.getData().NewPayModeButton.VagliaMaskVisible) {
+            dataSonModel.setProperty(
+              "/NewPayModeButton/VagliaMaskVisible",
+              false
+            );
+            dataSonModel.setProperty("/NewPayModeButton/MainMaskVisible", true);
+            dataSonModel.setProperty(
+              "/NewPayModeButton/btnVagliaVisible",
+              true
+            );
+            dataSonModel.setProperty(
+              "/NewPayModeButton/btnQuietanzanteVisible",
+              true
+            );
             return;
-          }    
+          }
 
-          if(dataSonModel.getData().NewPayModeButton.QuietanzanteMaskVisible){
-            dataSonModel.setProperty("/NewPayModeButton/QuietanzanteMaskVisible",false);
-            dataSonModel.setProperty("/NewPayModeButton/MainMaskVisible",true); 
-            dataSonModel.setProperty("/NewPayModeButton/btnVagliaVisible",true);
-            dataSonModel.setProperty("/NewPayModeButton/btnQuietanzanteVisible",true); 
+          if (dataSonModel.getData().NewPayModeButton.QuietanzanteMaskVisible) {
+            dataSonModel.setProperty(
+              "/NewPayModeButton/QuietanzanteMaskVisible",
+              false
+            );
+            dataSonModel.setProperty("/NewPayModeButton/MainMaskVisible", true);
+            dataSonModel.setProperty(
+              "/NewPayModeButton/btnVagliaVisible",
+              true
+            );
+            dataSonModel.setProperty(
+              "/NewPayModeButton/btnQuietanzanteVisible",
+              true
+            );
             return;
-          } 
+          }
           dataSonModel.setProperty("/NewModalitaPagamentoEntity", null);
-          dataSonModel.setProperty("/NewPayMode",[]);  
-          dataSonModel.setProperty("/NewPayModeTipoFirma",[]);  
-          dataSonModel.setProperty("/NewPayModeButton",null); 
-          dataSonModel.setProperty("/NewABLifnr",null); 
+          dataSonModel.setProperty("/NewPayMode", []);
+          dataSonModel.setProperty("/NewPayModeTipoFirma", []);
+          dataSonModel.setProperty("/NewPayModeButton", null);
+          dataSonModel.setProperty("/NewABLifnr", null);
           var oDialog = sap.ui.getCore().byId("dlgNewAnagraficaBeneficiario");
           oDialog.close();
           self.getView().setBusy(false);
           self.closeDialog();
         },
 
-        validateModalitaPagamento:function(entity){
-          var self =this,
-              dataSonModel = self.getView().getModel(DataSON_MODEL);
+        validateModalitaPagamento: function (entity) {
+          var self = this,
+            dataSonModel = self.getView().getModel(DataSON_MODEL);
 
-          var selectedItem = dataSonModel.getProperty("/NewModalitaPagamentoEntity/PayMode");
-          switch(selectedItem){
-            case 'ID1':
-              if(!entity.TipoFirma || entity.TipoFirma === null || entity.TipoFirma === ""){
-                return ({success:false,message:"Tipo firma obbligatorio"});
+          var selectedItem = dataSonModel.getProperty(
+            "/NewModalitaPagamentoEntity/PayMode"
+          );
+          switch (selectedItem) {
+            case "ID1":
+              if (
+                !entity.TipoFirma ||
+                entity.TipoFirma === null ||
+                entity.TipoFirma === ""
+              ) {
+                return { success: false, message: "Tipo firma obbligatorio" };
               }
 
-              if(entity.PayModeType === S_TYPE_2 && (entity.QNome === null || entity.QNome === "" || entity.QCognome === null || entity.QCognome === "") ){
-                return ({success:false,message:"Inserire almeno un quietanzante (Cognome e nome obbligatori)"});                  
+              if (
+                entity.PayModeType === S_TYPE_2 &&
+                (entity.QNome === null ||
+                  entity.QNome === "" ||
+                  entity.QCognome === null ||
+                  entity.QCognome === "")
+              ) {
+                return {
+                  success: false,
+                  message:
+                    "Inserire almeno un quietanzante (Cognome e nome obbligatori)",
+                };
               }
               break;
-            case 'ID6':  
-              if(!entity.CoordinateEstere || entity.CoordinateEstere === null || entity.CoordinateEstere === ""){
-                return ({success:false,message:"Coordinate estere obbligatorio"}); 
+            case "ID6":
+              if (
+                !entity.CoordinateEstere ||
+                entity.CoordinateEstere === null ||
+                entity.CoordinateEstere === ""
+              ) {
+                return {
+                  success: false,
+                  message: "Coordinate estere obbligatorio",
+                };
               }
-              if(!entity.VCognome || entity.VCognome === null || entity.VCognome === "" ||
-                !entity.VNome || entity.VNome === null || entity.VNome === "" ||
-                !entity.VIndirizzo || entity.VIndirizzo === null || entity.VIndirizzo === "" ||
-                !entity.VCitta || entity.VCitta === null || entity.VCitta === "" ||
-                !entity.VCap || entity.VCap === null || entity.VCap === "" ||
-                !entity.VProvinciaResidenza || entity.VProvinciaResidenza === null || entity.VProvinciaResidenza === "" 
-              ){
-                return ({success:false,message:"Destinatario Vaglia: inserire i campi obbligatori"});
+              if (
+                !entity.VCognome ||
+                entity.VCognome === null ||
+                entity.VCognome === "" ||
+                !entity.VNome ||
+                entity.VNome === null ||
+                entity.VNome === "" ||
+                !entity.VIndirizzo ||
+                entity.VIndirizzo === null ||
+                entity.VIndirizzo === "" ||
+                !entity.VCitta ||
+                entity.VCitta === null ||
+                entity.VCitta === "" ||
+                !entity.VCap ||
+                entity.VCap === null ||
+                entity.VCap === "" ||
+                !entity.VProvinciaResidenza ||
+                entity.VProvinciaResidenza === null ||
+                entity.VProvinciaResidenza === ""
+              ) {
+                return {
+                  success: false,
+                  message: "Destinatario Vaglia: inserire i campi obbligatori",
+                };
               }
             default:
               console.log("default");
           }
-          return ({success:true});  
+          return { success: true };
         },
 
-        ktm:function(oEvent){
-          var self =this;
+        ktm: function (oEvent) {
+          var self = this;
         },
 
-        onNewAnagraficaBeneficiarioSave:function(oEvent){
-          var self =this,
-            oBundle=self.getResourceBundle(),
-            dataSonModel= self.getView().getModel(DataSON_MODEL),
-            entity = !dataSonModel.getProperty("/NewModalitaPagamentoEntity") ? null : dataSonModel.getProperty("/NewModalitaPagamentoEntity"),
-            form = self.getView().getModel(DataSON_MODEL).getProperty("/NewAB/Form");
+        onNewAnagraficaBeneficiarioSave: function (oEvent) {
+          var self = this,
+            oBundle = self.getResourceBundle(),
+            dataSonModel = self.getView().getModel(DataSON_MODEL),
+            entity = !dataSonModel.getProperty("/NewModalitaPagamentoEntity")
+              ? null
+              : dataSonModel.getProperty("/NewModalitaPagamentoEntity"),
+            form = self
+              .getView()
+              .getModel(DataSON_MODEL)
+              .getProperty("/NewAB/Form");
 
-            // DataModel>/NewAB/Form/SedeLegale
-            // ;
+          // DataModel>/NewAB/Form/SedeLegale
+          // ;
 
-          if(!entity || entity === null || !entity.PayMode || entity.PayMode === ""){
+          if (
+            !entity ||
+            entity === null ||
+            !entity.PayMode ||
+            entity.PayMode === ""
+          ) {
             sap.m.MessageBox.error("Modalità di pagamento obbligatoria", {
               title: oBundle.getText("titleDialogWarning"),
               onClose: function (oAction) {
                 return;
-              }
-            });  
+              },
+            });
             return;
           }
 
           var validate = self.validateModalitaPagamento(entity);
-          if(!validate.success){
+          if (!validate.success) {
             sap.m.MessageBox.error(validate.message, {
               title: oBundle.getText("titleDialogWarning"),
               onClose: function (oAction) {
                 return;
-              }
-            });  
+              },
+            });
             return;
           }
 
           self.getView().setBusy(true);
 
-          var benx = self.getView().getModel(DataSON_MODEL).getProperty("/NewABLifnr") && 
-                    self.getView().getModel(DataSON_MODEL).getProperty("/NewABLifnr") !==null &&
-                    self.getView().getModel(DataSON_MODEL).getProperty("/NewABLifnr") !== "" ? 
-                    self.getView().getModel(DataSON_MODEL).getProperty("/NewABLifnr") : "FITTIZIO";
+          var benx =
+            self.getView().getModel(DataSON_MODEL).getProperty("/NewABLifnr") &&
+            self
+              .getView()
+              .getModel(DataSON_MODEL)
+              .getProperty("/NewABLifnr") !== null &&
+            self
+              .getView()
+              .getModel(DataSON_MODEL)
+              .getProperty("/NewABLifnr") !== ""
+              ? self
+                  .getView()
+                  .getModel(DataSON_MODEL)
+                  .getProperty("/NewABLifnr")
+              : "FITTIZIO";
 
-          var anagraficaBeneficiario={
-            Beneficiario: benx, 
+          var anagraficaBeneficiario = {
+            Beneficiario: benx,
             Paese: form.PaeseCode,
-            Categoria:form.CategoriaBeneficiario,
-            RagioneSociale:form.RagioneSociale,
-            Nome:form.Nome,
-            Cognome:form.Cognome,
-            Via:form.Via,
-            NumeroCivico:form.Civico,
-            Localita:form.Localita,
-            Provincia:form.ProvinciaCode,
-            Cap:form.Cap,
-            SedeLegale: form.SedeLegale ? 'X' : "",
-            CodiceFiscale:form.CodiceFiscale,
-            PartitaIva:form.PartitaIva,
-            IdFiscaleEstero:form.IdentificativoFiscaleEstero,
-            BypassSife:null
+            Categoria: form.CategoriaBeneficiario,
+            RagioneSociale: form.RagioneSociale,
+            Nome: form.Nome,
+            Cognome: form.Cognome,
+            Via: form.Via,
+            NumeroCivico: form.Civico,
+            Localita: form.Localita,
+            Provincia: form.ProvinciaCode,
+            Cap: form.Cap,
+            SedeLegale: form.SedeLegale ? "X" : "",
+            CodiceFiscale: form.CodiceFiscale,
+            PartitaIva: form.PartitaIva,
+            IdFiscaleEstero: form.IdentificativoFiscaleEstero,
+            BypassSife: null,
           };
 
           console.log(anagraficaBeneficiario); //TODO:da canc
-          self._callSaveOnAnagraficaBeneficiario(anagraficaBeneficiario, function(callback){
-            if(!callback.success){
-              // C'è STATO UN PROBLEMA
-              console.log(callback.message);//TODO:da canc
-              self.getView().setBusy(false);
-              sap.m.MessageBox.error(callback.message, {
-                title: oBundle.getText("titleDialogError"),
-                onClose: function (oAction) {
-                  return;
-                }
-              });  
-            }
-            else{
-              if(callback.SifeKO){
-                // OK MA ERRORE SIFE
-                entityRequest.BypassSife = 'X';
-                self._callSaveOnAnagraficaBeneficiario(entityRequest, function(callback){
-                  if(!callback.success){
-                    self.getView().setBusy(false);
-                    console.log(callback.message);//TODO:da canc
-                    sap.m.MessageBox.error(callback.message, {
-                      title: oBundle.getText("titleDialogError"),
-                      onClose: function (oAction) {
-                        return;
-                      }
-                    });  
-                  }
-                  else{
-                    //dovrebbe essere andato tutto ok
-                    self.getView().setBusy(false);
-                    console.log(callback.message);
-                    switch(callback.severity){
-                      case 'Error':
+          self._callSaveOnAnagraficaBeneficiario(
+            anagraficaBeneficiario,
+            function (callback) {
+              if (!callback.success) {
+                // C'è STATO UN PROBLEMA
+                console.log(callback.message); //TODO:da canc
+                self.getView().setBusy(false);
+                sap.m.MessageBox.error(callback.message, {
+                  title: oBundle.getText("titleDialogError"),
+                  onClose: function (oAction) {
+                    return;
+                  },
+                });
+              } else {
+                if (callback.SifeKO) {
+                  // OK MA ERRORE SIFE
+                  entityRequest.BypassSife = "X";
+                  self._callSaveOnAnagraficaBeneficiario(
+                    entityRequest,
+                    function (callback) {
+                      if (!callback.success) {
+                        self.getView().setBusy(false);
+                        console.log(callback.message); //TODO:da canc
                         sap.m.MessageBox.error(callback.message, {
                           title: oBundle.getText("titleDialogError"),
                           onClose: function (oAction) {
                             return;
-                          }
-                        });  
-                        break;
-                      case 'Warning':
-                        sap.m.MessageBox.warning(callback.message, {
-                          title: oBundle.getText("titleDialogWarning"),
-                          onClose: function (oAction) {
-                            return;
-                          }
-                        }); 
-                        break;
-                      case 'Success':
-                        sap.m.MessageBox.success(callback.message, {
-                          title: oBundle.getText("titleDialogSuccess"),
-                          onClose: function (oAction) {
-                            return;
-                          }
-                        }); 
-                        break;
-                    };
+                          },
+                        });
+                      } else {
+                        //dovrebbe essere andato tutto ok
+                        self.getView().setBusy(false);
+                        console.log(callback.message);
+                        switch (callback.severity) {
+                          case "Error":
+                            sap.m.MessageBox.error(callback.message, {
+                              title: oBundle.getText("titleDialogError"),
+                              onClose: function (oAction) {
+                                return;
+                              },
+                            });
+                            break;
+                          case "Warning":
+                            sap.m.MessageBox.warning(callback.message, {
+                              title: oBundle.getText("titleDialogWarning"),
+                              onClose: function (oAction) {
+                                return;
+                              },
+                            });
+                            break;
+                          case "Success":
+                            sap.m.MessageBox.success(callback.message, {
+                              title: oBundle.getText("titleDialogSuccess"),
+                              onClose: function (oAction) {
+                                return;
+                              },
+                            });
+                            break;
+                        }
+                      }
+                    }
+                  );
+                } else {
+                  // dovrebbe essere andato tutto ok
+                  self.getView().setBusy(false);
+                  console.log(callback.message); //TODO:da canc
+                  switch (callback.severity) {
+                    case "Error":
+                      sap.m.MessageBox.error(callback.message, {
+                        title: oBundle.getText("titleDialogError"),
+                        onClose: function (oAction) {
+                          return;
+                        },
+                      });
+                      break;
+                    case "Warning":
+                      sap.m.MessageBox.warning(callback.message, {
+                        title: oBundle.getText("titleDialogWarning"),
+                        onClose: function (oAction) {
+                          return;
+                        },
+                      });
+                      break;
+                    case "Success":
+                      sap.m.MessageBox.success(callback.message, {
+                        title: oBundle.getText("titleDialogSuccess"),
+                        onClose: function (oAction) {
+                          return;
+                        },
+                      });
+                      break;
                   }
-                
-                });              
+                }
               }
-              else{
-                // dovrebbe essere andato tutto ok
-                self.getView().setBusy(false);
-                console.log(callback.message);//TODO:da canc
-                switch(callback.severity){
-                  case 'Error':
-                    sap.m.MessageBox.error(callback.message, {
-                      title: oBundle.getText("titleDialogError"),
-                      onClose: function (oAction) {
-                        return;
-                      }
-                    });  
-                    break;
-                  case 'Warning':
-                    sap.m.MessageBox.warning(callback.message, {
-                      title: oBundle.getText("titleDialogWarning"),
-                      onClose: function (oAction) {
-                        return;
-                      }
-                    }); 
-                    break;
-                  case 'Success':
-                    sap.m.MessageBox.success(callback.message, {
-                      title: oBundle.getText("titleDialogSuccess"),
-                      onClose: function (oAction) {
-                        return;
-                      }
-                    }); 
-                    break;
-                };
-              }
-            } 
-           
-          });        
+            }
+          );
         },
 
-        _callSaveOnAnagraficaBeneficiario:function(entityRequest,callback){
-          var self =this,
-              oDataModel =self.getModel();
+        _callSaveOnAnagraficaBeneficiario: function (entityRequest, callback) {
+          var self = this,
+            oDataModel = self.getModel();
 
-            oDataModel.create("/AnagraficaBeneficiarioSet", entityRequest, {
-              success: function (data, oResponse) {
-                var sapMessage = JSON.parse(oResponse.headers["sap-message"]);
-                if(sapMessage.severity.toUpperCase() === "WARNING")
-                  callback({success:true, SifeKO:true, message:sapMessage.message});
-                else if(sapMessage.severity.toUpperCase() === "ERROR")  
-                  callback({success:false, message:sapMessage.message});
-                else{
-                  if(data.Beneficiario !== ""){
-                    self.getView().getModel(DataSON_MODEL).setProperty("/NewABLifnr",data.beneficiario);
-                    var mex = "Benificiario " + data.Beneficiario.ToString() + " creato correttamente!";
-                    var entityModalitaPagamento = self.getEntityModalitaPagamento(entity, data.Beneficiario);
-                    oDataModel.create("/ModalitaPagamentoSet", entityModalitaPagamento, {
+          oDataModel.create("/AnagraficaBeneficiarioSet", entityRequest, {
+            success: function (data, oResponse) {
+              var sapMessage = JSON.parse(oResponse.headers["sap-message"]);
+              if (sapMessage.severity.toUpperCase() === "WARNING")
+                callback({
+                  success: true,
+                  SifeKO: true,
+                  message: sapMessage.message,
+                });
+              else if (sapMessage.severity.toUpperCase() === "ERROR")
+                callback({ success: false, message: sapMessage.message });
+              else {
+                if (data.Beneficiario !== "") {
+                  self
+                    .getView()
+                    .getModel(DataSON_MODEL)
+                    .setProperty("/NewABLifnr", data.beneficiario);
+                  var mex =
+                    "Benificiario " +
+                    data.Beneficiario.ToString() +
+                    " creato correttamente!";
+                  var entityModalitaPagamento = self.getEntityModalitaPagamento(
+                    entity,
+                    data.Beneficiario
+                  );
+                  oDataModel.create(
+                    "/ModalitaPagamentoSet",
+                    entityModalitaPagamento,
+                    {
                       success: function (data, oResponse) {
-                        var message = JSON.parse(oResponse.headers["sap-message"]);
-                        if(message.severity === "error"){
-                          mex = mex + "\nCreazione modalità di pagamento non riuscita!";
-                          callback({success:true, message:mex, severity:"Warning"});
-                        }
-                        else{
-                          mex = mex + "\nModalità di pagamento creata correttamente";
-                          callback({success:true, message:mex, severity:"Success"});
+                        var message = JSON.parse(
+                          oResponse.headers["sap-message"]
+                        );
+                        if (message.severity === "error") {
+                          mex =
+                            mex +
+                            "\nCreazione modalità di pagamento non riuscita!";
+                          callback({
+                            success: true,
+                            message: mex,
+                            severity: "Warning",
+                          });
+                        } else {
+                          mex =
+                            mex +
+                            "\nModalità di pagamento creata correttamente";
+                          callback({
+                            success: true,
+                            message: mex,
+                            severity: "Success",
+                          });
                         }
                       },
                       error: function (err) {
-                        console.log(err)//TODO:da canc
+                        console.log(err); //TODO:da canc
                         mex = mex + "\nErrore nella modalità di pagamento!";
-                        callback({success:true, message:mex, severity:"Error"});
+                        callback({
+                          success: true,
+                          message: mex,
+                          severity: "Error",
+                        });
                       },
-                      async: true
-                    });
-                  }
+                      async: true,
+                    }
+                  );
                 }
-              },
-              error: function (err) {
-                console.log(err);
-                // self.getView().setBusy(false);
-              },
-              async: true
-            });
+              }
+            },
+            error: function (err) {
+              console.log(err);
+              // self.getView().setBusy(false);
+            },
+            async: true,
+          });
         },
 
-        getEntityModalitaPagamento(entity, lifnr){
-          var self=this;
+        getEntityModalitaPagamento(entity, lifnr) {
+          var self = this;
           return {
             Beneficiario: lifnr,
-            ModPagamento:entity.PayMode,
-            TipoBeneficiario:entity.PayModeType, 
-            DatiPagamento:{
-              Iban: entity.Iban ? entity.Iban : null, 
-              PaeseResidenza: entity.PaeseResidenza ? entity.PaeseResidenza : null,
+            ModPagamento: entity.PayMode,
+            TipoBeneficiario: entity.PayModeType,
+            DatiPagamento: {
+              Iban: entity.Iban ? entity.Iban : null,
+              PaeseResidenza: entity.PaeseResidenza
+                ? entity.PaeseResidenza
+                : null,
               TipoFirma: entity.TipoFirma ? entity.TipoFirma : null,
               Bic: entity.Bic ? entity.Bic : null,
-              CoordinateEstere: entity.CoordinateEstere ? entity.CoordinateEstere : null,
-              InizioValidita: entity.InizioValidita ? self.formatter.formateDateForDeep(entity.InizioValidita): null,
-              FineValidita: entity.FineValidita ? self.formatter.formateDateForDeep(entity.FineValidita): null,
+              CoordinateEstere: entity.CoordinateEstere
+                ? entity.CoordinateEstere
+                : null,
+              InizioValidita: entity.InizioValidita
+                ? self.formatter.formateDateForDeep(entity.InizioValidita)
+                : null,
+              FineValidita: entity.FineValidita
+                ? self.formatter.formateDateForDeep(entity.FineValidita)
+                : null,
               Esercizio: entity.Esercizio ? entity.Esercizio : null,
               Capo: entity.Capo ? entity.Capo : null,
               Capitolo: entity.Capitolo ? entity.Capitolo : null,
               Articolo: entity.Articolo ? entity.Articolo : null,
             },
-            Quietanzante:{
+            Quietanzante: {
               Nome: entity.QNome ? entity.QNome : null,
               Cognome: entity.QCognome ? entity.QCognome : null,
               Qualifica: entity.QQualifica ? entity.QQualifica : null,
-              CodiceFiscale: entity.QCodiceFiscale ? entity.QCodiceFiscale : null,
-              DataNascita: entity.QDataNascita ? self.formatter.formateDateForDeep(entity.QDataNascita): null,
+              CodiceFiscale: entity.QCodiceFiscale
+                ? entity.QCodiceFiscale
+                : null,
+              DataNascita: entity.QDataNascita
+                ? self.formatter.formateDateForDeep(entity.QDataNascita)
+                : null,
               LuogoNascita: entity.QLuogoNascita ? entity.QLuogoNascita : null,
-              ProvinciaNascita: entity.QProvinciaNascita ? entity.QProvinciaNascita : null,
+              ProvinciaNascita: entity.QProvinciaNascita
+                ? entity.QProvinciaNascita
+                : null,
               Indirizzo: entity.QIndirizzo ? entity.QIndirizzo : null,
               Citta: entity.QCitta ? entity.QCitta : null,
               Cap: entity.QCap ? entity.QCap : null,
-              ProvinciaResidenza: entity.QProvinciaResidenza ? entity.QProvinciaResidenza : null,
-              Telefono: entity.QTelefono ? entity.QTelefono : null
+              ProvinciaResidenza: entity.QProvinciaResidenza
+                ? entity.QProvinciaResidenza
+                : null,
+              Telefono: entity.QTelefono ? entity.QTelefono : null,
             },
-            DestinatarioVaglia:{
+            DestinatarioVaglia: {
               Nome: entity.VNome ? entity.VNome : null,
               Cognome: entity.VCognome ? entity.VCognome : null,
               Qualifica: entity.VQualifica ? entity.VQualifica : null,
-              CodiceFiscale: entity.VCodiceFiscale ? entity.VCodiceFiscale : null,
-              DataNascita: entity.VDataNascita ? self.formatter.formateDateForDeep(entity.VDataNascita): null,
+              CodiceFiscale: entity.VCodiceFiscale
+                ? entity.VCodiceFiscale
+                : null,
+              DataNascita: entity.VDataNascita
+                ? self.formatter.formateDateForDeep(entity.VDataNascita)
+                : null,
               LuogoNascita: entity.VLuogoNascita ? entity.VLuogoNascita : null,
-              ProvinciaNascita: entity.VProvinciaNascita ? entity.VProvinciaNascita : null,
+              ProvinciaNascita: entity.VProvinciaNascita
+                ? entity.VProvinciaNascita
+                : null,
               Indirizzo: entity.VIndirizzo ? entity.QIndirizzo : null,
               Citta: entity.VCitta ? entity.VCitta : null,
               Cap: entity.VCap ? entity.VCap : null,
-              ProvinciaResidenza: entity.VProvinciaResidenza ? entity.VProvinciaResidenza : null,
-              Telefono: entity.VTelefono ? entity.VTelefono : null
-            }
-          }
+              ProvinciaResidenza: entity.VProvinciaResidenza
+                ? entity.VProvinciaResidenza
+                : null,
+              Telefono: entity.VTelefono ? entity.VTelefono : null,
+            },
+          };
         },
 
         /* ANAGRAFICA BENEFICIARIO - END */
 
-        strutturaAmministrativaLiveChangeHeaderActionModel:function(oEvent){
+        strutturaAmministrativaLiveChangeHeaderActionModel: function (oEvent) {
           var self = this;
-          self.getView().getModel("headerActionModel").setProperty("/Zcdr",oEvent.getParameters().value);
+          self
+            .getView()
+            .getModel("headerActionModel")
+            .setProperty("/Zcdr", oEvent.getParameters().value);
         },
-        
-        
+
         /*REFactoring */
-        loadWizardModel(){
+        loadWizardModel() {
           return {
-            btnBackVisible:false,
-            btnNextVisible:true,
-            btnFinishVisible:false,
+            btnBackVisible: false,
+            btnNextVisible: true,
+            btnFinishVisible: false,
             isInChange: false,
             Step3TableTitle: null,
-            Bukrs:null,
-            Zchiavesop:null,
-            Ztipososp:null,
-            Zstep:null,
-            Zzamministr:null,
-            Zchiaveopi:null,
+            Bukrs: null,
+            Zchiavesop: null,
+            Ztipososp: null,
+            Zstep: null,
+            Zzamministr: null,
+            Zchiaveopi: null,
             //step4
             ZE2e: null,
             Zcausale: null,
@@ -3366,63 +3960,63 @@ sap.ui.define(
             Iban: null,
             Zcoordest: null,
             isZcoordestEditable: false,
-            isZZcausalevalEditable:false,
-            isIbanEditable:false,
-            isBicEditable:false,
+            isZZcausalevalEditable: false,
+            isIbanEditable: false,
+            isBicEditable: false,
             Swift: null,
             PayMode: null,
             ZZcausaleval: null,
-            Zwels:null,
-            ZCausaleval:null,
-            Zflagfrutt:null,
-            Zpurpose:null,
-            Zalias:null,
+            Zwels: null,
+            ZCausaleval: null,
+            Zflagfrutt: null,
+            Zpurpose: null,
+            Zalias: null,
 
             //sezione Versante
-            Zcodprov:null,
-            Zcodvers:null,
-            Zcfcommit:null,                                    
-            Zcfvers:null,                                           
-            Zcodtrib:null,                                          
-            Zperiodrifda:null,                                      
-            Zperiodrifa:null,                                       
-            Zcodinps:null,                                          
-            Zdescvers:null,                                         
-            Zdatavers:null,                                         
-            Zsedevers:null,                                         
-            Zprovvers:null,                                         
+            Zcodprov: null,
+            Zcodvers: null,
+            Zcfcommit: null,
+            Zcfvers: null,
+            Zcodtrib: null,
+            Zperiodrifda: null,
+            Zperiodrifa: null,
+            Zcodinps: null,
+            Zdescvers: null,
+            Zdatavers: null,
+            Zsedevers: null,
+            Zprovvers: null,
 
-            //Banca Accredito  
-            Ziban_b:null,
-            Zbic_b:null,                                            
-            Zcoordest_b:null,                                       
-            Zdenbanca_b:null,                                       
-            Zclearsyst_b :null,                                     
-            Stras_b:null,                                          
-            Zcivico_b:null,                                         
-            Ort01_b:null,                                           
-            Regio_b:null,                                           
-            Pstlz_b:null,                                           
-            Land1_b:null,                                           
+            //Banca Accredito
+            Ziban_b: null,
+            Zbic_b: null,
+            Zcoordest_b: null,
+            Zdenbanca_b: null,
+            Zclearsyst_b: null,
+            Stras_b: null,
+            Zcivico_b: null,
+            Ort01_b: null,
+            Regio_b: null,
+            Pstlz_b: null,
+            Land1_b: null,
 
             //Intermediario1
-            Ziban_i:null,                                           
-            Zbic_i:null,                                            
-            Zcoordest_i:null,                                       
-            Zdenbanca_i:null,                                       
-            Zclearsyst_i:null,                                      
-            Zstras_i:null,                                          
-            Zcivico_i:null,                                         
-            Zort01_i:null,                                          
-            Zregio_i:null,                                          
-            Zpstlz_i:null,                                          
-            Zland1_i:null, 
+            Ziban_i: null,
+            Zbic_i: null,
+            Zcoordest_i: null,
+            Zdenbanca_i: null,
+            Zclearsyst_i: null,
+            Zstras_i: null,
+            Zcivico_i: null,
+            Zort01_i: null,
+            Zregio_i: null,
+            Zpstlz_i: null,
+            Zland1_i: null,
           };
         },
 
-        loadDataSONModel:function(){
+        loadDataSONModel: function () {
           return {
-            ZstatoSop:null,
+            ZstatoSop: null,
             Gjahr: null,
             ZufficioCont: null,
             Zdesctipodisp3: null,
@@ -3440,23 +4034,38 @@ sap.ui.define(
             ZimptotDivisa: null,
             TaxnumCf: null,
             Zzamministr: null,
-            PayMode:[],
-            NewPayMode:[],
-            FlagFruttifero:[]
-          }; 
+            PayMode: [],
+            NewPayMode: [],
+            FlagFruttifero: [],
+          };
         },
 
-        resetWizardModel:function(){
+        resetWizardModel: function () {
           var self = this;
-          self.getView().getModel(WIZARD_MODEL).setProperty("/isInChange", false);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Step3TableTitle", null);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/isInChange", false);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Step3TableTitle", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/Bukrs", null);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zchiavesop", null);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zstep",null);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Ztipososp",null);  
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zzamministr",null);  
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zchiaveopi",null);              
-                    
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Zchiavesop", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zstep", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Ztipososp", null);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Zzamministr", null);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Zchiaveopi", null);
+
           //step4
           self.getView().getModel(WIZARD_MODEL).setProperty("/ZE2e", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/Zcausale", null);
@@ -3465,23 +4074,44 @@ sap.ui.define(
           self.getView().getModel(WIZARD_MODEL).setProperty("/Zlocpag", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/Zzonaint", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/StrasList", null);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/FirstKeyStras", null);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/FirstKeyStras", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/Zidsede", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/Ort01", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/Regio", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/Pstlz", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/Land1", null);
           //step3
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zimptotcos", null);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Zimptotcos", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/Zimpcos", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/Zcos", null);
           //step1
           self.getView().getModel(WIZARD_MODEL).setProperty("/Gjahr", null);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/ZufficioCont", null);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/ZvimDescrufficio", null);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zdesctipodisp3", null);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Ztipodisp3", null);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Ztipodisp3List", null);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/ZufficioCont", null);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/ZvimDescrufficio", null);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Zdesctipodisp3", null);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Ztipodisp3", null);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Ztipodisp3List", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/FiposList", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/Fipos", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/Fistl", null);
@@ -3490,7 +4120,10 @@ sap.ui.define(
           self.getView().getModel(WIZARD_MODEL).setProperty("/Skat", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/Saknr", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/Zimptot", null);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/ZimptotDivisa", null);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/ZimptotDivisa", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/Trbtr", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/Twaer", null);
           //step2
@@ -3502,88 +4135,144 @@ sap.ui.define(
           self.getView().getModel(WIZARD_MODEL).setProperty("/Type", true); //radio btn
           self.getView().getModel(WIZARD_MODEL).setProperty("/Taxnumxl", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/NameLast", null);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/TaxnumPiva", null);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zdenominazione", null);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/TaxnumPiva", null);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Zdenominazione", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/Banks", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/Iban", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/Zcoordest", null);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/isZcoordestEditable", false);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/isZZcausalevalEditable", false);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/isIbanEditable", false);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/isBicEditable", false);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/isZcoordestEditable", false);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/isZZcausalevalEditable", false);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/isIbanEditable", false);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/isBicEditable", false);
           self.getView().getModel(WIZARD_MODEL).setProperty("/Swift", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/PayMode", null);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/ZZcausaleval", null);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zwels",null);  
-          self.getView().getModel(WIZARD_MODEL).setProperty("/ZCausaleval",null);  
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/ZZcausaleval", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zwels", null);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/ZCausaleval", null);
 
           //nuovi Modalità pagamento
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zalias",null); 
-          self.getView().getModel(WIZARD_MODEL).setProperty("/AccTypeId",null); 
-          self.getView().getModel(WIZARD_MODEL).setProperty("/RegioSosp",null); 
-          self.getView().getModel(WIZARD_MODEL).setProperty("/ZaccText",null); 
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zzposfinent",null); 
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zpurpose",null); 
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcausben",null); 
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zflagfrutt",null); 
-          
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zalias", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/AccTypeId", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/RegioSosp", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/ZaccText", null);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Zzposfinent", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zpurpose", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcausben", null);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Zflagfrutt", null);
+
           //sezione Versante
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcodprov",null);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcodvers",null);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcfcommit",null);                                    
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcfvers",null);                                           
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcodtrib",null);                                          
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zperiodrifda",null);                                      
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zperiodrifa",null);                                       
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcodinps",null);                                          
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zdescvers",null);                                         
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zdatavers",null);                                         
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zsedevers",null);                                         
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zprovvers",null);                                         
-                                    
-          //Banca Accredito                                  
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Ziban_b",null);
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zbic_b",null);                                            
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcoordest_b",null);                                       
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zdenbanca_b",null);                                       
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zclearsyst_b ",null);                                     
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Stras_b",null);                                          
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcivico_b",null);                                         
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Ort01_b",null);                                           
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Regio_b",null);                                           
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Pstlz_b",null);                                           
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Land1_b",null);                                           
-                                    
-          //Intermediario1                                   
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Ziban_i",null);                                           
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zbic_i",null);                                            
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcoordest_i",null);                                       
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zdenbanca_i",null);                                       
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zclearsyst_i",null);                                      
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zstras_i",null);                                          
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcivico_i",null);                                         
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zort01_i",null);                                          
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zregio_i",null);                                          
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zpstlz_i",null);                                          
-          self.getView().getModel(WIZARD_MODEL).setProperty("/Zland1_i",null);
-          
-          var idWizardZdesctipodisp3 = self.getView().byId("idWizardZdesctipodisp3");
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcodprov", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcodvers", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcfcommit", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcfvers", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcodtrib", null);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Zperiodrifda", null);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Zperiodrifa", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcodinps", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zdescvers", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zdatavers", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zsedevers", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zprovvers", null);
+
+          //Banca Accredito
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Ziban_b", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zbic_b", null);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Zcoordest_b", null);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Zdenbanca_b", null);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Zclearsyst_b ", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Stras_b", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcivico_b", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Ort01_b", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Regio_b", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Pstlz_b", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Land1_b", null);
+
+          //Intermediario1
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Ziban_i", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zbic_i", null);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Zcoordest_i", null);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Zdenbanca_i", null);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/Zclearsyst_i", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zstras_i", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zcivico_i", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zort01_i", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zregio_i", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zpstlz_i", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zland1_i", null);
+
+          var idWizardZdesctipodisp3 = self
+            .getView()
+            .byId("idWizardZdesctipodisp3");
           var idWizardFipos = self.getView().byId("idWizardFipos");
           var idWizardStras = self.getView().byId("idWizardStras");
-          if(idWizardZdesctipodisp3){
+          if (idWizardZdesctipodisp3) {
             idWizardZdesctipodisp3.setSelectedKey("");
           }
-          if(idWizardFipos){
+          if (idWizardFipos) {
             idWizardFipos.setSelectedKey("");
           }
-          if(idWizardStras){
+          if (idWizardStras) {
             idWizardStras.setSelectedKey("");
           }
         },
 
-        resetStep3:function(){
-          var self = this;          
-          var oModelJson= new sap.ui.model.json.JSONModel();
+        resetStep3: function () {
+          var self = this;
+          var oModelJson = new sap.ui.model.json.JSONModel();
           oModelJson.setData([]);
           self.setModel(oModelJson, STEP3_LIST);
 
@@ -3592,383 +4281,527 @@ sap.ui.define(
           self.setModel(oModelJsonCS, CLASSIFICAZIONE_SON_DEEP);
         },
 
-        resetDataSONModel:function(){
+        resetDataSONModel: function () {
           var self = this;
-          self.getView().getModel(DataSON_MODEL).setProperty("/ZstatoSop", null);
+          self
+            .getView()
+            .getModel(DataSON_MODEL)
+            .setProperty("/ZstatoSop", null);
           self.getView().getModel(DataSON_MODEL).setProperty("/Gjahr", null);
-          self.getView().getModel(DataSON_MODEL).setProperty("/ZufficioCont", null);
-          self.getView().getModel(DataSON_MODEL).setProperty("/Zdesctipodisp3", null);
-          self.getView().getModel(DataSON_MODEL).setProperty("/FiposList", null);
+          self
+            .getView()
+            .getModel(DataSON_MODEL)
+            .setProperty("/ZufficioCont", null);
+          self
+            .getView()
+            .getModel(DataSON_MODEL)
+            .setProperty("/Zdesctipodisp3", null);
+          self
+            .getView()
+            .getModel(DataSON_MODEL)
+            .setProperty("/FiposList", null);
           self.getView().getModel(DataSON_MODEL).setProperty("/Fipos", null);
           self.getView().getModel(DataSON_MODEL).setProperty("/Fistl", null);
           self.getView().getModel(DataSON_MODEL).setProperty("/Kostl", null);
           self.getView().getModel(DataSON_MODEL).setProperty("/Saknr", null);
           self.getView().getModel(DataSON_MODEL).setProperty("/Hkont", null);
           self.getView().getModel(DataSON_MODEL).setProperty("/Lifnr", null);
-          self.getView().getModel(DataSON_MODEL).setProperty("/NameFirst", null);
+          self
+            .getView()
+            .getModel(DataSON_MODEL)
+            .setProperty("/NameFirst", null);
           self.getView().getModel(DataSON_MODEL).setProperty("/NameLast", null);
           self.getView().getModel(DataSON_MODEL).setProperty("/Zimptot", null);
-          self.getView().getModel(DataSON_MODEL).setProperty("/TaxnumPiva", null);
+          self
+            .getView()
+            .getModel(DataSON_MODEL)
+            .setProperty("/TaxnumPiva", null);
           self.getView().getModel(DataSON_MODEL).setProperty("/ZzragSoc", null);
-          self.getView().getModel(DataSON_MODEL).setProperty("/ZimptotDivisa", null);
+          self
+            .getView()
+            .getModel(DataSON_MODEL)
+            .setProperty("/ZimptotDivisa", null);
           self.getView().getModel(DataSON_MODEL).setProperty("/TaxnumCf", null);
-          self.getView().getModel(DataSON_MODEL).setProperty("/Zzamministr", null);
+          self
+            .getView()
+            .getModel(DataSON_MODEL)
+            .setProperty("/Zzamministr", null);
           self.getView().getModel(DataSON_MODEL).setProperty("/PayMode", []);
-          self.getView().getModel(DataSON_MODEL).setProperty("/NewPayMode", []); 
-          self.getView().getModel(DataSON_MODEL).setProperty("/FlagFruttifero", []);           
+          self.getView().getModel(DataSON_MODEL).setProperty("/NewPayMode", []);
+          self
+            .getView()
+            .getModel(DataSON_MODEL)
+            .setProperty("/FlagFruttifero", []);
         },
 
-        closeWizardPanel:function(){
+        closeWizardPanel: function () {
           var self = this,
-              wizard = self.getView().byId("WizardForDetail"),
-              array = document.querySelectorAll(".expanded");
-          
-          for(var i=0;i<array.length;i++){
-              var panel = sap.ui.getCore().byId(array[i].id);
-              if(panel.getExpanded())
-                  panel.setExpanded(false);                    
+            wizard = self.getView().byId("WizardForDetail"),
+            array = document.querySelectorAll(".expanded");
+
+          for (var i = 0; i < array.length; i++) {
+            var panel = sap.ui.getCore().byId(array[i].id);
+            if (panel.getExpanded()) panel.setExpanded(false);
           }
           wizard.setCurrentStep(wizard.getSteps()[0]);
         },
 
-        resetForBack:function(selectedKeyText, isClearHeader=false){
+        resetForBack: function (selectedKeyText, isClearHeader = false) {
           var self = this,
-              oBundle = self.getResourceBundle(),
-              tab = self.getView().byId("idIconTabBar");
+            oBundle = self.getResourceBundle(),
+            tab = self.getView().byId("idIconTabBar");
           self._beneficiario = null;
-          self._sedeBeneficiario=null;
-          self._amministrazione=null;
-          self.getView().getModel(DETAIL_MODEL).setProperty("/total",null);
-          self.getView().getModel(DETAIL_MODEL).setProperty("/checkList",[]);
-          self.getView().getModel(DETAIL_MODEL).setProperty("/buttonText",null);
-          self.getView().getModel(DETAIL_MODEL).setProperty("/buttonVisible",false);
-          self.getView().getModel(DETAIL_MODEL).setProperty("/iconTab","sap-icon://detail-view");
-          self.getView().getModel(DETAIL_MODEL).setProperty("/text",self.getResourceBundle().getText("btnDetail"));
-          self.getView().getModel(DETAIL_MODEL).setProperty("/key",self.getResourceBundle().getText("btnDetail"));
-          self.getView().getModel(DETAIL_MODEL).setProperty("/showSelection",false);
-          self.getView().getModel(DETAIL_MODEL).setProperty("/headerVisible",false);
-          if(isClearHeader)
-            self.resetHeaderAction();
+          self._sedeBeneficiario = null;
+          self._amministrazione = null;
+          self.getView().getModel(DETAIL_MODEL).setProperty("/total", null);
+          self.getView().getModel(DETAIL_MODEL).setProperty("/checkList", []);
+          self
+            .getView()
+            .getModel(DETAIL_MODEL)
+            .setProperty("/buttonText", null);
+          self
+            .getView()
+            .getModel(DETAIL_MODEL)
+            .setProperty("/buttonVisible", false);
+          self
+            .getView()
+            .getModel(DETAIL_MODEL)
+            .setProperty("/iconTab", "sap-icon://detail-view");
+          self
+            .getView()
+            .getModel(DETAIL_MODEL)
+            .setProperty(
+              "/text",
+              self.getResourceBundle().getText("btnDetail")
+            );
+          self
+            .getView()
+            .getModel(DETAIL_MODEL)
+            .setProperty("/key", self.getResourceBundle().getText("btnDetail"));
+          self
+            .getView()
+            .getModel(DETAIL_MODEL)
+            .setProperty("/showSelection", false);
+          self
+            .getView()
+            .getModel(DETAIL_MODEL)
+            .setProperty("/headerVisible", false);
+          if (isClearHeader) self.resetHeaderAction();
           self.resetDataSONModel();
-          self.resetWizardModel(); 
-          self.resetStep3();           
-          if(self._detailShowed) 
-              self.closeWizardPanel();
+          self.resetWizardModel();
+          self.resetStep3();
+          if (self._detailShowed) self.closeWizardPanel();
           tab.setSelectedKey(oBundle.getText(selectedKeyText));
         },
 
-        resetHeaderAction:function(){
-          var self =this;
-          self.getView().getModel(HEADER_ACTION_MODEL).setProperty("/ZufficioCont",null);
-          self.getView().getModel(HEADER_ACTION_MODEL).setProperty("/ZvimDescrufficio",null);
-          self.getView().getModel(HEADER_ACTION_MODEL).setProperty("/Zcodord",null);
-          self.getView().getModel(HEADER_ACTION_MODEL).setProperty("/ZcodordDesc",null);
-          self.getView().getModel(HEADER_ACTION_MODEL).setProperty("/Zcdr",null);
-          self.getView().getModel(HEADER_ACTION_MODEL).setProperty("/ZdirigenteAmm",null);
-          var sendSignSonDt=self.getView().byId("sendSignSonDt");
-          if(sendSignSonDt){
-              sendSignSonDt.setValue(null);
+        resetHeaderAction: function () {
+          var self = this;
+          self
+            .getView()
+            .getModel(HEADER_ACTION_MODEL)
+            .setProperty("/ZufficioCont", null);
+          self
+            .getView()
+            .getModel(HEADER_ACTION_MODEL)
+            .setProperty("/ZvimDescrufficio", null);
+          self
+            .getView()
+            .getModel(HEADER_ACTION_MODEL)
+            .setProperty("/Zcodord", null);
+          self
+            .getView()
+            .getModel(HEADER_ACTION_MODEL)
+            .setProperty("/ZcodordDesc", null);
+          self
+            .getView()
+            .getModel(HEADER_ACTION_MODEL)
+            .setProperty("/Zcdr", null);
+          self
+            .getView()
+            .getModel(HEADER_ACTION_MODEL)
+            .setProperty("/ZdirigenteAmm", null);
+          var sendSignSonDt = self.getView().byId("sendSignSonDt");
+          if (sendSignSonDt) {
+            sendSignSonDt.setValue(null);
           }
         },
 
-        resetLog:function(){
+        resetLog: function () {
           var self = this;
-          var oModelJson= new sap.ui.model.json.JSONModel();
+          var oModelJson = new sap.ui.model.json.JSONModel();
           oModelJson.setData([]);
           self.setModel(oModelJson, LOG_MODEL);
-          self.setModel(oModelJson, MESSAGE_MODEL);                
-        },  
+          self.setModel(oModelJson, MESSAGE_MODEL);
+        },
 
-        setWizardModel:function(data){
+        setWizardModel: function (data) {
           var self = this;
           var oWizardModel = new JSONModel({
-              btnBackVisible:false,
-              btnNextVisible:true,
-              btnFinishVisible:false,
-              isInChange: false,
-              Step3TableTitle: null,
-              Bukrs:data.Bukrs,
-              Zchiavesop:data.Zchiavesop,
-              Zstep:data.Zstep,
-              Ztipososp:data.Ztipososp,
-              Zzamministr:data.Zzamministr,
-              Zchiaveopi:data.Zchiaveopi,
-              //step4
-              ZE2e: data.ZE2e,
-              Zcausale: data.Zcausale,
-              Znumprot: data.Znumprot,
-              Zdataprot: data.Zdataprot,
-              Zlocpag: data.Zlocpag,
-              Zzonaint: data.Zzonaint,
-              StrasList: null,
-              
-              //step3
-              Zimptotcos: null,        
-              Zimpcos: data.Zimpcos,
-              Zcos: data.Zcos,
-              //step1
-              Gjahr: data.Gjahr,
-              ZufficioCont: data.ZufficioCont,
-              ZvimDescrufficio: data.ZvimDescrufficio,
-              Zdesctipodisp3: data.Zdesctipodisp3,
-              Ztipodisp3: data.Ztipodisp3,
-              Ztipodisp3List: null,
-              FiposList: null,
-              Fipos: data.Fipos,
-              Fistl: data.Fistl,
-              Kostl: data.Kostl,
-              Ltext: data.Ltext,
-              Skat: data.Skat,
-              Saknr: data.Hkont,
-              Hkont: data.Hkont,
-              Zimptot: data.Zimptot,
-              ZimptotDivisa: data.ZimptotDivisa,
-              Trbtr: data.Trbtr,
-              Twaer: data.Twaer,
-              //step2
-              Lifnr: data.Lifnr,
-              TaxnumCf: data.TaxnumCf,
-              Banks: data.Banks,
-              Iban: data.Iban,
-              Zcoordest: data.Zcoordest,
-              isZcoordestEditable: false,
-              isZZcausalevalEditable:false,
-              isIbanEditable:false,
-              isBicEditable:false,
-              Swift: data.Swift,
-              PayMode: data.Zwels,
-              ZZcausaleval: data.ZCausaleval,
-              Zwels:data.Zwels,
-              ZCausaleval:data.ZCausaleval,
+            btnBackVisible: false,
+            btnNextVisible: true,
+            btnFinishVisible: false,
+            isInChange: false,
+            Step3TableTitle: null,
+            Bukrs: data.Bukrs,
+            Zchiavesop: data.Zchiavesop,
+            Zstep: data.Zstep,
+            Ztipososp: data.Ztipososp,
+            Zzamministr: data.Zzamministr,
+            Zchiaveopi: data.Zchiaveopi,
+            //step4
+            ZE2e: data.ZE2e,
+            Zcausale: data.Zcausale,
+            Znumprot: data.Znumprot,
+            Zdataprot: data.Zdataprot,
+            Zlocpag: data.Zlocpag,
+            Zzonaint: data.Zzonaint,
+            StrasList: null,
 
-              //nuovi modalità pagamento
-              Zalias:data.Zalias,
-              AccTypeId:data.AccTypeId,
-              RegioSosp:data.RegioSosp,
-              ZaccText:data.ZaccText,
-              Zzposfinent:data.Zzposfinent,
-              Zpurpose:data.Zpurpose,
-              Zcausben:data.Zcausben,
-              Zflagfrutt:data.Zflagfrutt,
+            //step3
+            Zimptotcos: null,
+            Zimpcos: data.Zimpcos,
+            Zcos: data.Zcos,
+            //step1
+            Gjahr: data.Gjahr,
+            ZufficioCont: data.ZufficioCont,
+            ZvimDescrufficio: data.ZvimDescrufficio,
+            Zdesctipodisp3: data.Zdesctipodisp3,
+            Ztipodisp3: data.Ztipodisp3,
+            Ztipodisp3List: null,
+            FiposList: null,
+            Fipos: data.Fipos,
+            Fistl: data.Fistl,
+            Kostl: data.Kostl,
+            Ltext: data.Ltext,
+            Skat: data.Skat,
+            Saknr: data.Hkont,
+            Hkont: data.Hkont,
+            Zimptot: data.Zimptot,
+            ZimptotDivisa: data.ZimptotDivisa,
+            Trbtr: data.Trbtr,
+            Twaer: data.Twaer,
+            //step2
+            Lifnr: data.Lifnr,
+            TaxnumCf: data.TaxnumCf,
+            Banks: data.Banks,
+            Iban: data.Iban,
+            Zcoordest: data.Zcoordest,
+            isZcoordestEditable: false,
+            isZZcausalevalEditable: false,
+            isIbanEditable: false,
+            isBicEditable: false,
+            Swift: data.Swift,
+            PayMode: data.Zwels,
+            ZZcausaleval: data.ZCausaleval,
+            Zwels: data.Zwels,
+            ZCausaleval: data.ZCausaleval,
 
-              //sezione Versante
-              Zcodprov:data.Zcodprov,
-              Zcodvers:data.Zcodvers,
-              Zcfcommit:data.Zcfcommit,
-              Zcfvers:data.Zcfvers,
-              Zcodtrib:data.Zcodtrib,
-              Zperiodrifda:data.Zperiodrifda,
-              Zperiodrifa:data.Zperiodrifa,
-              Zcodinps:data.Zcodinps,
-              Zdescvers:data.Zdescvers,
-              Zdatavers:data.Zdatavers,
-              Zsedevers:data.Zsedevers,
-              Zprovvers:data.Zprovvers,
+            //nuovi modalità pagamento
+            Zalias: data.Zalias,
+            AccTypeId: data.AccTypeId,
+            RegioSosp: data.RegioSosp,
+            ZaccText: data.ZaccText,
+            Zzposfinent: data.Zzposfinent,
+            Zpurpose: data.Zpurpose,
+            Zcausben: data.Zcausben,
+            Zflagfrutt: data.Zflagfrutt,
 
-              //Banca Accredito  
-              Ziban_b: data.Zibanb,
-              Zbic_b:data.Zbicb,
-              Zcoordest_b:data.Zcoordestb,
-              Zdenbanca_b:data.Zdenbanca,
-              Zclearsyst_b:data.Zclearsyst,
-              Stras_b:data.Stras,
-              Zcivico_b:data.Zcivico,
-              Ort01_b:data.Ort01,
-              Regio_b:data.Regio,
-              Pstlz_b:data.Pstlz,
-              Land1_b:data.Land1,
+            //sezione Versante
+            Zcodprov: data.Zcodprov,
+            Zcodvers: data.Zcodvers,
+            Zcfcommit: data.Zcfcommit,
+            Zcfvers: data.Zcfvers,
+            Zcodtrib: data.Zcodtrib,
+            Zperiodrifda: data.Zperiodrifda,
+            Zperiodrifa: data.Zperiodrifa,
+            Zcodinps: data.Zcodinps,
+            Zdescvers: data.Zdescvers,
+            Zdatavers: data.Zdatavers,
+            Zsedevers: data.Zsedevers,
+            Zprovvers: data.Zprovvers,
 
-              //Intermediario1
-              Ziban_i:data.Zibani,
-              Zbic_i:data.Zbici,
-              Zcoordest_i:data.Zcoordesti,
-              Zdenbanca_i:data.Zdenbancai,
-              Zclearsyst_i:data.Zclearsysti,
-              Zstras_i:data.Zstrasi,
-              Zcivico_i:data.Zcivicoi,
-              Zort01_i:data.Zort01i,
-              Zregio_i:data.Zregioi,
-              Zpstlz_i:data.Zpstlzi,
-              Zland1_i:data.Zland1i
-            });
-            return oWizardModel;
-          },
+            //Banca Accredito
+            Ziban_b: data.Zibanb,
+            Zbic_b: data.Zbicb,
+            Zcoordest_b: data.Zcoordestb,
+            Zdenbanca_b: data.Zdenbanca,
+            Zclearsyst_b: data.Zclearsyst,
+            Stras_b: data.Stras,
+            Zcivico_b: data.Zcivico,
+            Ort01_b: data.Ort01,
+            Regio_b: data.Regio,
+            Pstlz_b: data.Pstlz,
+            Land1_b: data.Land1,
 
-          fillWizard: function (oItem) {
-            var self = this,
-                oWizardModel,
-                fruttiferoSet=[],
-                oDataModel=self.getModel();
-            
-                self.getView().setBusy(true);
-            self.payMode=[];
-            console.log("hello", oItem);
-            
-            self.getFruttiferoInfruttifero(function(callback){
-              if(!callback.error){
-                fruttiferoSet = callback.data;
-              }
-              else 
-                fruttiferoSet = callback.data;
-            });
+            //Intermediario1
+            Ziban_i: data.Zibani,
+            Zbic_i: data.Zbici,
+            Zcoordest_i: data.Zcoordesti,
+            Zdenbanca_i: data.Zdenbancai,
+            Zclearsyst_i: data.Zclearsysti,
+            Zstras_i: data.Zstrasi,
+            Zcivico_i: data.Zcivicoi,
+            Zort01_i: data.Zort01i,
+            Zregio_i: data.Zregioi,
+            Zpstlz_i: data.Zpstlzi,
+            Zland1_i: data.Zland1i,
+          });
+          return oWizardModel;
+        },
 
-            var path = self.getModel().createKey(SON_SET, {
-                Bukrs: oItem.Bukrs,
-                Gjahr: oItem.Gjahr,
-                Zchiavesop: oItem.Zchiavesop,
-                Zstep: oItem.Zstep,
-                Ztipososp: oItem.Ztipososp
-            });
-            
-            self.getModel().metadataLoaded().then(function () {
-                oDataModel.read("/" + path, {
-                    success: function (data, oResponse) {
-                        self.getBeneficiarioHeader(data.Lifnr);
-                        self.getPayModeByLifnr(data.Lifnr,"",true,function(callback){
-                            if(!callback.error){
-                              self.payMode = callback.data;
+        fillWizard: function (oItem) {
+          var self = this,
+            oWizardModel,
+            fruttiferoSet = [],
+            oDataModel = self.getModel();
+
+          self.getView().setBusy(true);
+          self.payMode = [];
+          console.log("hello", oItem);
+
+          self.getFruttiferoInfruttifero(function (callback) {
+            if (!callback.error) {
+              fruttiferoSet = callback.data;
+            } else fruttiferoSet = callback.data;
+          });
+
+          var path = self.getModel().createKey(SON_SET, {
+            Bukrs: oItem.Bukrs,
+            Gjahr: oItem.Gjahr,
+            Zchiavesop: oItem.Zchiavesop,
+            Zstep: oItem.Zstep,
+            Ztipososp: oItem.Ztipososp,
+          });
+
+          self
+            .getModel()
+            .metadataLoaded()
+            .then(function () {
+              oDataModel.read("/" + path, {
+                success: function (data, oResponse) {
+                  self.getBeneficiarioHeader(data.Lifnr);
+                  self.getPayModeByLifnr(
+                    data.Lifnr,
+                    "",
+                    true,
+                    function (callback) {
+                      if (!callback.error) {
+                        self.payMode = callback.data;
+                      } else self.payMode = [];
+                    }
+                  );
+
+                  self.getSedeBeneficiario(data.Lifnr, data.Zidsede);
+                  oWizardModel = self.setWizardModel(data);
+
+                  setTimeout(() => {
+                    oWizardModel.getData().FirstKeyStras =
+                      self._sedeBeneficiario
+                        ? self._sedeBeneficiario.Stras
+                        : "";
+                    oWizardModel.getData().Zidsede = data.Zidsede;
+                    oWizardModel.getData().Ort01 = self._sedeBeneficiario
+                      ? self._sedeBeneficiario.Ort01
+                      : "";
+                    oWizardModel.getData().Regio = self._sedeBeneficiario
+                      ? self._sedeBeneficiario.Regio
+                      : "";
+                    oWizardModel.getData().Pstlz = self._sedeBeneficiario
+                      ? self._sedeBeneficiario.Pstlz
+                      : "";
+                    oWizardModel.getData().Land1 = self._sedeBeneficiario
+                      ? self._sedeBeneficiario.Land1
+                      : "";
+                    oWizardModel.getData().NameFirst = self._beneficiario
+                      ? self._beneficiario.NameFirst
+                      : "";
+                    oWizardModel.getData().ZzragSoc = self._beneficiario
+                      ? self._beneficiario.ZzragSoc
+                      : "";
+                    oWizardModel.getData().Zsede = self._beneficiario
+                      ? self._beneficiario.Zsede
+                      : "";
+                    oWizardModel.getData().Type =
+                      self._beneficiario && self._beneficiario.Type === "1"
+                        ? true
+                        : false; //radio btn
+                    oWizardModel.getData().TaxnumCf = self._beneficiario
+                      ? self._beneficiario.TaxnumCf
+                      : "";
+                    oWizardModel.getData().Taxnumxl = self._beneficiario
+                      ? self._beneficiario.Taxnumxl
+                      : "";
+                    oWizardModel.getData().NameLast = self._beneficiario
+                      ? self._beneficiario.NameLast
+                      : "";
+                    oWizardModel.getData().TaxnumPiva = self._beneficiario
+                      ? self._beneficiario.TaxnumPiva
+                      : "";
+                    oWizardModel.getData().Zdenominazione = self._beneficiario
+                      ? self._beneficiario.Zdenominazione
+                      : "";
+
+                    //todo metti il flag fruttifero se ce a db.
+
+                    var oDataSONModel = new JSONModel({
+                      ZstatoSop: data.ZstatoSop,
+                      Gjahr: data.Gjahr,
+                      ZufficioCont: data.ZufficioCont,
+                      Zdesctipodisp3: data.Zdesctipodisp3,
+                      Fipos: data.Fipos,
+                      Fistl: data.Fistl,
+                      Kostl: data.Kostl,
+                      Saknr: data.Saknr,
+                      Lifnr: data.Lifnr,
+                      NameFirst: self._beneficiario
+                        ? self._beneficiario.NameFirst
+                        : "",
+                      NameLast: self._beneficiario
+                        ? self._beneficiario.NameLast
+                        : "",
+                      Zimptot: data.Zimptot,
+                      ZimptotDivisa: data.ZimptotDivisa,
+                      TaxnumPiva: self._beneficiario
+                        ? self._beneficiario.TaxnumPiva
+                        : "",
+                      ZzragSoc: self._beneficiario
+                        ? self._beneficiario.ZzragSoc
+                        : "",
+                      TaxnumCf: self._beneficiario
+                        ? self._beneficiario.TaxnumCf
+                        : "",
+                      Zzamministr: self._amministrazione.Value,
+                      PayMode: self.payMode,
+                      FlagFruttifero: fruttiferoSet,
+                      NewPayMode: [],
+                    });
+
+                    if (
+                      oWizardModel.getData() &&
+                      oWizardModel.getData().PayMode !== null &&
+                      oWizardModel.getData().PayMode !== "" &&
+                      self.payMode.length > 0
+                    ) {
+                      self.getPayModeByLifnr(
+                        data.Lifnr,
+                        oWizardModel.getData().PayMode,
+                        false,
+                        function (callback) {
+                          if (!callback.error) {
+                            var record = callback.data[0];
+                            if (record) {
+                              oWizardModel.getData().Banks =
+                                oWizardModel.getData().Banks === ""
+                                  ? record.Banks
+                                  : oWizardModel.getData().Banks;
+                              oWizardModel.getData().Iban =
+                                oWizardModel.getData().Iban === ""
+                                  ? record.Iban
+                                  : oWizardModel.getData().Iban;
+                              oWizardModel.getData().Swift =
+                                oWizardModel.getData().Swift === ""
+                                  ? record.Swift
+                                  : oWizardModel.getData().Swift;
+                              oWizardModel.getData().Zcoordest =
+                                oWizardModel.getData().Zcoordest === ""
+                                  ? record.ZcoordEst
+                                  : oWizardModel.getData().Zcoordest;
+
+                              oWizardModel.getData().Zcodprov =
+                                oWizardModel.getData().Zcodprov === ""
+                                  ? record.Zcodprov
+                                  : oWizardModel.getData().Zcodprov;
                             }
-                            else 
-                              self.payMode = [];
-                          });
-                          
-                        self.getSedeBeneficiario(data.Lifnr, data.Zidsede);
-                        oWizardModel = self.setWizardModel(data);
+                          }
+                        }
+                      );
+                    }
 
-                        setTimeout(() => {     
-                            oWizardModel.getData().FirstKeyStras= self._sedeBeneficiario ? self._sedeBeneficiario.Stras: "";
-                            oWizardModel.getData().Zidsede= data.Zidsede;
-                            oWizardModel.getData().Ort01= self._sedeBeneficiario ? self._sedeBeneficiario.Ort01 : "";
-                            oWizardModel.getData().Regio= self._sedeBeneficiario ? self._sedeBeneficiario.Regio : "";
-                            oWizardModel.getData().Pstlz= self._sedeBeneficiario ? self._sedeBeneficiario.Pstlz : "";
-                            oWizardModel.getData().Land1= self._sedeBeneficiario ? self._sedeBeneficiario.Land1 : "";
-                            oWizardModel.getData().NameFirst= self._beneficiario ? self._beneficiario.NameFirst : "";
-                            oWizardModel.getData().ZzragSoc= self._beneficiario ? self._beneficiario.ZzragSoc : "";
-                            oWizardModel.getData().Zsede= self._beneficiario ? self._beneficiario.Zsede : "";
-                            oWizardModel.getData().Type= self._beneficiario && self._beneficiario.Type === "1" ? true : false; //radio btn
-                            oWizardModel.getData().TaxnumCf= self._beneficiario ? self._beneficiario.TaxnumCf : "";
-                            oWizardModel.getData().Taxnumxl= self._beneficiario ? self._beneficiario.Taxnumxl : "";
-                            oWizardModel.getData().NameLast= self._beneficiario ? self._beneficiario.NameLast : "";
-                            oWizardModel.getData().TaxnumPiva= self._beneficiario ? self._beneficiario.TaxnumPiva :"";
-                            oWizardModel.getData().Zdenominazione= self._beneficiario ? self._beneficiario.Zdenominazione :"";
-
-                            //todo metti il flag fruttifero se ce a db.
-
-                            var oDataSONModel = new JSONModel({
-                                ZstatoSop: data.ZstatoSop,
-                                Gjahr: data.Gjahr,
-                                ZufficioCont: data.ZufficioCont,
-                                Zdesctipodisp3: data.Zdesctipodisp3,
-                                Fipos: data.Fipos,
-                                Fistl: data.Fistl,
-                                Kostl: data.Kostl,
-                                Saknr: data.Saknr,
-                                Lifnr: data.Lifnr,
-                                NameFirst: self._beneficiario ? self._beneficiario.NameFirst:"",
-                                NameLast: self._beneficiario ? self._beneficiario.NameLast:"",
-                                Zimptot: data.Zimptot,
-                                ZimptotDivisa:data.ZimptotDivisa,
-                                TaxnumPiva: self._beneficiario ? self._beneficiario.TaxnumPiva:"",
-                                ZzragSoc: self._beneficiario ? self._beneficiario.ZzragSoc:"",
-                                TaxnumCf: self._beneficiario ? self._beneficiario.TaxnumCf:"",
-                                Zzamministr: self._amministrazione.Value,
-                                PayMode: self.payMode,
-                                FlagFruttifero: fruttiferoSet,
-                                NewPayMode:[]
-                            });    
-
-                            if(oWizardModel.getData() && oWizardModel.getData().PayMode !== null && oWizardModel.getData().PayMode !== "" && self.payMode.length>0){
-                                self.getPayModeByLifnr(data.Lifnr,oWizardModel.getData().PayMode,false, function(callback){
-                                    if(!callback.error){
-                                    var record = callback.data[0];
-                                    if(record){
-                                        oWizardModel.getData().Banks = oWizardModel.getData().Banks === "" ? record.Banks : oWizardModel.getData().Banks;
-                                        oWizardModel.getData().Iban = oWizardModel.getData().Iban === "" ? record.Iban : oWizardModel.getData().Iban;
-                                        oWizardModel.getData().Swift = oWizardModel.getData().Swift === "" ? record.Swift : oWizardModel.getData().Swift;
-                                        oWizardModel.getData().Zcoordest = oWizardModel.getData().Zcoordest === "" ? record.ZcoordEst : oWizardModel.getData().Zcoordest;                                
-                                        
-                                        oWizardModel.getData().Zcodprov = oWizardModel.getData().Zcodprov === "" ? record.Zcodprov : oWizardModel.getData().Zcodprov;
-                                      }
-                                    }
-                                });                              
-                            } 
-
-                            self.setModel(oWizardModel, WIZARD_MODEL);
-                            self.setModel(oDataSONModel, DataSON_MODEL);
-                            self.fillZtipodisp3List();
-                            self.getClassificazioneFRomFillWizard(self.getView().getModel(WIZARD_MODEL));
-                            self.getView().setBusy(false);
-                        },4000);
-                    },
-                    error: function (error) {
-                        console.log(error)
-                    },
-                });
-            });
-          },
-
-          getSedeBeneficiario:function(lifnr,idSede){
-            var self = this,
-                oDataModel = self.getModel();
-
-            if(!lifnr || lifnr === null)
-                return false;
-
-            var path = self.getModel().createKey(SedeBeneficiario_SET, {
-                Lifnr: lifnr,
-                Zidsede: idSede
-            });
-
-            self.getModel().metadataLoaded().then(function () {
-                oDataModel.read("/" + path, {
-                    success: function (data, oResponse) {
-                        self._sedeBeneficiario = data;
-                    },
-                    error: function (error) {
-                        self._sedeBeneficiario = null;
-                    },
-                });
+                    self.setModel(oWizardModel, WIZARD_MODEL);
+                    self.setModel(oDataSONModel, DataSON_MODEL);
+                    self.fillZtipodisp3List();
+                    self.getClassificazioneFRomFillWizard(
+                      self.getView().getModel(WIZARD_MODEL)
+                    );
+                    self.getView().setBusy(false);
+                  }, 4000);
+                },
+                error: function (error) {
+                  console.log(error);
+                },
+              });
             });
         },
 
-        getBeneficiarioHeader: function(lifnr){
+        getSedeBeneficiario: function (lifnr, idSede) {
           var self = this,
-              oDataModel = self.getModel();
+            oDataModel = self.getModel();
 
-          if(!lifnr || lifnr === null)
-              return false;
+          if (!lifnr || lifnr === null) return false;
+
+          var path = self.getModel().createKey(SedeBeneficiario_SET, {
+            Lifnr: lifnr,
+            Zidsede: idSede,
+          });
+
+          self
+            .getModel()
+            .metadataLoaded()
+            .then(function () {
+              oDataModel.read("/" + path, {
+                success: function (data, oResponse) {
+                  self._sedeBeneficiario = data;
+                },
+                error: function (error) {
+                  self._sedeBeneficiario = null;
+                },
+              });
+            });
+        },
+
+        getBeneficiarioHeader: function (lifnr) {
+          var self = this,
+            oDataModel = self.getModel();
+
+          if (!lifnr || lifnr === null) return false;
 
           var path = self.getModel().createKey(Beneficiary_SET, {
-              Lifnr: lifnr,
+            Lifnr: lifnr,
           });
 
-          self.getModel().metadataLoaded().then(function () {
+          self
+            .getModel()
+            .metadataLoaded()
+            .then(function () {
               oDataModel.read("/" + path, {
-                  success: function (data, oResponse) {
-                      self._beneficiario = data;
-                  },
-                  error: function (error) {
-                      self._beneficiario = null;
-                  },
+                success: function (data, oResponse) {
+                  self._beneficiario = data;
+                },
+                error: function (error) {
+                  self._beneficiario = null;
+                },
               });
-          });
+            });
         },
 
-        getFruttiferoInfruttifero:function(callback){
-          var self =this,
+        getFruttiferoInfruttifero: function (callback) {
+          var self = this,
             oDataModel = self.getModel();
-          
-            self.getModel().metadataLoaded().then(function () {
+
+          self
+            .getModel()
+            .metadataLoaded()
+            .then(function () {
               oDataModel.read("/FlagFruttiferoSet", {
-                  success: function (data, oResponse) {
-                    callback({error:false, data:data.results});
-                  },
-                  error: function (error) {
-                    console.log(error);
-                    callback({error:true, data:[]});
-                  },
+                success: function (data, oResponse) {
+                  callback({ error: false, data: data.results });
+                },
+                error: function (error) {
+                  console.log(error);
+                  callback({ error: true, data: [] });
+                },
               });
-          });  
+            });
         },
 
         fillWorkflow: function (oItem) {
@@ -3977,9 +4810,7 @@ sap.ui.define(
             oView = self.getView();
 
           var Zchiavesop = oItem["Zchiavesop"];
-          var filter = [
-            self.setFilterEQWithKey("Zchiavesop", Zchiavesop),
-          ];
+          var filter = [self.setFilterEQWithKey("Zchiavesop", Zchiavesop)];
           console.log("filter", filter);
           oView.setBusy(true);
           self
@@ -3992,38 +4823,41 @@ sap.ui.define(
                   oView.setBusy(false);
                   var res = data.results;
                   console.log("result", res);
-                  for(var i=0;i<res.length;i++){
-                      res[i].DataStato = new Date(res[i].DataOraString);
+                  for (var i = 0; i < res.length; i++) {
+                    res[i].DataStato = new Date(res[i].DataOraString);
                   }
-                  var oModelJson = new sap.ui.model.json.JSONModel();  
-                  oModelJson.setData(res);  
+                  var oModelJson = new sap.ui.model.json.JSONModel();
+                  oModelJson.setData(res);
                   self.getView().setModel(oModelJson, "WorkFlow");
                 },
                 error: function (error) {
                   oView.setBusy(false);
                 },
               });
-          });
+            });
         },
 
-        getAmministrazioneHeader:function(){
-          var self= this,
-              oDataModel = self.getModel();
+        getAmministrazioneHeader: function () {
+          var self = this,
+            oDataModel = self.getModel();
 
           var path = self.getModel().createKey(Zzamministr_SET, {
-              Name: "PRC",
+            Name: "PRC",
           });
 
-          self.getModel().metadataLoaded().then(function () {
+          self
+            .getModel()
+            .metadataLoaded()
+            .then(function () {
               oDataModel.read("/" + path, {
-                  success: function (data, oResponse) {
-                      self._amministrazione = data;
-                  },
-                  error: function (error) {
-                      self._amministrazione = null;
-                  },
+                success: function (data, oResponse) {
+                  self._amministrazione = data;
+                },
+                error: function (error) {
+                  self._amministrazione = null;
+                },
               });
-          });
+            });
         },
 
         onChangeUpdateDate: function (oEvent) {
@@ -4037,51 +4871,52 @@ sap.ui.define(
             return;
           }
           var value = oEvent.getParameter("newValue");
-          value =self.formatter.formatStringForDate(value);
+          value = self.formatter.formatStringForDate(value);
           wizardModel.setProperty("/Zdataprot", value);
         },
 
-        onFlagFruttiferoChange:function(oEvent){
-          var self =this,
+        onFlagFruttiferoChange: function (oEvent) {
+          var self = this,
             wizardModel = self.getModel(WIZARD_MODEL),
-            value=oEvent.getSource().getSelectedKey();
+            value = oEvent.getSource().getSelectedKey();
           wizardModel.setProperty("/Zflagfrutt", value);
         },
 
-        onChangeSON:function(oEvent){
+        onChangeSON: function (oEvent) {
           var self = this;
-          self.getView().getModel(WIZARD_MODEL).setProperty("/isInChange", true);  
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/isInChange", true);
         },
 
         onSaveAll: function () {
           var self = this,
-              wizardModel = self.getView().getModel(WIZARD_MODEL);
-              
-          if(!wizardModel.getProperty("/isInChange"))
-            return;
+            wizardModel = self.getView().getModel(WIZARD_MODEL);
 
-          self.goToFinish("WizardForDetail", function(callback){
-            switch(callback){
-              case 'ValidationError':
-                  return false;
+          if (!wizardModel.getProperty("/isInChange")) return;
+
+          self.goToFinish("WizardForDetail", function (callback) {
+            switch (callback) {
+              case "ValidationError":
+                return false;
                 break;
-              case 'ValidationSuccess':
+              case "ValidationSuccess":
                 self._setDialogSaveAll("msgRettificaSon");
                 break;
               default:
                 return false;
-                break;     
-            }           
+                break;
+            }
           });
         },
 
-        onWizardFinishButton:function(oEvent){
-          var self =this,
-              wizardType = oEvent.getSource().data("dataWizardType");
+        onWizardFinishButton: function (oEvent) {
+          var self = this,
+            wizardType = oEvent.getSource().data("dataWizardType");
 
-          if(wizardType === "Fine")
-            return false;
-          
+          if (wizardType === "Fine") return false;
+
           self.onSaveAll();
         },
 
@@ -4124,17 +4959,24 @@ sap.ui.define(
             oDataModel = self.getModel(),
             oBundle = self.getResourceBundle(),
             wizardModel = self.getModel(WIZARD_MODEL),
-            classificazioneSonList = self.getModel(CLASSIFICAZIONE_SON_DEEP).getData(),
+            classificazioneSonList = self
+              .getModel(CLASSIFICAZIONE_SON_DEEP)
+              .getData(),
             Zchiavesop = wizardModel.getProperty("/Zchiavesop");
-            
-            var arrayClassificazioneSonList=[];
-            for(var i=0;i<classificazioneSonList.length;i++){
-                var item = classificazioneSonList[i];
-                if(item.Id === 0 || !item.ZcosDesc || item.ZcosDesc === null || item.ZcosDesc === "")
-                  continue;
-                delete item.Id;
-                arrayClassificazioneSonList.push(item);
-            }
+
+          var arrayClassificazioneSonList = [];
+          for (var i = 0; i < classificazioneSonList.length; i++) {
+            var item = classificazioneSonList[i];
+            if (
+              item.Id === 0 ||
+              !item.ZcosDesc ||
+              item.ZcosDesc === null ||
+              item.ZcosDesc === ""
+            )
+              continue;
+            delete item.Id;
+            arrayClassificazioneSonList.push(item);
+          }
 
           var entityRequestBody = {
             Zchiavesop: Zchiavesop,
@@ -4146,86 +4988,120 @@ sap.ui.define(
             ClassificazioneSonSet: arrayClassificazioneSonList,
             SonSet: [
               {
-                  Bukrs: wizardModel.getProperty("/Bukrs"),
-                  ZstatoSop:wizardModel.getProperty("/ZstatoSop"),
-                  Zimptot:wizardModel.getProperty("/Zimptot"),
-                  ZimptotDivisa: wizardModel.getProperty("/ZimptotDivisa"),
-                  Zidsede:wizardModel.getProperty("/Zidsede"),
-                  Gjahr:wizardModel.getProperty("/Gjahr"),
-                  Zchiavesop:wizardModel.getProperty("/Zchiavesop"),
-                  Zstep:wizardModel.getProperty("/Zstep"),
-                  Ztipososp:wizardModel.getProperty("/Ztipososp"),
-                  Zzamministr:wizardModel.getProperty("/Zzamministr"),
-                  ZufficioCont:wizardModel.getProperty("/ZufficioCont"),
-                  Znumsop:wizardModel.getProperty("/Znumsop"),
-                  Zricann:wizardModel.getProperty("/Zricann"),
-                  Zdatasop: wizardModel.getProperty("/Zdatasop") && wizardModel.getProperty("/Zdatasop") !== null && wizardModel.getProperty("/Zdatasop") !== "" ?
-                              self.formatter.formateDateForDeep(wizardModel.getProperty("/Zdatasop")):
-                              null,
-                  Zdataprot: wizardModel.getProperty("/Zdataprot") && wizardModel.getProperty("/Zdataprot") !== null && wizardModel.getProperty("/Zdataprot") !== "" ?
-                              self.formatter.formateDateForDeep(wizardModel.getProperty("/Zdataprot")):
-                              null,
-                  Znumprot:wizardModel.getProperty("/Znumprot"),
-                  Lifnr:wizardModel.getProperty("/Lifnr"),
-                  Fipos:wizardModel.getProperty("/Fipos"),
-                  Fistl:wizardModel.getProperty("/Fistl"),
-                  Ztipodisp3:wizardModel.getProperty("/Ztipodisp3"),
-                  Kostl:wizardModel.getProperty("/Kostl"),
-                  Hkont:wizardModel.getProperty("/Hkont"),
-                  Zwels:wizardModel.getProperty("/Zwels"),
-                  ZCausaleval:wizardModel.getProperty("/ZCausaleval"),
-                  Iban:wizardModel.getProperty("/Iban"),
-                  Swift:wizardModel.getProperty("/Swift"),
-                  Zcoordest:wizardModel.getProperty("/Zcoordest"),
-                  Zlocpag:wizardModel.getProperty("/Zlocpag"),
-                  Zcausale:wizardModel.getProperty("/Zcausale"),
-                  Zzonaint:wizardModel.getProperty("/Zzonaint"),
-                  ZE2e:wizardModel.getProperty("/ZE2e"),
-                  ZuffcontFirm:wizardModel.getProperty("/ZuffcontFirm"),
-                  Zcdr:wizardModel.getProperty("/Zcdr"),
-                  ZdirigenteAmm:wizardModel.getProperty("/ZdirigenteAmm"),
-                  ZuffcontRicann:wizardModel.getProperty("/ZuffcontRicann"),
-                  CdrRicann:wizardModel.getProperty("/CdrRicann"),
-                  ZdirigenteRicann:wizardModel.getProperty("/ZdirigenteRicann"),
-                  ZuffcontCancricann:wizardModel.getProperty("/ZuffcontCancricann"),
-                  CdrCancricann:wizardModel.getProperty("/CdrCancricann"),
-                  ZdirigenteCancricann:wizardModel.getProperty("/ZdirigenteCancricann"),
-                  Zdatarichann: wizardModel.getProperty("/Zdatarichann") && wizardModel.getProperty("/Zdatarichann") !== null && wizardModel.getProperty("/Zdatarichann")!= "" ? 
-                                      self.formatter.formateDateForDeep(wizardModel.getProperty("/Zdatarichann")):
-                                      null,
-                  Zchiaveopi:wizardModel.getProperty("/Zchiaveopi"),
-                  Zinvioricann:wizardModel.getProperty("/Zinvioricann"),
+                Bukrs: wizardModel.getProperty("/Bukrs"),
+                ZstatoSop: wizardModel.getProperty("/ZstatoSop"),
+                Zimptot: wizardModel.getProperty("/Zimptot"),
+                ZimptotDivisa: wizardModel.getProperty("/ZimptotDivisa"),
+                Zidsede: wizardModel.getProperty("/Zidsede"),
+                Gjahr: wizardModel.getProperty("/Gjahr"),
+                Zchiavesop: wizardModel.getProperty("/Zchiavesop"),
+                Zstep: wizardModel.getProperty("/Zstep"),
+                Ztipososp: wizardModel.getProperty("/Ztipososp"),
+                Zzamministr: wizardModel.getProperty("/Zzamministr"),
+                ZufficioCont: wizardModel.getProperty("/ZufficioCont"),
+                Znumsop: wizardModel.getProperty("/Znumsop"),
+                Zricann: wizardModel.getProperty("/Zricann"),
+                Zdatasop:
+                  wizardModel.getProperty("/Zdatasop") &&
+                  wizardModel.getProperty("/Zdatasop") !== null &&
+                  wizardModel.getProperty("/Zdatasop") !== ""
+                    ? self.formatter.formateDateForDeep(
+                        wizardModel.getProperty("/Zdatasop")
+                      )
+                    : null,
+                Zdataprot:
+                  wizardModel.getProperty("/Zdataprot") &&
+                  wizardModel.getProperty("/Zdataprot") !== null &&
+                  wizardModel.getProperty("/Zdataprot") !== ""
+                    ? self.formatter.formateDateForDeep(
+                        wizardModel.getProperty("/Zdataprot")
+                      )
+                    : null,
+                Znumprot: wizardModel.getProperty("/Znumprot"),
+                Lifnr: wizardModel.getProperty("/Lifnr"),
+                Fipos: wizardModel.getProperty("/Fipos"),
+                Fistl: wizardModel.getProperty("/Fistl"),
+                Ztipodisp3: wizardModel.getProperty("/Ztipodisp3"),
+                Kostl: wizardModel.getProperty("/Kostl"),
+                Hkont: wizardModel.getProperty("/Hkont"),
+                Zwels: wizardModel.getProperty("/Zwels"),
+                ZCausaleval: wizardModel.getProperty("/ZCausaleval"),
+                Iban: wizardModel.getProperty("/Iban"),
+                Swift: wizardModel.getProperty("/Swift"),
+                Zcoordest: wizardModel.getProperty("/Zcoordest"),
+                Zlocpag: wizardModel.getProperty("/Zlocpag"),
+                Zcausale: wizardModel.getProperty("/Zcausale"),
+                Zzonaint: wizardModel.getProperty("/Zzonaint"),
+                ZE2e: wizardModel.getProperty("/ZE2e"),
+                ZuffcontFirm: wizardModel.getProperty("/ZuffcontFirm"),
+                Zcdr: wizardModel.getProperty("/Zcdr"),
+                ZdirigenteAmm: wizardModel.getProperty("/ZdirigenteAmm"),
+                ZuffcontRicann: wizardModel.getProperty("/ZuffcontRicann"),
+                CdrRicann: wizardModel.getProperty("/CdrRicann"),
+                ZdirigenteRicann: wizardModel.getProperty("/ZdirigenteRicann"),
+                ZuffcontCancricann: wizardModel.getProperty(
+                  "/ZuffcontCancricann"
+                ),
+                CdrCancricann: wizardModel.getProperty("/CdrCancricann"),
+                ZdirigenteCancricann: wizardModel.getProperty(
+                  "/ZdirigenteCancricann"
+                ),
+                Zdatarichann:
+                  wizardModel.getProperty("/Zdatarichann") &&
+                  wizardModel.getProperty("/Zdatarichann") !== null &&
+                  wizardModel.getProperty("/Zdatarichann") != ""
+                    ? self.formatter.formateDateForDeep(
+                        wizardModel.getProperty("/Zdatarichann")
+                      )
+                    : null,
+                Zchiaveopi: wizardModel.getProperty("/Zchiaveopi"),
+                Zinvioricann: wizardModel.getProperty("/Zinvioricann"),
 
-                  /*Modalità pagamento - campi nuovi*/  
-                  Zalias:wizardModel.getProperty("/Zalias"),
-                  AccTypeId:wizardModel.getProperty("/AccTypeId"),
-                  RegioSosp:wizardModel.getProperty("/RegioSosp"),
-                  ZaccText:wizardModel.getProperty("/ZaccText"),
-                  Zzposfinent:wizardModel.getProperty("/Zzposfinent"),
-                  Zpurpose:wizardModel.getProperty("/Zpurpose"),
-                  Zcausben:wizardModel.getProperty("/Zcausben"),
-                  Zflagfrutt:wizardModel.getProperty("/Zflagfrutt"),
+                /*Modalità pagamento - campi nuovi*/
+                Zalias: wizardModel.getProperty("/Zalias"),
+                AccTypeId: wizardModel.getProperty("/AccTypeId"),
+                RegioSosp: wizardModel.getProperty("/RegioSosp"),
+                ZaccText: wizardModel.getProperty("/ZaccText"),
+                Zzposfinent: wizardModel.getProperty("/Zzposfinent"),
+                Zpurpose: wizardModel.getProperty("/Zpurpose"),
+                Zcausben: wizardModel.getProperty("/Zcausben"),
+                Zflagfrutt: wizardModel.getProperty("/Zflagfrutt"),
 
-                  //Sezione Versante
-                  Zcodprov:wizardModel.getProperty("/Zcodprov"),
-                  Zcfcommit:wizardModel.getProperty("/Zcfcommit"),
-                  Zcodtrib:wizardModel.getProperty("/Zcodtrib"),
-                  Zperiodrifda:wizardModel.getProperty("/Zperiodrifda") && wizardModel.getProperty("/Zperiodrifda") !== null && wizardModel.getProperty("/Zperiodrifda")!= "" ? 
-                    self.formatter.formateDateForDeep(wizardModel.getProperty("/Zperiodrifda")):
-                    null,
-                  Zperiodrifa:wizardModel.getProperty("/Zperiodrifa") && wizardModel.getProperty("/Zperiodrifa") !== null && wizardModel.getProperty("/Zperiodrifa")!= "" ? 
-                    self.formatter.formateDateForDeep(wizardModel.getProperty("/Zperiodrifa")):
-                    null,
-                  Zcodinps:wizardModel.getProperty("/Zcodinps"),
-                  Zcodvers:wizardModel.getProperty("/Zcodvers"),
-                  Zcfvers:wizardModel.getProperty("/Zcfvers"),
-                  Zdescvers:wizardModel.getProperty("/Zdescvers"),
-                  Zdatavers:wizardModel.getProperty("/Zdatavers") && wizardModel.getProperty("/Zdatavers") !== null && wizardModel.getProperty("/Zdatavers")!= "" ? 
-                    self.formatter.formateDateForDeep(wizardModel.getProperty("/Zdatavers")):
-                    null,
-                  Zprovvers:wizardModel.getProperty("/Zprovvers"),
-                  Zsedevers:wizardModel.getProperty("/Zsedevers")
-              }
+                //Sezione Versante
+                Zcodprov: wizardModel.getProperty("/Zcodprov"),
+                Zcfcommit: wizardModel.getProperty("/Zcfcommit"),
+                Zcodtrib: wizardModel.getProperty("/Zcodtrib"),
+                Zperiodrifda:
+                  wizardModel.getProperty("/Zperiodrifda") &&
+                  wizardModel.getProperty("/Zperiodrifda") !== null &&
+                  wizardModel.getProperty("/Zperiodrifda") != ""
+                    ? self.formatter.formateDateForDeep(
+                        wizardModel.getProperty("/Zperiodrifda")
+                      )
+                    : null,
+                Zperiodrifa:
+                  wizardModel.getProperty("/Zperiodrifa") &&
+                  wizardModel.getProperty("/Zperiodrifa") !== null &&
+                  wizardModel.getProperty("/Zperiodrifa") != ""
+                    ? self.formatter.formateDateForDeep(
+                        wizardModel.getProperty("/Zperiodrifa")
+                      )
+                    : null,
+                Zcodinps: wizardModel.getProperty("/Zcodinps"),
+                Zcodvers: wizardModel.getProperty("/Zcodvers"),
+                Zcfvers: wizardModel.getProperty("/Zcfvers"),
+                Zdescvers: wizardModel.getProperty("/Zdescvers"),
+                Zdatavers:
+                  wizardModel.getProperty("/Zdatavers") &&
+                  wizardModel.getProperty("/Zdatavers") !== null &&
+                  wizardModel.getProperty("/Zdatavers") != ""
+                    ? self.formatter.formateDateForDeep(
+                        wizardModel.getProperty("/Zdatavers")
+                      )
+                    : null,
+                Zprovvers: wizardModel.getProperty("/Zprovvers"),
+                Zsedevers: wizardModel.getProperty("/Zsedevers"),
+              },
             ],
           };
 
@@ -4245,7 +5121,7 @@ sap.ui.define(
               sap.m.MessageBox.success(text, {
                 title: oBundle.getText("operationOK"),
                 onClose: function (oAction) {
-                  self.setPropertyGlobal(self.RELOAD_MODEL,"canRefresh",true);
+                  self.setPropertyGlobal(self.RELOAD_MODEL, "canRefresh", true);
                   self.onNavBack();
                 },
               });
@@ -4261,17 +5137,21 @@ sap.ui.define(
 
         onUpdateFinished: function (oEvent) {
           console.log("update");
-          var self =this;
+          var self = this;
           var sTitle,
             oTable = oEvent.getSource(),
             step3List = self.getModel(STEP3_LIST).getData(),
             wizardModel = self.getModel(WIZARD_MODEL),
             iTotalItems = step3List.length;
 
-          if (iTotalItems && oTable.getBinding("items").isLengthFinal() && iTotalItems >0) {
-            sTitle = self.getResourceBundle().getText("Step3TableTitleCount", [
-              iTotalItems,
-            ]);
+          if (
+            iTotalItems &&
+            oTable.getBinding("items").isLengthFinal() &&
+            iTotalItems > 0
+          ) {
+            sTitle = self
+              .getResourceBundle()
+              .getText("Step3TableTitleCount", [iTotalItems]);
           } else {
             sTitle = self.getResourceBundle().getText("Step3TableTitle");
           }
@@ -4281,37 +5161,38 @@ sap.ui.define(
 
         onAddRow: function (oEvent) {
           var self = this,
-              oBundle = self.getResourceBundle(),
-              wizardModel = self.getModel(WIZARD_MODEL),
-              classificazoneSonDeep = self.getModel(CLASSIFICAZIONE_SON_DEEP).getData(),
-              Zchiavesop=wizardModel.getProperty("/Zchiavesop"),
-              Bukrs=wizardModel.getProperty("/Bukrs"),
-              Zchiavesop=wizardModel.getProperty("/Zchiavesop"),
-              ZstepSop=wizardModel.getProperty("/Zstep"),
-              step3List = self.getModel(STEP3_LIST).getData();
-          
-          if(self._indexClassificazioneSON===0){
-              self._indexClassificazioneSON = step3List.length;
+            oBundle = self.getResourceBundle(),
+            wizardModel = self.getModel(WIZARD_MODEL),
+            classificazoneSonDeep = self
+              .getModel(CLASSIFICAZIONE_SON_DEEP)
+              .getData(),
+            Zchiavesop = wizardModel.getProperty("/Zchiavesop"),
+            Bukrs = wizardModel.getProperty("/Bukrs"),
+            Zchiavesop = wizardModel.getProperty("/Zchiavesop"),
+            ZstepSop = wizardModel.getProperty("/Zstep"),
+            step3List = self.getModel(STEP3_LIST).getData();
+
+          if (self._indexClassificazioneSON === 0) {
+            self._indexClassificazioneSON = step3List.length;
           }
 
           var firstRow = {};
           firstRow.Zchiavesop = Zchiavesop;
-          firstRow.Bukrs = Bukrs 
+          firstRow.Bukrs = Bukrs;
           firstRow.Zetichetta = COS;
           firstRow.ZstepSop = ZstepSop;
           firstRow.Zposizione = "";
-          firstRow.Id = self._indexClassificazioneSON+1;             
-          self._indexClassificazioneSON=self._indexClassificazioneSON+1;
-          step3List.push(firstRow);   
+          firstRow.Id = self._indexClassificazioneSON + 1;
+          self._indexClassificazioneSON = self._indexClassificazioneSON + 1;
+          step3List.push(firstRow);
           classificazoneSonDeep.push(firstRow);
-          
+
           var sum = 0;
-          for(var i=0; i<step3List.length;i++){
-              var item = step3List[i].ZimptotClass;
-              if(!item || item === null)
-                  item= "0";
-              item.replace(",",".");
-              sum = sum + parseFloat(item);
+          for (var i = 0; i < step3List.length; i++) {
+            var item = step3List[i].ZimptotClass;
+            if (!item || item === null) item = "0";
+            item.replace(",", ".");
+            sum = sum + parseFloat(item);
           }
           wizardModel.setProperty("/Zimptotcos", sum.toFixed(2));
           var oModelJson = new sap.ui.model.json.JSONModel();
@@ -4324,60 +5205,66 @@ sap.ui.define(
         //Petro - Start
         onCancelRow: function (oEvent) {
           var self = this,
-              oBundle = self.getResourceBundle(),
-              wizardModel = self.getModel(WIZARD_MODEL),
-              classificazoneSonDeep = self.getModel(CLASSIFICAZIONE_SON_DEEP).getData(),
-              step3List = self.getModel(STEP3_LIST).getData(),
-              oTable = self.getView().byId(TABLE_STEP3),
-              oTableModel = oTable.getModel(STEP3_LIST),
-              selected = oTable.getSelectedContextPaths();
-  
-          if(self._indexClassificazioneSON===0){
-              self._indexClassificazioneSON = step3List.length;
+            oBundle = self.getResourceBundle(),
+            wizardModel = self.getModel(WIZARD_MODEL),
+            classificazoneSonDeep = self
+              .getModel(CLASSIFICAZIONE_SON_DEEP)
+              .getData(),
+            step3List = self.getModel(STEP3_LIST).getData(),
+            oTable = self.getView().byId(TABLE_STEP3),
+            oTableModel = oTable.getModel(STEP3_LIST),
+            selected = oTable.getSelectedContextPaths();
+
+          if (self._indexClassificazioneSON === 0) {
+            self._indexClassificazioneSON = step3List.length;
           }
-              
-          if(selected.length === 0){
-              sap.m.MessageBox.warning(oBundle.getText("msgWizardCodiceGestionaleNoSelection"), {
-                  title: oBundle.getText("titleDialogWarning"),
-                  onClose: function (oAction) {
-                      return false;
-                  },
-              });
-              return false;
+
+          if (selected.length === 0) {
+            sap.m.MessageBox.warning(
+              oBundle.getText("msgWizardCodiceGestionaleNoSelection"),
+              {
+                title: oBundle.getText("titleDialogWarning"),
+                onClose: function (oAction) {
+                  return false;
+                },
+              }
+            );
+            return false;
           }
-  
+
           console.log(classificazoneSonDeep);
           console.log(step3List);
-  
-  
+
           var cloneStep3List = Object.assign([], step3List);
-          for(var i=0; i<selected.length;i++){
-              var path = selected[i];
-              path = path.replace("/","");
-              var index =path;// parseInt(path)+1;
-              if(index === 0)
-                  continue;
-              var selectedItem = cloneStep3List[index];
-              
-              var indexClassificazoneSonDeep = classificazoneSonDeep.findIndex((x)=>x.Id === selectedItem.Id);
-              if(indexClassificazoneSonDeep>-1){
-                  classificazoneSonDeep.splice(indexClassificazoneSonDeep,1);
-              }else{
-                  var item = Object.assign({}, selectedItem);
-                  item.Zflagcanc = item.Zposizione !== null ? 'X' :null;
-                  classificazoneSonDeep.push(item);
-              }
-  
-              var indiceStep3 = step3List.findIndex((x)=>x.Id === selectedItem.Id);
-              step3List.splice(indiceStep3,1)
+          for (var i = 0; i < selected.length; i++) {
+            var path = selected[i];
+            path = path.replace("/", "");
+            var index = path; // parseInt(path)+1;
+            if (index === 0) continue;
+            var selectedItem = cloneStep3List[index];
+
+            var indexClassificazoneSonDeep = classificazoneSonDeep.findIndex(
+              (x) => x.Id === selectedItem.Id
+            );
+            if (indexClassificazoneSonDeep > -1) {
+              classificazoneSonDeep.splice(indexClassificazoneSonDeep, 1);
+            } else {
+              var item = Object.assign({}, selectedItem);
+              item.Zflagcanc = item.Zposizione !== null ? "X" : null;
+              classificazoneSonDeep.push(item);
+            }
+
+            var indiceStep3 = step3List.findIndex(
+              (x) => x.Id === selectedItem.Id
+            );
+            step3List.splice(indiceStep3, 1);
           }
           var sum = 0;
-          for(var i=0; i<step3List.length;i++){
-              var item = step3List[i].ZimptotClass;
-              if(!item || item === null)
-                  item= "0";
-              item.replace(",",".");
-              sum = sum + parseFloat(item);
+          for (var i = 0; i < step3List.length; i++) {
+            var item = step3List[i].ZimptotClass;
+            if (!item || item === null) item = "0";
+            item.replace(",", ".");
+            sum = sum + parseFloat(item);
           }
           wizardModel.setProperty("/Zimptotcos", sum.toFixed(2));
           var oModelJson = new sap.ui.model.json.JSONModel();
@@ -4393,8 +5280,12 @@ sap.ui.define(
             oDataModel = self.getModel(),
             wizardModel = self.getModel(WIZARD_MODEL),
             Gjahr = wizardModel.getProperty("/Gjahr"),
-            inputContextPath = oEvent.getSource().getBindingInfo("value").binding.getContext().getPath();
-            
+            inputContextPath = oEvent
+              .getSource()
+              .getBindingInfo("value")
+              .binding.getContext()
+              .getPath();
+
           var inputId = oEvent.getSource().data().id;
           var fragmentName = oEvent.getSource().data().fragmentName;
           var path = oEvent.getSource().data().datapathmodel;
@@ -4419,7 +5310,11 @@ sap.ui.define(
                   console.log(dialogName);
                   oTable.setModel(oModelJson, pathName);
                   console.log(inputId);
-                  if(inputContextPath && inputContextPath!== null && inputContextPath!=="")
+                  if (
+                    inputContextPath &&
+                    inputContextPath !== null &&
+                    inputContextPath !== ""
+                  )
                     self.referInputId = inputContextPath;
 
                   oTable.data("inputId", inputId);
@@ -4432,44 +5327,49 @@ sap.ui.define(
 
         onLiveChangeTable: function (oEvent) {
           var self = this,
-              wizardModel = self.getModel(WIZARD_MODEL),
-              oTable = self.getView().byId(TABLE_STEP3),
-              oTableModel = oTable.getModel(STEP3_LIST),
-              classificazoneSonDeep = self.getModel(CLASSIFICAZIONE_SON_DEEP).getData(),
-              path = oEvent.getSource().getParent().getBindingContextPath();
+            wizardModel = self.getModel(WIZARD_MODEL),
+            oTable = self.getView().byId(TABLE_STEP3),
+            oTableModel = oTable.getModel(STEP3_LIST),
+            classificazoneSonDeep = self
+              .getModel(CLASSIFICAZIONE_SON_DEEP)
+              .getData(),
+            path = oEvent.getSource().getParent().getBindingContextPath();
 
-          if(path ==="")
-              return false;
+          if (path === "") return false;
 
-          if(self._indexClassificazioneSON===0){
-              self._indexClassificazioneSON = oTableModel.getData().length;
+          if (self._indexClassificazioneSON === 0) {
+            self._indexClassificazioneSON = oTableModel.getData().length;
           }
 
           var item = oTableModel.getObject(path);
           var value = oEvent.getParameters().value;
-          value.replace(",",".");
+          value.replace(",", ".");
           value = parseFloat(value).toFixed(2);
-          value.replace(".",",");
+          value.replace(".", ",");
           item.ZimptotClass = value;
-          self.getView().getModel(STEP3_LIST).setProperty(path+"/ZimptotClass",item.ZimptotClass);
-          var indexClassificazoneSonDeep = classificazoneSonDeep.findIndex((x)=>x.Id === item.Id);
-          if(indexClassificazoneSonDeep>-1){
-              classificazoneSonDeep.splice(indexClassificazoneSonDeep,1);
-              classificazoneSonDeep.push(item);
-          }else{                
-              classificazoneSonDeep.push(item);
+          self
+            .getView()
+            .getModel(STEP3_LIST)
+            .setProperty(path + "/ZimptotClass", item.ZimptotClass);
+          var indexClassificazoneSonDeep = classificazoneSonDeep.findIndex(
+            (x) => x.Id === item.Id
+          );
+          if (indexClassificazoneSonDeep > -1) {
+            classificazoneSonDeep.splice(indexClassificazoneSonDeep, 1);
+            classificazoneSonDeep.push(item);
+          } else {
+            classificazoneSonDeep.push(item);
           }
 
           var step3List = self.getView().getModel(STEP3_LIST).getData();
           var sum = 0;
-          for(var i=0; i<step3List.length;i++){
-              var item = step3List[i].ZimptotClass;
-              if(!item || item === null)
-                item= "0";
-              item.replace(",",".");
-              sum = sum + parseFloat(item);
+          for (var i = 0; i < step3List.length; i++) {
+            var item = step3List[i].ZimptotClass;
+            if (!item || item === null) item = "0";
+            item.replace(",", ".");
+            sum = sum + parseFloat(item);
           }
-          
+
           wizardModel.setProperty("/Zimptotcos", sum.toFixed(2));
           var oModelJsonCS = new sap.ui.model.json.JSONModel();
           oModelJsonCS.setData(classificazoneSonDeep);
@@ -4486,16 +5386,32 @@ sap.ui.define(
           }
 
           var self = this;
-          self.getModel(STEP3_LIST).setProperty(self.referInputId + "/Zcos",oSelectedItem.getCells()[0].getTitle());
-          self.getModel(STEP3_LIST).setProperty(self.referInputId + "/ZcosDesc",oSelectedItem.getCells()[1].getText());
+          self
+            .getModel(STEP3_LIST)
+            .setProperty(
+              self.referInputId + "/Zcos",
+              oSelectedItem.getCells()[0].getTitle()
+            );
+          self
+            .getModel(STEP3_LIST)
+            .setProperty(
+              self.referInputId + "/ZcosDesc",
+              oSelectedItem.getCells()[1].getText()
+            );
 
-          var currentItem = self.getModel(STEP3_LIST).getProperty(self.referInputId);
+          var currentItem = self
+            .getModel(STEP3_LIST)
+            .getProperty(self.referInputId);
           var array = self.getModel(CLASSIFICAZIONE_SON_DEEP).getData();
 
-          var item = array.filter(x=> x.Id === currentItem.Id);
-          if(item && item.length>0){
-            item[0].Zcos = self.getModel(STEP3_LIST).getProperty(self.referInputId + "/Zcos");
-            item[0].ZcosDesc = self.getModel(STEP3_LIST).getProperty(self.referInputId + "/ZcosDesc");
+          var item = array.filter((x) => x.Id === currentItem.Id);
+          if (item && item.length > 0) {
+            item[0].Zcos = self
+              .getModel(STEP3_LIST)
+              .getProperty(self.referInputId + "/Zcos");
+            item[0].ZcosDesc = self
+              .getModel(STEP3_LIST)
+              .getProperty(self.referInputId + "/ZcosDesc");
           }
 
           //   step3List = self.getModel(STEP3_LIST).getData();
@@ -4512,16 +5428,16 @@ sap.ui.define(
           self.closeDialog();
         },
 
-        configLog:function(){
+        configLog: function () {
           var self = this;
           var oMessageTemplate = new MessageItem({
-              type: "{logModel>type}",
-              title: "{logModel>title}",
-              description: "{logModel>description}",
-              subtitle: "{logModel>subtitle}",
-              counter: "{logModel>counter}",
-            });
-  
+            type: "{logModel>type}",
+            title: "{logModel>title}",
+            description: "{logModel>description}",
+            subtitle: "{logModel>subtitle}",
+            counter: "{logModel>counter}",
+          });
+
           var aMockMessages = [];
 
           var oModel = new JSONModel();
@@ -4529,28 +5445,28 @@ sap.ui.define(
           oModel.setData(aMockMessages);
 
           self.oMessageView = new MessageView({
-          showDetailsPageHeader: false,
-          items: {
+            showDetailsPageHeader: false,
+            items: {
               path: "logModel>/",
               template: oMessageTemplate,
-          },
+            },
           });
 
           var oExportButton = new Button({
-          text: self.getResourceBundle().getText("btnExport"),
-          type: "Emphasized",
-          visible: true,
-          press: function () {
+            text: self.getResourceBundle().getText("btnExport"),
+            type: "Emphasized",
+            visible: true,
+            press: function () {
               self.configExportMessage();
-          },
+            },
           });
 
           var oInputFilter = new Input({
-          placeholder: self.getResourceBundle().getText("msgSearch"),
-          visible: true,
-          liveChange: function (oEvent) {
+            placeholder: self.getResourceBundle().getText("msgSearch"),
+            visible: true,
+            liveChange: function (oEvent) {
               self.filterMessage(oEvent);
-          },
+            },
           });
 
           self.oMessageView.setModel(oModel, "logModel");
@@ -4558,33 +5474,33 @@ sap.ui.define(
           self.setModel(oModel, MESSAGE_MODEL);
 
           self.oLogDialog = new Dialog({
-          resizable: true,
-          content: self.oMessageView,
-          state: "Error",
-          beginButton: new Button({
+            resizable: true,
+            content: self.oMessageView,
+            state: "Error",
+            beginButton: new Button({
               press: function () {
-                  self.oLogDialog.close()
+                self.oLogDialog.close();
               },
               text: self.getResourceBundle().getText("btnClose"),
-          }),
-          customHeader: new Bar({
+            }),
+            customHeader: new Bar({
               // contentLeft: [oBackButton],
               contentMiddle: [oInputFilter],
               contentRight: [oExportButton],
-          }),
-          contentHeight: "50%",
-          contentWidth: "50%",
-          verticalScrolling: false,
+            }),
+            contentHeight: "50%",
+            contentWidth: "50%",
+            verticalScrolling: false,
           });
         },
 
         handleDialogPress: function (oEvent) {
-            var self = this;
-            self.oMessageView.navigateBack();
-            self.oLogDialog.open();
-        }
+          var self = this;
+          self.oMessageView.navigateBack();
+          self.oLogDialog.open();
+        },
 
-      //Petro - End
+        //Petro - End
 
         /**/
       }

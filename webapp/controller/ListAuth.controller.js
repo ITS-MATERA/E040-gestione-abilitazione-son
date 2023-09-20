@@ -35,7 +35,6 @@ sap.ui.define(
 
     const ACTION_MODEL = "actionModel";
 
-    const PAGINATOR_MODEL = "paginatorModel";
     const LISTAUTH_MODEL = "listAuthModel";
     const LOG_MODEL = "logModel";
     const MESSAGE_MODEL = "messageModel";
@@ -64,7 +63,7 @@ sap.ui.define(
 
         onInit: function () {
           var self = this;
-          var oListAuthModel, oPaginatorModel;
+          var oListAuthModel;
           oListAuthModel = new JSONModel({
             listAuthTableTitle:
               this.getResourceBundle().getText("listAuthPageTitle"),
@@ -75,26 +74,12 @@ sap.ui.define(
             changeList: [],
             dateForAll: null,
           });
-          oPaginatorModel = new JSONModel({
-            btnPrevEnabled: false,
-            btnFirstEnabled: false,
-            btnNextEnabled: false,
-            btnLastEnabled: false,
-            recordForPageEnabled: false,
-            currentPageEnabled: true,
-            stepInputDefault: 50,
-            currentPage: 1,
-            maxPage: 1,
-            paginatorSkip: 0,
-            paginatorClick: 0,
-          });
 
           var oReloadModel = new JSONModel({
             canRefresh: false,
           });
 
           this.setModel(oListAuthModel, LISTAUTH_MODEL);
-          this.setModel(oPaginatorModel, PAGINATOR_MODEL);
           this.setModelGlobal(oReloadModel, this.RELOAD_MODEL_AUTH);
 
           var oMessageTemplate = new MessageItem({
@@ -173,23 +158,31 @@ sap.ui.define(
           var self = this,
             reloadModel = self.getModelGlobal(self.RELOAD_MODEL_AUTH).getData();
 
-            self.getAuthorityCheck(self.FILTER_AUTH_OBJ, function(callback){
-              if(callback){
-                if (reloadModel && reloadModel !== null && reloadModel.canRefresh) {
-                  self.setPropertyGlobal(self.RELOAD_MODEL_AUTH, "canRefresh", false);
-                  location.reload();
-                }
+          self.getAuthorityCheck(self.FILTER_AUTH_OBJ, function (callback) {
+            if (callback) {
+              if (
+                reloadModel &&
+                reloadModel !== null &&
+                reloadModel.canRefresh
+              ) {
+                self.setPropertyGlobal(
+                  self.RELOAD_MODEL_AUTH,
+                  "canRefresh",
+                  false
+                );
+                location.reload();
               }
-              else{
-                self.getRouter().navTo("notAuth", {mex: self.getResourceBundle().getText("notAuthText")});
-              }
-            });
+            } else {
+              self.getRouter().navTo("notAuth", {
+                mex: self.getResourceBundle().getText("notAuthText"),
+              });
+            }
+          });
         },
 
         // ----------------------------- START INITIALIZATION -----------------------------  //
         onBeforeRendering: function () {
           var self = this;
-          self.resetPaginator(PAGINATOR_MODEL);
           self._setEntityProperties();
           var oTable = self.getView().byId(TABLE_LISTAUTH);
           oTable._getSelectAllCheckbox().setVisible(false);
@@ -199,7 +192,6 @@ sap.ui.define(
           var sTitle,
             oTable = oEvent.getSource(),
             listAuthModel = this.getModel(LISTAUTH_MODEL),
-            oPaginatorPanel = this.getView().byId("paginatorPanel"),
             iTotalItems = listAuthModel.getProperty("/total"),
             isChange = listAuthModel.getProperty("/isChange");
 
@@ -223,7 +215,6 @@ sap.ui.define(
             }
           }
           listAuthModel.setProperty("/listAuthTableTitle", sTitle);
-          oPaginatorPanel.setVisible(!isChange);
           this.getView().setBusy(false);
         },
 
@@ -242,8 +233,6 @@ sap.ui.define(
             oDataModel = self.getModel(),
             nameModel = null,
             oView = self.getView(),
-            paginatorModel = self.getModel(PAGINATOR_MODEL),
-            numRecordsForPage = paginatorModel.getProperty("/stepInputDefault"),
             listAuthModel = self.getModel(LISTAUTH_MODEL);
 
           oView.setBusy(true);
@@ -252,10 +241,6 @@ sap.ui.define(
             obj = {};
             nameModel = AUTH_MODEL_EXPORT;
           } else {
-            obj = {
-              $top: numRecordsForPage,
-              $skip: paginatorModel.getProperty("/paginatorSkip"),
-            };
             nameModel = AUTH_SET;
           }
 
@@ -270,7 +255,6 @@ sap.ui.define(
                   if (getKey) {
                     var counter = JSON.parse(oResponse.headers["sap-message"]);
                     listAuthModel.setProperty("/total", counter.message);
-                    self.counterRecords(counter.message);
                   }
                   var res = data.results;
                   var oModelJson = new sap.ui.model.json.JSONModel();
@@ -374,9 +358,7 @@ sap.ui.define(
         },
         onNavBack: function () {
           var self = this;
-          self.resetPaginator(PAGINATOR_MODEL);
 
-          self._resetAfterAction();
           self.getRouter().navTo("startPage");
         },
 
@@ -476,10 +458,8 @@ sap.ui.define(
         },
         onNavBackChange: function () {
           var self = this,
-            oPaginatorPanel = this.getView().byId("paginatorPanel"),
             listAuthModel = self.getModel(LISTAUTH_MODEL);
           listAuthModel.setProperty("/isChange", false);
-          oPaginatorPanel.setVisible(true);
 
           var checklist = listAuthModel.getProperty("/checkList");
           console.log("checklist BACK", checklist);
@@ -531,37 +511,39 @@ sap.ui.define(
         // ----------------------------- START MANAGE ROW  -----------------------------  //
 
         onSelectedItem: function (oEvent) {
-          var self =this,
-              isSelectedRow = oEvent.getParameter("selected"),
-              listAuthModel = self.getModel(LISTAUTH_MODEL),
-              oTable = self.getView().byId(TABLE_LISTAUTH),
-              oTableModel = oTable.getModel(AUTH_SET),
-              list = listAuthModel.getProperty("/checkList");
-          
-              var checkBox = self.getView().byId(CHECK_ALL);
-              checkBox.setSelected(false);
-              listAuthModel.setProperty("/isSelectedAll", false);    
-          
-          var itemPath = oEvent.getParameters().listItem.getBindingContextPath();   
-          var oItem = oTableModel.getObject(itemPath); 
+          var self = this,
+            isSelectedRow = oEvent.getParameter("selected"),
+            listAuthModel = self.getModel(LISTAUTH_MODEL),
+            oTable = self.getView().byId(TABLE_LISTAUTH),
+            oTableModel = oTable.getModel(AUTH_SET),
+            list = listAuthModel.getProperty("/checkList");
+
+          var checkBox = self.getView().byId(CHECK_ALL);
+          checkBox.setSelected(false);
+          listAuthModel.setProperty("/isSelectedAll", false);
+
+          var itemPath = oEvent
+            .getParameters()
+            .listItem.getBindingContextPath();
+          var oItem = oTableModel.getObject(itemPath);
           if (isSelectedRow) {
             // è stata selezionata
             list.push(oItem);
             listAuthModel.setProperty("/checkList", list);
-          }
-          else{
+          } else {
             // è stata DESELEZIONATA
             var index = list.findIndex(
-              (x) =>  x.Bukrs === oItem.Bukrs &&
-                      x.Gjahr === oItem.Gjahr &&
-                      x.Zchiaveabi === oItem.Zchiaveabi &&
-                      x.ZstepAbi === oItem.ZstepAbi
+              (x) =>
+                x.Bukrs === oItem.Bukrs &&
+                x.Gjahr === oItem.Gjahr &&
+                x.Zchiaveabi === oItem.Zchiaveabi &&
+                x.ZstepAbi === oItem.ZstepAbi
             );
-           if(index > -1){
-            list.splice(index, 1);
-           }
-           listAuthModel.setProperty("/checkList", list);
-          }    
+            if (index > -1) {
+              list.splice(index, 1);
+            }
+            listAuthModel.setProperty("/checkList", list);
+          }
         },
 
         // onSelectedItem_old: function (oEvent) {
@@ -714,7 +696,6 @@ sap.ui.define(
             dateForAll: null,
           });
           self.setModel(oListAuthModel, LISTAUTH_MODEL);
-          self.resetPaginator(PAGINATOR_MODEL);
           self._setEntityProperties();
           self.resetLog();
           var checkBox = self.getView().byId(CHECK_ALL);
@@ -725,34 +706,31 @@ sap.ui.define(
           var self = this,
             listAuthModel = self.getModel(LISTAUTH_MODEL),
             oDataModel = self.getModel(),
-           checkList =  listAuthModel.getProperty("/checkList"),
+            checkList = listAuthModel.getProperty("/checkList"),
             changeList = listAuthModel.getProperty("/changeList");
 
-            if(changeList.length === 0 ){
-              var entityRequestBody = {
-                Bukrs: "",
-                Gjahr: "",
-                Zchiaveabi: "key",
-                OperationType: OPTION_CHANGE,
-                AbilitazioneSet: checkList,
-                AbilitazioneMessageSet: [],
-              };
-
-            }else{
-              var entityRequestBody = {
-                Bukrs: "",
-                Gjahr: "",
-                Zchiaveabi: "key",
-                OperationType: OPTION_CHANGE,
-                AbilitazioneSet: changeList,
-                AbilitazioneMessageSet: [],
-              };
-            }
+          if (changeList.length === 0) {
+            var entityRequestBody = {
+              Bukrs: "",
+              Gjahr: "",
+              Zchiaveabi: "key",
+              OperationType: OPTION_CHANGE,
+              AbilitazioneSet: checkList,
+              AbilitazioneMessageSet: [],
+            };
+          } else {
+            var entityRequestBody = {
+              Bukrs: "",
+              Gjahr: "",
+              Zchiaveabi: "key",
+              OperationType: OPTION_CHANGE,
+              AbilitazioneSet: changeList,
+              AbilitazioneMessageSet: [],
+            };
+          }
 
           console.log(flag);
           console.log("quello che mando", changeList);
-
-     
 
           self.getView().setBusy(true);
           oDataModel.create("/" + URL_DEEP, entityRequestBody, {
@@ -761,7 +739,7 @@ sap.ui.define(
               console.log("result", result);
               var arrayMessage = result.AbilitazioneMessageSet.results;
               var arrayInf = arrayMessage.filter((el) => el.Msgty === "I");
-              
+
               if (arrayInf.length > 0) {
                 var oModel = new JSONModel();
 
@@ -791,77 +769,6 @@ sap.ui.define(
 
         // ----------------------------- END MANAGE METHOD  -----------------------------  //
 
-        // ----------------------------- START PAGINATION -----------------------------  //
-        counterRecords: function (data) {
-          var self = this,
-            paginatorModel = self.getModel(PAGINATOR_MODEL),
-            numRecordsForPage = paginatorModel.getProperty("/stepInputDefault");
-
-          if (data > numRecordsForPage) {
-            paginatorModel.setProperty("/btnLastEnabled", true);
-            self.paginatorTotalPage = data / numRecordsForPage;
-            var moduleN = Number.isInteger(self.paginatorTotalPage);
-            if (!moduleN) {
-              self.paginatorTotalPage = Math.trunc(self.paginatorTotalPage) + 1;
-            }
-            paginatorModel.setProperty("/maxPage", self.paginatorTotalPage);
-          } else {
-            paginatorModel.setProperty("/maxPage", 1);
-            paginatorModel.setProperty("/btnLastEnabled", false);
-          }
-        },
-
-        paginateChange: function () {
-          var self = this,
-            oView = self.getView(),
-            paginatorModel = self.getModel(PAGINATOR_MODEL),
-            listAuthModel = self.getModel(LISTAUTH_MODEL);
-          var listCheck = listAuthModel.getProperty("/checkList");
-
-          var numRecordsForPage =
-            paginatorModel.getProperty("/stepInputDefault");
-          var skip = paginatorModel.getProperty("/paginatorSkip");
-          var listCheckNew = listCheck.slice(skip, skip + numRecordsForPage);
-          var oModelJson = new sap.ui.model.json.JSONModel();
-          oModelJson.setData(listCheckNew);
-          oView.setModel(oModelJson, AUTH_SET);
-        },
-
-        onFirstPaginator: function (oEvent) {
-          var self = this,
-            listAuthModel = self.getModel(LISTAUTH_MODEL);
-          self.getFirstPaginator(PAGINATOR_MODEL);
-          if (listAuthModel.getProperty("/isChange")) {
-            self.paginateChange();
-          } else {
-            self._getEntity();
-          }
-        },
-
-        onLastPaginator: function (oEvent) {
-          var self = this,
-            listAuthModel = self.getModel(LISTAUTH_MODEL);
-          self.getLastPaginator(PAGINATOR_MODEL);
-          if (listAuthModel.getProperty("/isChange")) {
-            self.paginateChange();
-          } else {
-            self._getEntity();
-          }
-        },
-
-        onChangePage: function (oEvent) {
-          var self = this,
-            paginatorModel = self.getModel(PAGINATOR_MODEL),
-            listAuthModel = self.getModel(LISTAUTH_MODEL),
-            maxPage = paginatorModel.getProperty("/maxPage");
-          self.getChangePage(PAGINATOR_MODEL, maxPage);
-          if (listAuthModel.getProperty("/isChange")) {
-            self.paginateChange();
-          } else {
-            self._getEntity();
-          }
-        },
-        // ----------------------------- END PAGINATION -----------------------------  //
         // ----------------------------- START EXPORT -----------------------------  //
         _configExport: async function () {
           var oSheet;

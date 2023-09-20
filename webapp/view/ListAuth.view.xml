@@ -1,65 +1,109 @@
 <mvc:View
-    controllerName="gestioneabilitazioneeson.controller.ListAuth"
+	controllerName="gestioneabilitazioneeson.controller.ListAuth"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:l="sap.ui.layout"
 	xmlns:zcontrolPosFin="zsap.com.r3.cobi.s4.custposfin.z_s4_zposfinlink.controls"
-   >
-	<Page showHeader="false" title="{listAuthModel>/listAuthTableTitle}" >
+>
+	<Page
+		showHeader="false"
+		title="{listAuthModel>/listAuthTableTitle}"
+	>
 		<IconTabHeader visible="{listAuthModel>/isChange}">
 			<items>
 				<IconTabFilter
 					design="Horizontal"
-					icon="sap-icon://edit"			
+					icon="sap-icon://edit"
 					text="{i18n>btnChange}"
 					class="textBlack"
-					/>
+				/>
 			</items>
 		</IconTabHeader>
-		<VBox width="100%" class="bgWhite">
-			<Title text="{listAuthModel>/listAuthTableTitle}" titleStyle="H2" class="sapUiSmallMargin"/>
+		<VBox
+			width="100%"
+			class="bgWhite"
+		>
+			<Title
+				text="{listAuthModel>/listAuthTableTitle}"
+				titleStyle="H2"
+				class="sapUiSmallMargin"
+			/>
 		</VBox>
-		<Panel visible="{= !${listAuthModel>/isChange}}" class="panelListAuth">
-			<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.listAuth.ToolBarListAuth"
-							   type="XML"/>
+		<Panel
+			visible="{= !${listAuthModel>/isChange}}"
+			class="panelListAuth"
+		>
+			<core:Fragment
+				fragmentName="gestioneabilitazioneeson.view.fragment.listAuth.ToolBarListAuth"
+				type="XML"
+			/>
 		</Panel>
-		<Panel visible="{listAuthModel>/isChange}" class="panelListAuth">
-			<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.listAuth.ToolBarChange"
-							   type="XML"/>
+		<Panel
+			visible="{listAuthModel>/isChange}"
+			class="panelListAuth"
+		>
+			<core:Fragment
+				fragmentName="gestioneabilitazioneeson.view.fragment.listAuth.ToolBarChange"
+				type="XML"
+			/>
 		</Panel>
 		<Panel visible="{= !${listAuthModel>/isChange}}">
-			<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.listAuth.TableListAuth"
-							   type="XML"/>
+			<core:Fragment
+				fragmentName="gestioneabilitazioneeson.view.fragment.listAuth.TableListAuth"
+				type="XML"
+			/>
 		</Panel>
 		<Panel visible="{listAuthModel>/isChange}">
-			<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.listAuth.TableChange"
-							   type="XML"/>
-		</Panel>
-		<Panel id="paginatorPanel" >
 			<core:Fragment
-			fragmentName="gestioneabilitazioneeson.view.fragment.Paginator"
-			type="XML"
-		/>
-			<layoutData>
-				<l:GridData
-				span="XL6 L6 M6 S12"
-				indent="XL3 L3 M3"
+				fragmentName="gestioneabilitazioneeson.view.fragment.listAuth.TableChange"
+				type="XML"
 			/>
-			</layoutData>
 		</Panel>
 		<footer>
 			<OverflowToolbar>
-				<Button visible="{listAuthModel>/isChange}" type="Emphasized" text="{i18n>btnBack}" press="onNavBackChange" />
-				<Button visible="{= !${listAuthModel>/isChange}}" type="Emphasized" text="{i18n>btnBack}" press="onNavBack"/>
 				<Button
-				    icon="{ path: 'logModel>/', formatter: '.buttonIconFormatter' }"
-					type="{ path: 'logModel>/', formatter: '.buttonTypeFormatter' }"
-					text= "{path: 'logModel>/', formatter: '.highestSeverityMessages' }"
-			        press="handleDialogPress"/>
-				<ToolbarSpacer />
-				<Button visible="{= !${listAuthModel>/isChange}}" type="Emphasized" enabled="{AuthorityCheckAbilitazione>/Z01Enabled}" press="onAdd" text="{i18n>btnAdd}" />
-				<Button visible="{listAuthModel>/isChange}" type="Emphasized"  press="onSaveChanges" enabled="{AuthorityCheckAbilitazione>/Z02Enabled}" text="{i18n>btnChanges}"/>
+					visible="{listAuthModel>/isChange}"
+					type="Emphasized"
+					text="{i18n>btnBack}"
+					press="onNavBackChange"
+				/>
+				<Button
+					visible="{= !${listAuthModel>/isChange}}"
+					type="Emphasized"
+					text="{i18n>btnBack}"
+					press="onNavBack"
+				/>
+				<Button
+					icon="{
+						path: 'logModel>/',
+						formatter: '.buttonIconFormatter'
+					}"
+					type="{
+						path: 'logModel>/',
+						formatter: '.buttonTypeFormatter'
+					}"
+					text="{
+						path: 'logModel>/',
+						formatter: '.highestSeverityMessages'
+					}"
+					press="handleDialogPress"
+				/>
+				<ToolbarSpacer/>
+				<Button
+					visible="{= !${listAuthModel>/isChange}}"
+					type="Emphasized"
+					enabled="{AuthorityCheckAbilitazione>/Z01Enabled}"
+					press="onAdd"
+					text="{i18n>btnAdd}"
+				/>
+				<Button
+					visible="{listAuthModel>/isChange}"
+					type="Emphasized"
+					press="onSaveChanges"
+					enabled="{AuthorityCheckAbilitazione>/Z02Enabled}"
+					text="{i18n>btnChanges}"
+				/>
 			</OverflowToolbar>
 		</footer>
 	</Page>

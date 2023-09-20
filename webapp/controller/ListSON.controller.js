@@ -35,7 +35,6 @@ sap.ui.define(
     const LOG_MODEL = "logModel";
     const MESSAGE_MODEL = "messageModel";
 
-    const PAGINATOR_MODEL = "paginatorModel";
     const LISTSON_MODEL = "listSONModel";
     const SON_SET = "SonSet";
     const SON_MODEL_EXPORT = "SONModelExport";
@@ -48,7 +47,7 @@ sap.ui.define(
       {
         formatter: formatter,
         onInit: function () {
-          var oListSonModel, oPaginatorModel, oActionDisabled;
+          var oListSonModel, oActionDisabled;
           oListSonModel = new JSONModel({
             listSonTableTitle:
               this.getResourceBundle().getText("listSonPageTitle"),
@@ -57,21 +56,9 @@ sap.ui.define(
             isSelectedAll: false,
             checkList: [],
             filterRequestEnable: true,
-            filterGjahr:null,
+            filterGjahr: null,
           });
-          oPaginatorModel = new JSONModel({
-            btnPrevEnabled: false,
-            btnFirstEnabled: false,
-            btnNextEnabled: false,
-            btnLastEnabled: false,
-            recordForPageEnabled: false,
-            currentPageEnabled: true,
-            stepInputDefault: 50,
-            currentPage: 1,
-            maxPage: 1,
-            paginatorSkip: 0,
-            paginatorClick: 0,
-          });
+
           oActionDisabled = new JSONModel({
             DetailEnabled: false,
             CancelSONEnabled: false,
@@ -90,7 +77,7 @@ sap.ui.define(
           });
 
           this.setModel(oListSonModel, LISTSON_MODEL);
-          this.setModel(oPaginatorModel, PAGINATOR_MODEL);
+
           this.setModelGlobal(oActionDisabled, ACTION_MODEL);
           this.setModelGlobal(oReloadModel, this.RELOAD_MODEL);
 
@@ -166,22 +153,27 @@ sap.ui.define(
           var self = this,
             reloadModel = self.getModelGlobal(self.RELOAD_MODEL).getData();
 
-            self.getAuthorityCheck(self.FILTER_SON_OBJ, function(callback){
-              if(callback){
-                self.getAmministrazione();
-                if (reloadModel && reloadModel !== null && reloadModel.canRefresh) {
-                  self.setPropertyGlobal(self.RELOAD_MODEL, "canRefresh", false);
-                  location.reload();
-                }
+          self.getAuthorityCheck(self.FILTER_SON_OBJ, function (callback) {
+            if (callback) {
+              self.getAmministrazione();
+              if (
+                reloadModel &&
+                reloadModel !== null &&
+                reloadModel.canRefresh
+              ) {
+                self.setPropertyGlobal(self.RELOAD_MODEL, "canRefresh", false);
+                location.reload();
               }
-              else{
-                self.getRouter().navTo("notAuth", {mex: self.getResourceBundle().getText("notAuthText")});
-              }
-            });
+            } else {
+              self.getRouter().navTo("notAuth", {
+                mex: self.getResourceBundle().getText("notAuthText"),
+              });
+            }
+          });
         },
 
-        getAmministrazione:function(){
-          var self =this,
+        getAmministrazione: function () {
+          var self = this,
             oDataModel = self.getModel();
           var path = self.getModel().createKey(Zzamministr_SET, {
             Name: "PRC",
@@ -194,9 +186,9 @@ sap.ui.define(
                 success: function (data, oResponse) {
                   self.getView().setBusy(false);
                   console.log(data);
-                  if(data && data.Value!== null && data.Value !== "")
+                  if (data && data.Value !== null && data.Value !== "")
                     self.getView().byId("fZzamministr").setValue(data.Value);
-                  
+
                   // self.getView().getModel(DataSON_MODEL).setProperty("/Zzamministr",);
                 },
                 error: function (error) {
@@ -214,7 +206,7 @@ sap.ui.define(
         // ----------------------------- START INITIALIZATION -----------------------------  //
         resetPage: function () {
           //PULIRE ANCHE I FILTRI
-          var oListSonModel, oPaginatorModel;
+          var oListSonModel;
           oListSonModel = new JSONModel({
             listSonTableTitle:
               this.getResourceBundle().getText("listSonPageTitle"),
@@ -223,21 +215,8 @@ sap.ui.define(
             isSelectedAll: false,
             checkList: [],
           });
-          oPaginatorModel = new JSONModel({
-            btnPrevEnabled: false,
-            btnFirstEnabled: false,
-            btnNextEnabled: false,
-            btnLastEnabled: false,
-            recordForPageEnabled: false,
-            currentPageEnabled: true,
-            stepInputDefault: 3,
-            currentPage: 1,
-            maxPage: 1,
-            paginatorSkip: 0,
-            paginatorClick: 0,
-          });
+
           this.setModel(oListSonModel, LISTSON_MODEL);
-          this.setModel(oPaginatorModel, PAGINATOR_MODEL);
 
           var oTable = this.getView().byId(TABLE_LISTSON);
           oTable.removeSelections(true);
@@ -315,26 +294,28 @@ sap.ui.define(
             oDataModel = self.getModel(),
             nameModel = null,
             oView = self.getView(),
-            oBundle = self.getResourceBundle(),
-            paginatorModel = self.getModel(PAGINATOR_MODEL),
-            numRecordsForPage = paginatorModel.getProperty("/stepInputDefault");
+            oBundle = self.getResourceBundle();
           var listSONModel = self.getModel(LISTSON_MODEL);
           oView.setBusy(true);
 
           if (getAll) {
             obj = {
-              AgrName: self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().AGR_NAME,
-              Fikrs:self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().FIKRS,
-              Prctr:self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().PRCTR
+              AgrName: self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData()
+                .AGR_NAME,
+              Fikrs: self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData()
+                .FIKRS,
+              Prctr: self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData()
+                .PRCTR,
             };
             nameModel = SON_MODEL_EXPORT;
           } else {
             obj = {
-              $top: numRecordsForPage,
-              $skip: paginatorModel.getProperty("/paginatorSkip"),
-              AgrName: self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().AGR_NAME,
-              Fikrs:self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().FIKRS,
-              Prctr:self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().PRCTR
+              AgrName: self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData()
+                .AGR_NAME,
+              Fikrs: self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData()
+                .FIKRS,
+              Prctr: self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData()
+                .PRCTR,
             };
             nameModel = SON_SET;
           }
@@ -363,20 +344,23 @@ sap.ui.define(
                 urlParameters: obj,
                 filters: headerObject.filters,
                 success: function (data, oResponse) {
-
-                  var message = oResponse.headers["sap-message"] && oResponse.headers["sap-message"] !== "" ? JSON.parse(oResponse.headers["sap-message"]) : null;
-                  if(message && message.severity === "error"){
+                  var message =
+                    oResponse.headers["sap-message"] &&
+                    oResponse.headers["sap-message"] !== ""
+                      ? JSON.parse(oResponse.headers["sap-message"])
+                      : null;
+                  if (message && message.severity === "error") {
                     oView.setBusy(false);
-                    MessageBox.warning(message.message,{
+                    MessageBox.warning(message.message, {
                       title: oBundle.getText("titleDialogWarning"),
                       onClose: function (oAction) {
                         return false;
-                      }
+                      },
                     });
                     return false;
                   }
 
-                  console.log("data", data.results);//TODO:Da canc
+                  console.log("data", data.results); //TODO:Da canc
                   if (getKey) {
                     var response = oResponse.headers["sap-message"];
                     var mess = !response ? 0 : response;
@@ -384,7 +368,6 @@ sap.ui.define(
 
                     console.log("counter", counter.message);
                     listSONModel.setProperty("/total", counter.message);
-                    self.counterRecords(counter.message);
                   }
                   var res = data.results;
                   if (getAll) {
@@ -395,7 +378,7 @@ sap.ui.define(
                   var oModelJson = new sap.ui.model.json.JSONModel();
                   oModelJson.setData(res);
                   oView.setModel(oModelJson, nameModel);
-                  
+
                   var oTable = self.getView().byId(TABLE_LISTSON);
 
                   var isSelectedAll =
@@ -421,13 +404,16 @@ sap.ui.define(
                   }
 
                   oView.setBusy(false);
-                  if(data.results.length === 0){
-                    MessageBox.warning("Nessun dato soddisfa i criteri di ricerca",{
+                  if (data.results.length === 0) {
+                    MessageBox.warning(
+                      "Nessun dato soddisfa i criteri di ricerca",
+                      {
                         title: oBundle.getText("titleDialogWarning"),
                         onClose: function (oAction) {
                           return false;
-                        }
-                      });
+                        },
+                      }
+                    );
                   }
                 },
                 error: function (error) {
@@ -457,7 +443,6 @@ sap.ui.define(
           var sTitle,
             oTable = oEvent.getSource(),
             listSONModel = this.getModel(LISTSON_MODEL),
-            oPaginatorPanel = this.getView().byId("paginatorPanel"),
             iTotalItems = listSONModel.getProperty("/total"),
             areFiltersValid = listSONModel.getProperty("/areFiltersValid");
 
@@ -475,22 +460,6 @@ sap.ui.define(
           listSONModel.setProperty("/listSONTableTitle", sTitle);
           var idText = this.getView().byId("idTextTableSON");
           idText.setVisible(true);
-          oPaginatorPanel.setVisible(true);
-          // oTable.setVisible(true);
-
-          // this.getView().setBusy(false);
-          // if(!parseInt(iTotalItems) === true || iTotalItems===null || iTotalItems === "" || parseInt(iTotalItems) === 0){
-          //   //giannilecci
-          //   var oBundle= this.getResourceBundle();
-          //   MessageBox.warning("Nessun dato soddisfa i criteri di ricerca",
-          //     {
-          //       title: oBundle.getText("titleDialogWarning"),
-          //       onClose: function (oAction) {
-          //         return false;
-          //       }
-          //     }
-          //   );
-          // }
         },
         // ----------------------------- END INITIALIZATION -----------------------------  //
 
@@ -706,13 +675,10 @@ sap.ui.define(
 
         onNavBack: function () {
           // eslint-disable-next-line sap-no-history-manipulation
-          var self = this,
-            oTable = this.getView().byId(TABLE_LISTSON),
-            oPaginatorPanel = this.getView().byId("paginatorPanel");
+          var self = this;
 
           var idText = this.getView().byId("idTextTableSON");
           idText.setVisible(false);
-          oPaginatorPanel.setVisible(false);
           // oTable.setVisible(false);//giannilecci
           self.resetPage();
           self.resetEntityModel(SON_MODEL_EXPORT);
@@ -749,11 +715,10 @@ sap.ui.define(
         },
         onStart: function () {
           var self = this;
-          self.getView().setBusy(true); 
+          self.getView().setBusy(true);
           self.resetList();
           //var reloadModel = self.getModelGlobal(self.RELOAD_MODEL);
           self._setEntityProperties();
-
         },
 
         resetList: function () {
@@ -800,43 +765,42 @@ sap.ui.define(
         },
 
         onSelectedItem: function (oEvent) {
-          var self =this,
-              isSelectedRow = oEvent.getParameter("selected"),
-              listSONModel = self.getModel(LISTSON_MODEL),
-              oTable = self.getView().byId(TABLE_LISTSON),
-              oTableModel = oTable.getModel(SON_SET),
-              list = listSONModel.getProperty("/checkList");
-          
+          var self = this,
+            isSelectedRow = oEvent.getParameter("selected"),
+            listSONModel = self.getModel(LISTSON_MODEL),
+            oTable = self.getView().byId(TABLE_LISTSON),
+            oTableModel = oTable.getModel(SON_SET),
+            list = listSONModel.getProperty("/checkList");
+
           var checkBox = self.getView().byId(CHECK_ALL);
           checkBox.setSelected(false);
-          listSONModel.setProperty("/isSelectedAll", false);    
-          
-          var itemPath = oEvent.getParameters().listItem.getBindingContextPath();   
-          var oItem = oTableModel.getObject(itemPath); 
+          listSONModel.setProperty("/isSelectedAll", false);
+
+          var itemPath = oEvent
+            .getParameters()
+            .listItem.getBindingContextPath();
+          var oItem = oTableModel.getObject(itemPath);
           if (isSelectedRow) {
             // è stata selezionata
             list.push(oItem);
             listSONModel.setProperty("/checkList", list);
-          }
-          else{
+          } else {
             // è stata DESELEZIONATA
             var index = list.findIndex(
-              (x) =>  x.Bukrs === oItem.Bukrs &&
-                      x.Gjahr === oItem.Gjahr &&
-                      x.Zchiavesop === oItem.Zchiavesop &&
-                      x.Zstep === oItem.Zstep &&
-                      x.Ztipososp === oItem.Ztipososp
+              (x) =>
+                x.Bukrs === oItem.Bukrs &&
+                x.Gjahr === oItem.Gjahr &&
+                x.Zchiavesop === oItem.Zchiavesop &&
+                x.Zstep === oItem.Zstep &&
+                x.Ztipososp === oItem.Ztipososp
             );
-           if(index > -1){
-            list.splice(index, 1);
-           }
-           listSONModel.setProperty("/checkList", list);
+            if (index > -1) {
+              list.splice(index, 1);
+            }
+            listSONModel.setProperty("/checkList", list);
           }
-          self.fillActionModel(list);    
+          self.fillActionModel(list);
         },
-
-
-
 
         // onSelectedItem_old: function (oEvent) {
         //   var self = this,
@@ -913,7 +877,11 @@ sap.ui.define(
           if (list.length === 1) {
             var first = list[0];
             obj = {
-              DetailEnabled: self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z03Enabled ? true : false,
+              DetailEnabled: self
+                .getModelGlobal(self.AUTHORITY_CHECK_SON)
+                .getData().Z03Enabled
+                ? true
+                : false,
               CancelSONEnabled: self.checkStatusEnabled(
                 oBundle.getText("btnCancelSON"),
                 first
@@ -1021,38 +989,70 @@ sap.ui.define(
 
           switch (state) {
             case oBundle.getText("btnCancelSON"):
-              enabled = item.ZstatoSop === "00" && self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z07Enabled ? true : false;
+              enabled =
+                item.ZstatoSop === "00" &&
+                self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData()
+                  .Z07Enabled
+                  ? true
+                  : false;
               break;
             case oBundle.getText("btnSendSign"):
-              enabled = item.ZstatoSop === "00" && self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z04Enabled ? true : false;
+              enabled =
+                item.ZstatoSop === "00" &&
+                self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData()
+                  .Z04Enabled
+                  ? true
+                  : false;
               break;
             case oBundle.getText("btnDeleteSendSign"):
-              enabled = item.ZstatoSop === "01" && self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z05Enabled ? true : false;
+              enabled =
+                item.ZstatoSop === "01" &&
+                self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData()
+                  .Z05Enabled
+                  ? true
+                  : false;
               break;
             case oBundle.getText("btnSign"):
-              enabled = item.ZstatoSop === "01" && self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z06Enabled ? true : false;
+              enabled =
+                item.ZstatoSop === "01" &&
+                self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData()
+                  .Z06Enabled
+                  ? true
+                  : false;
               break;
             case oBundle.getText("btnDeleteSign"):
-              enabled = item.ZstatoSop === "02" && self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z27Enabled ? true : false;
+              enabled =
+                item.ZstatoSop === "02" &&
+                self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData()
+                  .Z27Enabled
+                  ? true
+                  : false;
               break;
             case oBundle.getText("btnRegisterCancel"):
               enabled =
-                (item.ZstatoSop === "10" || item.ZstatoSop === "16") 
-                && self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z08Enabled
-                && item.Zricann === "0000000"
+                (item.ZstatoSop === "10" || item.ZstatoSop === "16") &&
+                self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData()
+                  .Z08Enabled &&
+                item.Zricann === "0000000"
                   ? true
                   : false;
               break;
             case oBundle.getText("btnDeleteCancel"):
               enabled =
-                (item.ZstatoSop === "10" || item.ZstatoSop === "16") 
-                && self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z09Enabled
-                && item.Zricann !== "0000000"
+                (item.ZstatoSop === "10" || item.ZstatoSop === "16") &&
+                self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData()
+                  .Z09Enabled &&
+                item.Zricann !== "0000000"
                   ? true
                   : false;
               break;
             case oBundle.getText("btnChangeSON"):
-              enabled = item.ZstatoSop === "00"  && self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z02Enabled ? true : false;
+              enabled =
+                item.ZstatoSop === "00" &&
+                self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData()
+                  .Z02Enabled
+                  ? true
+                  : false;
               break;
             default:
               console.log("default");
@@ -1088,48 +1088,6 @@ sap.ui.define(
         },
         // ----------------------------- END FORMATTING -----------------------------  //
 
-        // ----------------------------- START PAGINATION -----------------------------  //
-
-        counterRecords: function (data) {
-          var self = this,
-            paginatorModel = self.getModel(PAGINATOR_MODEL),
-            numRecordsForPage = paginatorModel.getProperty("/stepInputDefault");
-
-          if (data > numRecordsForPage) {
-            paginatorModel.setProperty("/btnLastEnabled", true);
-            self.paginatorTotalPage = data / numRecordsForPage;
-            var moduleN = Number.isInteger(self.paginatorTotalPage);
-            if (!moduleN) {
-              self.paginatorTotalPage = Math.trunc(self.paginatorTotalPage) + 1;
-            }
-            paginatorModel.setProperty("/maxPage", self.paginatorTotalPage);
-          } else {
-            paginatorModel.setProperty("/maxPage", 1);
-            paginatorModel.setProperty("/btnLastEnabled", false);
-          }
-        },
-        onFirstPaginator: function (oEvent) {
-          var self = this;
-          self.getFirstPaginator(PAGINATOR_MODEL);
-
-          self._getEntity();
-        },
-
-        onLastPaginator: function (oEvent) {
-          var self = this;
-          self.getLastPaginator(PAGINATOR_MODEL);
-          self._getEntity();
-        },
-
-        onChangePage: function (oEvent) {
-          var self = this,
-            paginatorModel = self.getModel(PAGINATOR_MODEL),
-            maxPage = paginatorModel.getProperty("/maxPage");
-          self.getChangePage(PAGINATOR_MODEL, maxPage);
-
-          self._getEntity();
-        },
-        // ----------------------------- END PAGINATION -----------------------------  //
         // ----------------------------- START EXPORT -----------------------------  //
         _configExport: function () {
           var oSheet;
@@ -1248,13 +1206,13 @@ sap.ui.define(
                 "07": oBundle.getText("ZstatoSop07"),
                 "08": oBundle.getText("ZstatoSop08"),
                 "09": oBundle.getText("ZstatoSop09"),
-                "10": oBundle.getText("ZstatoSop10"),
-                "11": oBundle.getText("ZstatoSop11"),
-                "14": oBundle.getText("ZstatoSop14"),
-                "15": oBundle.getText("ZstatoSop15"),
-                "16": oBundle.getText("ZstatoSop16"),
-                "17": oBundle.getText("ZstatoSop17"),
-                "18": oBundle.getText("ZstatoSop18"),
+                10: oBundle.getText("ZstatoSop10"),
+                11: oBundle.getText("ZstatoSop11"),
+                14: oBundle.getText("ZstatoSop14"),
+                15: oBundle.getText("ZstatoSop15"),
+                16: oBundle.getText("ZstatoSop16"),
+                17: oBundle.getText("ZstatoSop17"),
+                18: oBundle.getText("ZstatoSop18"),
               },
             },
           ];
@@ -1264,14 +1222,15 @@ sap.ui.define(
 
         // ----------------------------- END EXPORT -----------------------------  //
 
-        onFilterGjahrChange:function(oEvent){
-          var self =this,
+        onFilterGjahrChange: function (oEvent) {
+          var self = this,
             value = oEvent.getParameters().value;
-          
-          self.getView().getModel(LISTSON_MODEL).setProperty("/filterGjahr",value);
-        }
 
-
+          self
+            .getView()
+            .getModel(LISTSON_MODEL)
+            .setProperty("/filterGjahr", value);
+        },
       }
     );
   }

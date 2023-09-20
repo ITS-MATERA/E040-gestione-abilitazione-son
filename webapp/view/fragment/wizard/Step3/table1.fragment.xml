@@ -1,124 +1,165 @@
 <core:FragmentDefinition
-    xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
-    xmlns="sap.m"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
-		xmlns:l="sap.ui.layout"
->    
-
-	<FlexBox  width="100%" class="sapUiSmallMargin" alignItems="Center">
-		<Text text="{i18n>msgAssocImp}" class="sapUiSmallMarginEnd"></Text>
+	xmlns:l="sap.ui.layout"
+>
+	<FlexBox
+		width="100%"
+		class="sapUiSmallMargin"
+		alignItems="Center"
+	>
+		<Text
+			text="{i18n>msgAssocImp}"
+			class="sapUiSmallMarginEnd"
+		/>
 		<Input
-				editable="false"
-				value="{wizardModel>/Zimptot}"				
-			>	
-		</Input>
+			editable="false"
+			value="{wizardModel>/Zimptot}"
+		/>
 	</FlexBox>
-<VBox  width="100%"  >
-        <Label required="true" text="{wizardModel>/Step3TableTitle}"  class="sapUiTinyMargin titleSize"></Label>
-    </VBox>
-
-        <Table  
-				id ="idTableStep3"
-				mode="MultiSelect"
-				fixedLayout="false"
-				contextualWidth="Auto"
-				growing="true"
-				
-				updateFinished="onUpdateFinished"
-						items="{
-				path: 'step3List>/'
-			}"
-		>
+	<VBox width="100%">
+		<Label
+			required="true"
+			text="{wizardModel>/Step3TableTitle}"
+			class="sapUiTinyMargin titleSize"
+		/>
+	</VBox>
+	<Table
+		id="idTableStep3"
+		mode="MultiSelect"
+		fixedLayout="false"
+		contextualWidth="Auto"
+		growing="true"
+		updateFinished="onUpdateFinished"
+		items="{
+			path: 'step3List>/'
+		}"
+	>
 		<!-- selectionChange="onSelectedItem" -->
-		
 		<headerToolbar>
-			<OverflowToolbar >
+			<OverflowToolbar>
 				<ToolbarSpacer/>
-				<FlexBox width="100%"  justifyContent="End">					
-					<Button enabled="{wizardModel>/isInChange}" class="sapUiTinyMarginEnd sapUiTinyMarginBegin sapUiTinyMarginBottom" icon="sap-icon://add" text="{i18n>btnAddRow}" type="Emphasized" press="onAddRow">
+				<FlexBox
+					width="100%"
+					justifyContent="End"
+				>
+					<Button
+						enabled="{wizardModel>/isInChange}"
+						class="sapUiTinyMarginEnd sapUiTinyMarginBegin sapUiTinyMarginBottom"
+						icon="sap-icon://add"
+						text="{i18n>btnAddRow}"
+						type="Emphasized"
+						press="onAddRow"
+					>
 						<layoutData>
-							<OverflowToolbarLayoutData priority="NeverOverflow" />
+							<OverflowToolbarLayoutData priority="NeverOverflow"/>
 						</layoutData>
 					</Button>
-					<Button enabled="{wizardModel>/isInChange}" class="sapUiTinyMarginEnd sapUiTinyMarginBegin sapUiTinyMarginBottom" icon="sap-icon://less" text="{i18n>btnCancelRow}" type="Emphasized" press="onCancelRow">
+					<Button
+						enabled="{wizardModel>/isInChange}"
+						class="sapUiTinyMarginEnd sapUiTinyMarginBegin sapUiTinyMarginBottom"
+						icon="sap-icon://less"
+						text="{i18n>btnCancelRow}"
+						type="Emphasized"
+						press="onCancelRow"
+					>
 						<layoutData>
-							<OverflowToolbarLayoutData priority="NeverOverflow" />
+							<OverflowToolbarLayoutData priority="NeverOverflow"/>
 						</layoutData>
 					</Button>
-   		 		</FlexBox>
+				</FlexBox>
 			</OverflowToolbar>
-		</headerToolbar>		
+		</headerToolbar>
 		<columns>
-		<Column minScreenWidth="Tablet" demandPopin="true">
-				<header><Text text="{i18n>fieldNameZcos}" /></header>
-		</Column>
-		<Column minScreenWidth="Tablet" demandPopin="true">
-				<header><Text text="{i18n>fieldNameZcosdDesc}" /></header>
-		</Column>
-		<Column minScreenWidth="Tablet" demandPopin="true">
-				<header><Text text="{i18n>fieldNameZimpcos}" /></header>
-		</Column>
-		
+			<Column
+				minScreenWidth="Tablet"
+				demandPopin="true"
+			>
+				<header>
+					<Text text="{i18n>fieldNameZcos}"/>
+				</header>
+			</Column>
+			<Column
+				minScreenWidth="Tablet"
+				demandPopin="true"
+			>
+				<header>
+					<Text text="{i18n>fieldNameZcosdDesc}"/>
+				</header>
+			</Column>
+			<Column
+				minScreenWidth="Tablet"
+				demandPopin="true"
+			>
+				<header>
+					<Text text="{i18n>fieldNameZimpcos}"/>
+				</header>
+			</Column>
 		</columns>
-		<items >
-		<!-- liveChange="onLiveChangeTable" -->
+		<items>
+			<!-- liveChange="onLiveChangeTable" -->
 			<ColumnListItem vAlign="Middle">
-				<cells>			
-				<Input			
-					showValueHelp="true"
-					id ="idInputFieldZcos"
-					showSuggestion="true"
-					suggestionItems="{/CodiceGestionale>}"
-					app:id="idInputFieldZcos"
-					app:dialogName="selectDialogZcos"
-					app:searchPropertyModel="Zcos"
-					app:fragmentName="Zcos"
-					app:datapathmodel="CodiceGestionaleMcSet" 
-					app:pathName="CodiceGestionale" 
-					valueHelpRequest="onValueHelpRequestedZcos"				
-					width="65%"		
-					value="{step3List>Zcos}"
-					valueHelpOnly="true"		
-					submit="onSubmitZcos" 	
-					app:property="Zcos"
-					editable="{wizardModel>/isInChange}"
-					>	
-						<suggestionItems >
-									<core:Item  text="{CodiceGestionale>Zcos}"  />
+				<cells>
+					<Input
+						showValueHelp="true"
+						id="idInputFieldZcos"
+						showSuggestion="true"
+						suggestionItems="{/CodiceGestionale>}"
+						app:id="idInputFieldZcos"
+						app:dialogName="selectDialogZcos"
+						app:searchPropertyModel="Zcos"
+						app:fragmentName="Zcos"
+						app:datapathmodel="CodiceGestionaleMcSet"
+						app:pathName="CodiceGestionale"
+						valueHelpRequest="onValueHelpRequestedZcos"
+						width="65%"
+						value="{step3List>Zcos}"
+						valueHelpOnly="true"
+						submit="onSubmitZcos"
+						app:property="Zcos"
+						editable="{wizardModel>/isInChange}"
+					>
+						<suggestionItems>
+							<core:Item text="{CodiceGestionale>Zcos}"/>
 						</suggestionItems>
-				</Input>
-				<Input
+					</Input>
+					<Input
 						editable="false"
-						id ="idInputZcosDesc"	
-						value="{step3List>ZcosDesc}"	
-					>	
-				</Input>
-				
+						id="idInputZcosDesc"
+						value="{step3List>ZcosDesc}"
+					/>
 					<!--  -->
-				<Input
-					width="30%"
-					id ="idInputZimpcos"
-					type="Number"
-					value="{step3List>ZimptotClass}"
-					app:property="Zimpcos"
-					liveChange="onLiveChangeTable"
-					editable="{wizardModel>/isInChange}"
-					>	
-				</Input>				
-		
+					<Input
+						width="30%"
+						id="idInputZimpcos"
+						type="Number"
+						value="{step3List>ZimptotClass}"
+						app:property="Zimpcos"
+						liveChange="onLiveChangeTable"
+						editable="{wizardModel>/isInChange}"
+					/>
 				</cells>
 			</ColumnListItem>
 		</items>
 	</Table>
-
-	<FlexBox justifyContent="Center" width="100%" class="sapUiSmallMargin">
-		<FlexBox justifyContent="End" width="50%" >
-		<Text text="{i18n>msgTotImpClass}" class="sapUiSmallMarginEnd"></Text>
-		<Text text="{path:'wizardModel>/Zimptotcos', formatter:'.formatter.convertFormattedNumber'}" />
+	<FlexBox
+		justifyContent="Center"
+		width="100%"
+		class="sapUiSmallMargin"
+	>
+		<FlexBox
+			justifyContent="End"
+			width="50%"
+		>
+			<Text
+				text="{i18n>msgTotImpClass}"
+				class="sapUiSmallMarginEnd"
+			/>
+			<Text text="{
+				path: 'wizardModel>/Zimptotcos',
+				formatter: '.formatter.convertFormattedNumber'
+			}"/>
+		</FlexBox>
 	</FlexBox>
-
-	</FlexBox>
-
-	
-
 </core:FragmentDefinition>
