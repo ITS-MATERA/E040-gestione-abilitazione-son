@@ -190,7 +190,9 @@ sap.ui.define(
                 detailModel.setProperty("/checkList", checkList);
                 detailModel.setProperty("/total", checkList.length);
                 if(checkList && checkList.length === 1){
+                    console.log(checkList[0]);
                     self.getView().getModel(HEADER_ACTION_MODEL).setProperty("/Zcdr",checkList[0].Fistl);
+                    self.getView().getModel(HEADER_ACTION_MODEL).setProperty("/ZdirigenteAmm",checkList[0].ZdirigenteRicann);
                 }else  
                     self.getView().getModel(HEADER_ACTION_MODEL).setProperty("/Zcdr","");      
                 self.getView().setBusy(false);         
