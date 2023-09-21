@@ -1252,7 +1252,10 @@ sap.ui.define(
             Zwels = wizardModel.getProperty("/PayMode"),
             Zcoordest = wizardModel.getProperty("/Zcoordest"),
             ZZcausaleval = wizardModel.getProperty("/ZZcausaleval"),
-            Banks = wizardModel.getProperty("/Banks");
+            Banks = wizardModel.getProperty("/Banks"),
+            Trbtr = wizardModel.getProperty("/Trbtr");
+
+          Trbtr = !Trbtr || Trbtr === null ? 0 : Trbtr;
 
           if (!wizardModel.getProperty("/isInChange")) return;
 
@@ -1291,7 +1294,7 @@ sap.ui.define(
           } else {
             url = URL_VALIDATION_2;
             oParam = {
-              Zimptot: !Zimptot || Zimptot === null ? 0 : Zimptot,
+              Zimptot: !Zimptot || Zimptot === null ? Trbtr : Zimptot,
               Iban: !Iban || Iban === null ? "" : Iban,
               Lifnr: !Lifnr || Lifnr === null ? "" : Lifnr,
               Zcoordest: !Zcoordest || Zcoordest === null ? "" : Zcoordest,
@@ -1432,8 +1435,11 @@ sap.ui.define(
           var wizardModel = self.getModel(WIZARD_MODEL),
             oDataModel = self.getModel(),
             Zimptot = wizardModel.getProperty("/Zimptot"),
+            Trbtr = wizardModel.getProperty("/Trbtr"),
             Step3List = self.getModel(STEP3_LIST).getData(),
             Zimptotcos = wizardModel.getProperty("/Zimptotcos");
+
+          Trbtr = !Trbtr || Trbtr === null ? 0 : Trbtr;
 
           if (!wizardModel.getProperty("/isInChange")) return;
 
@@ -1453,7 +1459,7 @@ sap.ui.define(
             // self.handleButtonsVisibility(2);
           } else {
             var oParam = {
-              Zimptot: !Zimptot || Zimptot === null ? 0 : Zimptot,
+              Zimptot: !Zimptot || Zimptot === null ? Trbtr : Zimptot,
               Zimptotcos: !Zimptotcos || Zimptotcos === null ? 0 : Zimptotcos,
             };
 

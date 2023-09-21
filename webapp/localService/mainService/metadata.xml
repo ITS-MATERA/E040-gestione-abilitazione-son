@@ -192,6 +192,10 @@
                 <Property Name="TaxnumPiva" Type="Edm.String" MaxLength="20" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Zsede" Type="Edm.String" MaxLength="25" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Zdenominazione" Type="Edm.String" MaxLength="50" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Zdurc" Type="Edm.String" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Zdstatodes" Type="Edm.String" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Zdscadenza" Type="Edm.DateTime" Precision="11" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ZfermAmm" Type="Edm.String" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </EntityType>
             <EntityType Name="ZstatoSopMc" sap:content-version="1">
                 <Key>
@@ -262,8 +266,8 @@
                 <Property Name="Gjahr" Type="Edm.String" MaxLength="4" sap:unicode="false" sap:label="Fiscal Year" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Zchiaveabi" Type="Edm.String" Nullable="false" MaxLength="33" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="OperationType" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <NavigationProperty Name="AbilitazioneSet" Relationship="ZS4_SOSPAUTPERMANENTE_SRV.DeepAbilitazioneToAbilitazione" FromRole="FromRole_DeepAbilitazioneToAbilitazione" ToRole="ToRole_DeepAbilitazioneToAbilitazione"/>
                 <NavigationProperty Name="AbilitazioneMessageSet" Relationship="ZS4_SOSPAUTPERMANENTE_SRV.DeepAbilitazioneToAbilitazioneMessage" FromRole="FromRole_DeepAbilitazioneToAbilitazioneMessage" ToRole="ToRole_DeepAbilitazioneToAbilitazioneMessage"/>
+                <NavigationProperty Name="AbilitazioneSet" Relationship="ZS4_SOSPAUTPERMANENTE_SRV.DeepAbilitazioneToAbilitazione" FromRole="FromRole_DeepAbilitazioneToAbilitazione" ToRole="ToRole_DeepAbilitazioneToAbilitazione"/>
             </EntityType>
             <EntityType Name="SonMessage" sap:content-version="1">
                 <Key>
@@ -638,14 +642,14 @@
                 <End Type="ZS4_SOSPAUTPERMANENTE_SRV.Intermediario1" Multiplicity="0..1" Role="ToRole_BancaAccreditoToIntermediario1"/>
                 <ReferentialConstraint>
                     <Principal Role="FromRole_BancaAccreditoToIntermediario1">
-                        <PropertyRef Name="Zcoordest"/>
                         <PropertyRef Name="Iban"/>
+                        <PropertyRef Name="Zcoordest"/>
                         <PropertyRef Name="Zwels"/>
                         <PropertyRef Name="Lifnr"/>
                     </Principal>
                     <Dependent Role="ToRole_BancaAccreditoToIntermediario1">
-                        <PropertyRef Name="Zcoordest"/>
                         <PropertyRef Name="Iban"/>
+                        <PropertyRef Name="Zcoordest"/>
                         <PropertyRef Name="Zwels"/>
                         <PropertyRef Name="Lifnr"/>
                     </Dependent>
@@ -753,61 +757,61 @@
                     <End EntitySet="SonMessageSet" Role="ToRole_DeepSonToSonMessage"/>
                 </AssociationSet>
                 <FunctionImport Name="ValidazioneSonRegW1" ReturnType="Collection(ZS4_SOSPAUTPERMANENTE_SRV.Message)" EntitySet="MessageSet" m:HttpMethod="GET">
-                    <Parameter Name="ZufficioCont" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Fistl" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Kostl" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Saknr" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Fipos" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Ztipodisp3" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="AgrName" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Fikrs" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Gjahr" Type="Edm.String" Mode="In"/>
                     <Parameter Name="Prctr" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Gjahr" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Fikrs" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="AgrName" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Ztipodisp3" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Fipos" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Saknr" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Kostl" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Fistl" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="ZufficioCont" Type="Edm.String" Mode="In"/>
                 </FunctionImport>
                 <FunctionImport Name="ValidazioneSonRegW2" ReturnType="Collection(ZS4_SOSPAUTPERMANENTE_SRV.Message)" EntitySet="MessageSet" m:HttpMethod="GET">
-                    <Parameter Name="Zcoordest" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Lifnr" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Zwels" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Iban" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Banks" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Zcodtrib" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Zimptot" Type="Edm.Decimal" Mode="In" Precision="2" Scale="2"/>
-                    <Parameter Name="ZZcausaleval" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="AliasRgs" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Purpose" Type="Edm.String" Mode="In"/>
                     <Parameter Name="Flagfruttifero" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Purpose" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="AliasRgs" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="ZZcausaleval" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Zimptot" Type="Edm.Decimal" Mode="In" Precision="2" Scale="2"/>
+                    <Parameter Name="Zcodtrib" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Banks" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Iban" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Zwels" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Lifnr" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Zcoordest" Type="Edm.String" Mode="In"/>
                 </FunctionImport>
                 <FunctionImport Name="ValidazioneSonW1" ReturnType="Collection(ZS4_SOSPAUTPERMANENTE_SRV.Message)" EntitySet="MessageSet" m:HttpMethod="GET">
-                    <Parameter Name="Fistl" Type="Edm.String" Mode="In"/>
                     <Parameter Name="Fipos" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Fistl" Type="Edm.String" Mode="In"/>
                 </FunctionImport>
                 <FunctionImport Name="ValidazioneSonW2" ReturnType="Collection(ZS4_SOSPAUTPERMANENTE_SRV.Message)" EntitySet="MessageSet" m:HttpMethod="GET">
-                    <Parameter Name="ZZcausaleval" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Iban" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Zwels" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Lifnr" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Zcoordest" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Banks" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Zcodtrib" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Flagfruttifero" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Purpose" Type="Edm.String" Mode="In"/>
                     <Parameter Name="AliasRgs" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Purpose" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Flagfruttifero" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Zcodtrib" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Banks" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Zcoordest" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Lifnr" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Zwels" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Iban" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="ZZcausaleval" Type="Edm.String" Mode="In"/>
                 </FunctionImport>
                 <FunctionImport Name="ValidazioneSonW3" ReturnType="Collection(ZS4_SOSPAUTPERMANENTE_SRV.Message)" EntitySet="MessageSet" m:HttpMethod="GET">
-                    <Parameter Name="Zimptotcos" Type="Edm.Decimal" Mode="In" Precision="2" Scale="2"/>
                     <Parameter Name="Zimptot" Type="Edm.Decimal" Mode="In" Precision="2" Scale="2"/>
+                    <Parameter Name="Zimptotcos" Type="Edm.Decimal" Mode="In" Precision="2" Scale="2"/>
                 </FunctionImport>
                 <FunctionImport Name="ValidazioneSonRegW4" ReturnType="Collection(ZS4_SOSPAUTPERMANENTE_SRV.Message)" EntitySet="MessageSet" m:HttpMethod="GET">
-                    <Parameter Name="Zlocpag" Type="Edm.String" Mode="In"/>
                     <Parameter Name="Zzonaint" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Zlocpag" Type="Edm.String" Mode="In"/>
                 </FunctionImport>
                 <FunctionImport Name="ValidazioneAbilitazione" ReturnType="Collection(ZS4_SOSPAUTPERMANENTE_SRV.Message)" EntitySet="MessageSet" m:HttpMethod="GET">
-                    <Parameter Name="AgrName" Type="Edm.String" Mode="In" MaxLength="30"/>
-                    <Parameter Name="Prctr" Type="Edm.String" Mode="In" MaxLength="40"/>
-                    <Parameter Name="Fikrs" Type="Edm.String" Mode="In" MaxLength="40"/>
-                    <Parameter Name="Gjahr" Type="Edm.String" Mode="In"/>
-                    <Parameter Name="Fipos" Type="Edm.String" Mode="In" MaxLength="24"/>
                     <Parameter Name="Fistl" Type="Edm.String" Mode="In" MaxLength="16"/>
+                    <Parameter Name="Fipos" Type="Edm.String" Mode="In" MaxLength="24"/>
+                    <Parameter Name="Gjahr" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Fikrs" Type="Edm.String" Mode="In" MaxLength="40"/>
+                    <Parameter Name="Prctr" Type="Edm.String" Mode="In" MaxLength="40"/>
+                    <Parameter Name="AgrName" Type="Edm.String" Mode="In" MaxLength="30"/>
                 </FunctionImport>
             </EntityContainer>
             <atom:link rel="self" href="http://l2vs2slass01.mef.gov.it:8000/sap/opu/odata/sap/ZS4_SOSPAUTPERMANENTE_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>

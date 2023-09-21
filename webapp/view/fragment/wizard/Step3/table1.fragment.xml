@@ -15,7 +15,7 @@
 		/>
 		<Input
 			editable="false"
-			value="{wizardModel>/Zimptot}"
+			value="{= ${wizardModel>/Zimptot} === null || ${wizardModel>/Zimptot} === '' ? ${wizardModel>/Trbtr} : ${wizardModel>/Zimptot} }"
 		/>
 	</FlexBox>
 	<VBox width="100%">
