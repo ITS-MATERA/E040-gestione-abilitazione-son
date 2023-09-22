@@ -11,26 +11,24 @@ sap.ui.define([], function () {
 
     dateWizard: function (sValue) {
       console.log(sValue);
-      if (!sValue) return;// new Date();
+      if (!sValue) return; // new Date();
 
-      if(sValue instanceof Date && !isNaN(sValue)){}
-      else
-        return;
-      
-      var sMonth = sValue.getMonth()+1;
-      if(sMonth<10)
-        sMonth = "0" +sMonth;
-      sValue = sValue.getFullYear()+ "-" + sMonth +"-"+ sValue.getDate();
+      if (sValue instanceof Date && !isNaN(sValue)) {
+      } else return;
+
+      var sMonth = sValue.getMonth() + 1;
+      if (sMonth < 10) sMonth = "0" + sMonth;
+      sValue = sValue.getFullYear() + "-" + sMonth + "-" + sValue.getDate();
       return sValue;
     },
 
-    convertFormattedNumber : function (sValue) {
-        if (!sValue) {
-            return "";
-        }
-        
-        sValue = sValue.replace(".",",");
-        return sValue.toString().replace(/\B(?<!\,\d*)(?=(\d{3})+(?!\d))/g, ".");            
+    convertFormattedNumber: function (sValue) {
+      if (!sValue) {
+        return "";
+      }
+
+      sValue = sValue.replace(".", ",");
+      return sValue.toString().replace(/\B(?<!\,\d*)(?=(\d{3})+(?!\d))/g, ".");
     },
 
     formateDateForDeep(dateValue) {
@@ -152,14 +150,14 @@ sap.ui.define([], function () {
             sDesc = bundle.getText("ZstatoSop15");
             break;
           case "16":
-              sDesc = bundle.getText("ZstatoSop16");
-              break;  
+            sDesc = bundle.getText("ZstatoSop16");
+            break;
           case "17":
-              sDesc = bundle.getText("ZstatoSop17");
-              break;  
+            sDesc = bundle.getText("ZstatoSop17");
+            break;
           case "18":
-              sDesc = bundle.getText("ZstatoSop18");
-              break;  
+            sDesc = bundle.getText("ZstatoSop18");
+            break;
           default:
             sDesc = bundle.getText("ZstatoDefault");
         }
@@ -167,19 +165,12 @@ sap.ui.define([], function () {
 
       return sDesc;
     },
-    defaultFormatDate: function (sDate) {
-      if (!sDate || sDate === "" || sDate === null) return "";
 
-      return sap.ui.core.format.DateFormat.getDateInstance({
-        pattern: "yyyy-MM-dd",
-      }).format(new Date());
-    },
-    formatDate: function (sDate) {
-      if (!sDate || sDate === "" || sDate === null) return "";
-
-      return sap.ui.core.format.DateFormat.getDateInstance({
-        pattern: "dd.MM.yyyy",
-      }).format(new Date(sDate));
+    deleteFirstZeros: function (sValue) {
+      if (parseInt(sValue) === 0 || !sValue) {
+        return "";
+      }
+      return parseInt(sValue).toString();
     },
   };
 });

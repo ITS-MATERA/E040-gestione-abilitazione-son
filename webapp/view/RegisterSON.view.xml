@@ -5,93 +5,170 @@
 	xmlns:core="sap.ui.core"
 	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 >
-
-	<Page showHeader="false" > 
+	<Page showHeader="false">
 		<content>
-				<Panel class="bgBlue margin0">
-					<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.HeaderPanel" type="XML"/>
-				</Panel>
-				<Wizard id="CreateProductWizard"  showNextButton="false" finishButtonText="{i18n>btnSaveAll}" 
-					class="sapUiResponsivePadding--header sapUiResponsivePadding--content"
-								>
-							<WizardStep id="idWizardStep1"
-										title="{i18n>wizardStep1Title}"
-										validated="true"
-										app:dataWizardStepIndex="0">
-
-								<VBox>	
-									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step1.form1" type="XML"/>
-									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step1.form2" type="XML"/>
-									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step1.form3" type="XML"/>
-								</VBox>	
-							</WizardStep>
-							<WizardStep id="idWizardStep2"
-										title="{i18n>wizardStep2Title}"
-										activate="goToTwo"
-										validated="true"
-										app:dataWizardStepIndex="1">
-
-								<VBox>	
-									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form1" type="XML"/>
-									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form2" type="XML"/>
-									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form3" type="XML"/>
-									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form4" type="XML"/>
-									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form5" type="XML"/>
-									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form6" type="XML"/>
-									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form7" type="XML"/>
-								</VBox>		
-							
-							</WizardStep>
-							<WizardStep id="idWizardStep3"
-										title="{i18n>wizardStep3Title}"
-										activate="goToThree"
-										validated="true"
-										app:dataWizardStepIndex="2">
-								<VBox>	
-									<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step3.table1" type="XML"/>
-								</VBox>		
-							</WizardStep>	
-							<WizardStep id="idWizardStep4"
-										activate="goToFour"
-										complete="onSaveAll"
-										title="{i18n>wizardStep4Title}"
-										validated="true"
-										app:dataWizardStepIndex="3">
-							<core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step4.form1" type="XML"/>
-							</WizardStep>													
-						</Wizard>
-						<OverflowToolbar>                
-							<Button text="Indietro" visible="{wizardModel>/btnBackVisible}" type="Emphasized" press="onWizardBackButton" app:dataWizardId="CreateProductWizard" />
-							<Button text="Avanti" visible="{wizardModel>/btnNextVisible}" type="Emphasized"  press="onWizardNextButton" app:dataWizardId="CreateProductWizard" />
-							<Button text="Registra SON" visible="{wizardModel>/btnFinishVisible}" type="Emphasized" 
-								press="onWizardFinishButton" 
-								app:dataWizardId="CreateProductWizard"
-								app:dataWizardType="{= ${wizardModel>/isInChange} === true ? 'Registra SON' : 'Fine' }" />
-							<ToolbarSpacer/>               
-						</OverflowToolbar>
+			<Panel class="bgBlue margin0">
+				<core:Fragment
+					fragmentName="gestioneabilitazioneeson.view.fragment.wizard.HeaderPanel"
+					type="XML"
+				/>
+			</Panel>
+			<Wizard
+				id="CreateProductWizard"
+				showNextButton="false"
+				finishButtonText="{i18n>btnSaveAll}"
+				class="sapUiResponsivePadding--header sapUiResponsivePadding--content"
+			>
+				<WizardStep
+					id="idWizardStep1"
+					title="{i18n>wizardStep1Title}"
+					validated="true"
+					app:dataWizardStepIndex="0"
+				>
+					<VBox>
+						<core:Fragment
+							fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step1.form1"
+							type="XML"
+						/>
+						<core:Fragment
+							fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step1.form2"
+							type="XML"
+						/>
+						<core:Fragment
+							fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step1.form3"
+							type="XML"
+						/>
+					</VBox>
+				</WizardStep>
+				<WizardStep
+					id="idWizardStep2"
+					title="{i18n>wizardStep2Title}"
+					activate="goToTwo"
+					validated="true"
+					app:dataWizardStepIndex="1"
+				>
+					<VBox>
+						<core:Fragment
+							fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form1"
+							type="XML"
+						/>
+						<core:Fragment
+							fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form2"
+							type="XML"
+						/>
+						<core:Fragment
+							fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form3"
+							type="XML"
+						/>
+						<core:Fragment
+							fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form4"
+							type="XML"
+						/>
+						<core:Fragment
+							fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form5"
+							type="XML"
+						/>
+						<core:Fragment
+							fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form6"
+							type="XML"
+						/>
+						<core:Fragment
+							fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form7"
+							type="XML"
+						/>
+						<core:Fragment
+							fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.Intermediario2"
+							type="XML"
+						/>
+					</VBox>
+				</WizardStep>
+				<WizardStep
+					id="idWizardStep3"
+					title="{i18n>wizardStep3Title}"
+					activate="goToThree"
+					validated="true"
+					app:dataWizardStepIndex="2"
+				>
+					<VBox>
+						<core:Fragment
+							fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step3.table1"
+							type="XML"
+						/>
+					</VBox>
+				</WizardStep>
+				<WizardStep
+					id="idWizardStep4"
+					activate="goToFour"
+					complete="onSaveAll"
+					title="{i18n>wizardStep4Title}"
+					validated="true"
+					app:dataWizardStepIndex="3"
+				>
+					<core:Fragment
+						fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step4.form1"
+						type="XML"
+					/>
+				</WizardStep>
+			</Wizard>
+			<OverflowToolbar>
+				<Button
+					text="Indietro"
+					visible="{wizardModel>/btnBackVisible}"
+					type="Emphasized"
+					press="onWizardBackButton"
+					app:dataWizardId="CreateProductWizard"
+				/>
+				<Button
+					text="Avanti"
+					visible="{wizardModel>/btnNextVisible}"
+					type="Emphasized"
+					press="onWizardNextButton"
+					app:dataWizardId="CreateProductWizard"
+				/>
+				<Button
+					text="Registra SON"
+					visible="{wizardModel>/btnFinishVisible}"
+					type="Emphasized"
+					press="onWizardFinishButton"
+					app:dataWizardId="CreateProductWizard"
+					app:dataWizardType="{= ${wizardModel>/isInChange} === true ? 'Registra SON' : 'Fine' }"
+				/>
+				<ToolbarSpacer/>
+			</OverflowToolbar>
 		</content>
-			<footer>
-				<OverflowToolbar>
-					<Button type="Emphasized" text="{i18n>btnBack}" press="onNavBack" >
-						<layoutData>
-							<OverflowToolbarLayoutData priority="NeverOverflow" />
-						</layoutData>
-					</Button>
-					<Button
-				    icon="{ path: 'logModel>/', formatter: '.buttonIconFormatter' }"
-					type="{ path: 'logModel>/', formatter: '.buttonTypeFormatter' }"
-					text= "{path: 'logModel>/', formatter: '.highestSeverityMessages' }"
-			        press="handleDialogPress"/>
-					<!-- <ToolbarSpacer />
+		<footer>
+			<OverflowToolbar>
+				<Button
+					type="Emphasized"
+					text="{i18n>btnBack}"
+					press="onNavBack"
+				>
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow"/>
+					</layoutData>
+				</Button>
+				<Button
+					icon="{
+						path: 'logModel>/',
+						formatter: '.buttonIconFormatter'
+					}"
+					type="{
+						path: 'logModel>/',
+						formatter: '.buttonTypeFormatter'
+					}"
+					text="{
+						path: 'logModel>/',
+						formatter: '.highestSeverityMessages'
+					}"
+					press="handleDialogPress"
+				/>
+				<!-- <ToolbarSpacer />
 					<Button type="Emphasized" text="{i18n>btnRegisterSON}" press="onRegisterSON" >
 						<layoutData>
 							<OverflowToolbarLayoutData priority="NeverOverflow" />
 						</layoutData>
 					</Button> -->
-				</OverflowToolbar>
-			</footer>
-    </Page>
-
-
-
+			</OverflowToolbar>
+		</footer>
+	</Page>
 </mvc:View>

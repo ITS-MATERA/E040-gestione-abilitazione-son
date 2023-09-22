@@ -2,17 +2,32 @@
 	xmlns="sap.m"
 	xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core"
-	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 >
 	<Panel
-		headerText="{i18n>wizardStep2SubTitle7}"
+		headerText="{i18n>titleIntermediario2}"
 		width="auto"
 		class="margin0 padding0  expanded"
-		visible="{= ${wizardModel>/PayMode} === 'ID6' || ${wizardModel>/PayMode} === 'ID10' ? true : false }"
 		backgroundDesign="Transparent"
+		visible="{= 
+			${wizardModel>/PayMode} === 'ID6' || 
+			${wizardModel>/PayMode} === 'ID10' &amp;&amp;
+			(
+				${wizardModel>/Ziban_i} || 
+				${wizardModel>/Zbic_i} || 
+				${wizardModel>/Zcoordest_i} || 
+				${wizardModel>/Zdenbanca_i} || 
+				${wizardModel>/Zclearsyst_i} || 
+				${wizardModel>/Zstras_i} || 
+				${wizardModel>/Zcivico_i} || 
+				${wizardModel>/Zort01_i} || 
+				${wizardModel>/Zregio_i} || 
+				${wizardModel>/Zpstlz_i} || 
+				${wizardModel>/Zland1_i}
+			)
+			? true : false }"
 	>
 		<content>
-			<VBox id="idStep2Form7">
+			<VBox>
 				<items>
 					<l:Grid vSpacing="0">
 						<VBox>
@@ -35,8 +50,9 @@
 												</layoutData>
 											</Label>
 											<Input
-												value="{wizardModel>/Ziban_i}"
+												value="{wizardModel>/Ziban2}"
 												editable="{wizardModel>/isInChange}"
+												maxLength="34"
 											>
 												<layoutData>
 													<l:GridData span="XL9 L9 M9 S12"/>
@@ -70,8 +86,9 @@
 												</layoutData>
 											</Label>
 											<Input
-												value="{wizardModel>/Zbic_i}"
+												value="{wizardModel>/Zbic2}"
 												editable="{wizardModel>/isInChange}"
+												maxLength="11"
 											>
 												<layoutData>
 													<l:GridData span="XL9 L9 M9 S12"/>
@@ -105,9 +122,10 @@
 												</layoutData>
 											</Label>
 											<Input
-												value="{wizardModel>/Zcoordest_i}"
+												value="{wizardModel>/Zcoordest2}"
 												width="100%"
 												editable="{wizardModel>/isInChange}"
+												maxLength="35"
 											>
 												<layoutData>
 													<l:GridData span="XL7 L7 M7 S12"/>
@@ -172,8 +190,9 @@
 												</layoutData>
 											</Label>
 											<Input
-												value="{wizardModel>/Zdenbanca_i}"
+												value="{wizardModel>/Zdenbanca2}"
 												editable="{wizardModel>/isInChange}"
+												maxLength="70"
 											>
 												<layoutData>
 													<l:GridData span="XL8 L8 M8 S12"/>
@@ -210,8 +229,9 @@
 												</layoutData>
 											</Label>
 											<Input
-												value="{wizardModel>/Zclearsyst_i}"
+												value="{wizardModel>/Zclearsyst2}"
 												editable="{wizardModel>/isInChange}"
+												maxLength="5"
 											>
 												<layoutData>
 													<l:GridData span="XL7 L7 M7 S12"/>
@@ -275,8 +295,9 @@
 												</layoutData>
 											</Label>
 											<Input
-												value="{wizardModel>/Zstras_i}"
+												value="{wizardModel>/Zstras2}"
 												editable="{wizardModel>/isInChange}"
+												maxLength="35"
 											>
 												<layoutData>
 													<l:GridData span="XL9 L9 M9 S12"/>
@@ -313,8 +334,10 @@
 												</layoutData>
 											</Label>
 											<Input
-												value="{wizardModel>/Zcivico_i}"
+												id="iptCivico2"
+												value="{wizardModel>/Zcivico2}"
 												editable="{wizardModel>/isInChange}"
+												maxLength="5"
 											>
 												<layoutData>
 													<l:GridData span="XL9 L9 M9 S12"/>
@@ -348,8 +371,9 @@
 												</layoutData>
 											</Label>
 											<Input
-												value="{wizardModel>/Zort01_i}"
+												value="{wizardModel>/Zort012}"
 												editable="{wizardModel>/isInChange}"
+												maxLength="35"
 											>
 												<layoutData>
 													<l:GridData span="XL9 L9 M9 S12"/>
@@ -386,8 +410,9 @@
 												</layoutData>
 											</Label>
 											<Input
-												value="{wizardModel>/Zregio_i}"
+												value="{wizardModel>/Zregio2}"
 												editable="{wizardModel>/isInChange}"
+												maxLength="3"
 											>
 												<layoutData>
 													<l:GridData span="XL9 L9 M9 S12"/>
@@ -421,8 +446,10 @@
 												</layoutData>
 											</Label>
 											<Input
-												value="{wizardModel>/Zpstlz_i}"
+												id="iptCodicePostale2"
+												value="{wizardModel>/Zpstlz2}"
 												editable="{wizardModel>/isInChange}"
+												maxLength="10"
 											>
 												<layoutData>
 													<l:GridData span="XL9 L9 M9 S12"/>
@@ -456,8 +483,9 @@
 												</layoutData>
 											</Label>
 											<Input
-												value="{wizardModel>/Zland1_i}"
+												value="{wizardModel>/Zland12}"
 												editable="{wizardModel>/isInChange}"
+												maxLength="3"
 											>
 												<layoutData>
 													<l:GridData span="XL9 L9 M9 S12"/>

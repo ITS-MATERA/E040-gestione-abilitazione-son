@@ -77,14 +77,35 @@ sap.ui.define(
               if (callback) {
                 self.getFistl();
               } else {
-                self
-                  .getRouter()
-                  .navTo("notAuth", {
-                    mex: self.getResourceBundle().getText("notAuthText"),
-                  });
+                self.getRouter().navTo("notAuth", {
+                  mex: self.getResourceBundle().getText("notAuthText"),
+                });
+                return;
               }
             });
           }
+
+          self.getTipoDisposizioneModel();
+        },
+
+        getTipoDisposizioneModel: function () {
+          var self = this;
+          var addAuthModel = self.getModel(ADD_AUTH_MODEL);
+          var oDataModel = self.getModel();
+          var oView = self.getView();
+
+          oView.setBusy(true);
+
+          oDataModel.read("/" + Ztipodisp3_SET, {
+            success: function (data, oResponse) {
+              oView.setBusy(false);
+              data.results.splice(0, 1);
+              addAuthModel.setProperty("/Ztipodisp3List", data.results);
+            },
+            error: function (error) {
+              oView.setBusy(false);
+            },
+          });
         },
 
         getFistl: function () {

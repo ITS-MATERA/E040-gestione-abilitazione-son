@@ -6,7 +6,7 @@
 >   
     <!-- expandable="true" -->
   <Panel   headerText="{i18n>wizardStep2SubTitle3}" width="auto" class="margin0 padding0 expanded"
-    visible="{= ${wizardModel>/PayMode} === 'ID1' || ${wizardModel>/PayMode} === 'ID2' ? true : false }">
+    visible="{= ${wizardModel>/PayMode} === 'ID1' || ${wizardModel>/PayMode} === 'ID2' ? true : false }" backgroundDesign="Transparent">
 		<content >
             <VBox id ="idStep2Form3">
                 <items>

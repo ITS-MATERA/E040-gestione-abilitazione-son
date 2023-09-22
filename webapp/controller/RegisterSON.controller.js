@@ -53,7 +53,7 @@ sap.ui.define(
     const STEP3_LIST = "step3List";
 
     const TABLE_STEP3 = "idTableStep3";
-    const UfficioContMc_SET="UfficioContMcSet";
+    const UfficioContMc_SET = "UfficioContMcSet";
     const FistlMc_SET = "TvarvcParameterSet";
     const URL_DEEP = "DeepSonSet";
     const URL_VALIDATION_1 = "ValidazioneSonRegW1";
@@ -70,14 +70,14 @@ sap.ui.define(
       "gestioneabilitazioneeson.controller.RegisterSON",
       {
         formatter: formatter,
-        _indexClassificazioneSON:0,
+        _indexClassificazioneSON: 0,
         onInit: function () {
-          var self =this;
+          var self = this;
           var oWizardModel, oDataSONModel, Step3List;
           var oWizardModel = new JSONModel(self.loadWizardModel());
-          
-          oDataSONModel = new JSONModel(self.loadDataSONModel()); 
-           
+
+          oDataSONModel = new JSONModel(self.loadDataSONModel());
+
           Step3List = new JSONModel([
             {
               Zcos: null,
@@ -118,6 +118,9 @@ sap.ui.define(
             .getRoute("registerSON")
             .attachPatternMatched(this._onObjectMatched, this);
 
+          self.acceptOnlyNumber("iptCodicePostale2");
+          self.acceptOnlyNumber("iptCivico2");
+
           this._wizard = this.getView().byId("CreateProductWizard");
         },
         onBeforeRendering: function () {
@@ -130,57 +133,96 @@ sap.ui.define(
             dataSONModel = self.getModel(DataSON_MODEL),
             oDataModel = self.getModel(),
             oView = self.getView();
-            self.getView().getModel(WIZARD_MODEL).setProperty("/isInChange",true);
-            oView.setBusy(true);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/isInChange", true);
+          oView.setBusy(true);
 
-            if(!self.getModelGlobal(self.AUTHORITY_CHECK_SON) || self.getModelGlobal(self.AUTHORITY_CHECK_SON) === null){
-              self.getAuthorityCheck(self.FILTER_SON_OBJ, function(callback){
-                if(callback){                }
-                else{
-                  oView.setBusy(false);
-                  self.getRouter().navTo("notAuth", {mex: self.getResourceBundle().getText("notAuthText")});                  
-                }
-              });
-            }
-
-            self.getInitialParams(function(callback){
-              self.getView().setBusy(false);
-              if(!callback.success){
-                sap.m.MessageBox.warning(callback.message,{
-                  title: oBundle.getText("titleDialogWarning"),
-                  onClose: function (oAction) {
-                    self.getView().getModel(WIZARD_MODEL).setProperty("/Zzamministr",null);
-                    self.getView().getModel(WIZARD_MODEL).setProperty("/ZufficioCont",null);
-                    self.getView().getModel(WIZARD_MODEL).setProperty("/ZvimDescrufficio",null);
-                    self.getView().getModel(WIZARD_MODEL).setProperty("/Fistl",null);
-                    self.getView().getModel(DataSON_MODEL).setProperty("/Zzamministr",null);
-                    return false;
-                  },
+          if (
+            !self.getModelGlobal(self.AUTHORITY_CHECK_SON) ||
+            self.getModelGlobal(self.AUTHORITY_CHECK_SON) === null
+          ) {
+            self.getAuthorityCheck(self.FILTER_SON_OBJ, function (callback) {
+              if (callback) {
+              } else {
+                oView.setBusy(false);
+                self.getRouter().navTo("notAuth", {
+                  mex: self.getResourceBundle().getText("notAuthText"),
                 });
-                return false;
               }
-              self.getView().getModel(WIZARD_MODEL).setProperty("/Zzamministr",callback.data.Zzamministr);
-              self.getView().getModel(WIZARD_MODEL).setProperty("/ZufficioCont",callback.data.ZufficioCont);
-              self.getView().getModel(WIZARD_MODEL).setProperty("/ZvimDescrufficio",callback.data.ZvimDescrufficio);
-              self.getView().getModel(WIZARD_MODEL).setProperty("/Fistl",callback.data.Fistl);
-              self.getView().getModel(DataSON_MODEL).setProperty("/Zzamministr",callback.data.Zzamministr);
             });
+          }
 
-            self.getFruttiferoInfruttifero(function(callback){
-              if(!callback.error){
-                self.getView().getModel(DataSON_MODEL).setProperty("/FlagFruttifero",callback.data);
-              }
-              else 
-                self.getView().getModel(DataSON_MODEL).setProperty("/FlagFruttifero",callback.data);
-            });
+          self.getInitialParams(function (callback) {
+            self.getView().setBusy(false);
+            if (!callback.success) {
+              sap.m.MessageBox.warning(callback.message, {
+                title: oBundle.getText("titleDialogWarning"),
+                onClose: function (oAction) {
+                  self
+                    .getView()
+                    .getModel(WIZARD_MODEL)
+                    .setProperty("/Zzamministr", null);
+                  self
+                    .getView()
+                    .getModel(WIZARD_MODEL)
+                    .setProperty("/ZufficioCont", null);
+                  self
+                    .getView()
+                    .getModel(WIZARD_MODEL)
+                    .setProperty("/ZvimDescrufficio", null);
+                  self
+                    .getView()
+                    .getModel(WIZARD_MODEL)
+                    .setProperty("/Fistl", null);
+                  self
+                    .getView()
+                    .getModel(DataSON_MODEL)
+                    .setProperty("/Zzamministr", null);
+                  return false;
+                },
+              });
+              return false;
+            }
+            self
+              .getView()
+              .getModel(WIZARD_MODEL)
+              .setProperty("/Zzamministr", callback.data.Zzamministr);
+            self
+              .getView()
+              .getModel(WIZARD_MODEL)
+              .setProperty("/ZufficioCont", callback.data.ZufficioCont);
+            self
+              .getView()
+              .getModel(WIZARD_MODEL)
+              .setProperty("/ZvimDescrufficio", callback.data.ZvimDescrufficio);
+            self
+              .getView()
+              .getModel(WIZARD_MODEL)
+              .setProperty("/Fistl", callback.data.Fistl);
+            self
+              .getView()
+              .getModel(DataSON_MODEL)
+              .setProperty("/Zzamministr", callback.data.Zzamministr);
+          });
+
+          self.getFruttiferoInfruttifero(function (callback) {
+            if (!callback.error) {
+              self
+                .getView()
+                .getModel(DataSON_MODEL)
+                .setProperty("/FlagFruttifero", callback.data);
+            } else self.getView().getModel(DataSON_MODEL).setProperty("/FlagFruttifero", callback.data);
+          });
         },
 
-        getInitialParams:function(callback){
-          var self =this,
+        getInitialParams: function (callback) {
+          var self = this,
             oDataModel = self.getModel();
           var path = self.getModel().createKey("PrevalorizzazioneW1Set", {
             TvarvcParam: "COSPR3FIORIE040_FISTL",
-            UserParam: "PRC"
+            UserParam: "PRC",
           });
           self
             .getModel()
@@ -188,16 +230,26 @@ sap.ui.define(
             .then(function () {
               oDataModel.read("/" + path, {
                 success: function (data, oResponse) {
-                  var message = oResponse.headers["sap-message"] && oResponse.headers["sap-message"] !== "" ? JSON.parse(oResponse.headers["sap-message"]) : null;
-                  if(message && message.severity === "error"){
-                    callback({success:false,message:message.message, data:null});
-                  }
-                  else
-                    callback({success:true,message:null, data:data});
+                  var message =
+                    oResponse.headers["sap-message"] &&
+                    oResponse.headers["sap-message"] !== ""
+                      ? JSON.parse(oResponse.headers["sap-message"])
+                      : null;
+                  if (message && message.severity === "error") {
+                    callback({
+                      success: false,
+                      message: message.message,
+                      data: null,
+                    });
+                  } else callback({ success: true, message: null, data: data });
                 },
                 error: function (error) {
                   console.log(error);
-                  callback({success:false,message:"Caricamento parametri non riuscito", data:null});
+                  callback({
+                    success: false,
+                    message: "Caricamento parametri non riuscito",
+                    data: null,
+                  });
                 },
               });
             });
@@ -235,7 +287,7 @@ sap.ui.define(
 
         //     self.getModel().metadataLoaded().then(function () {
         //         oDataModel.read("/" + path, {
-        //             success: function (data, oResponse) {                      
+        //             success: function (data, oResponse) {
         //                 self.getView().getModel(WIZARD_MODEL).setProperty("/ZufficioCont",data.ZufficioCont);
         //                 self.getView().getModel(WIZARD_MODEL).setProperty("/ZvimDescrufficio",data.ZvimDescrufficio);
         //             },
@@ -256,7 +308,7 @@ sap.ui.define(
 
         //     self.getModel().metadataLoaded().then(function () {
         //         oDataModel.read("/" + path, {
-        //             success: function (data, oResponse) {                      
+        //             success: function (data, oResponse) {
         //                 self.getView().getModel(WIZARD_MODEL).setProperty("/Fistl",data.Value);
         //             },
         //             error: function (error) {
@@ -370,9 +422,9 @@ sap.ui.define(
           firstRow.Zetichetta = COS;
           firstRow.ZstepSop = ZstepSop;
           firstRow.Zposizione = "";
-          firstRow.Zcos=null;
-          firstRow.ZcosDesc=null;
-          firstRow.ZimptotClass=null;
+          firstRow.Zcos = null;
+          firstRow.ZcosDesc = null;
+          firstRow.ZimptotClass = null;
 
           firstRow.Id = self._indexClassificazioneSON + 1;
           self._indexClassificazioneSON = self._indexClassificazioneSON + 1;
@@ -421,18 +473,18 @@ sap.ui.define(
           var self = this;
 
           // self.goToFinish(oEvent, function(callback){
-            self.goToFinish("CreateProductWizard", function(callback){
-            switch(callback){
-              case 'ValidationError':
-                  return false;
+          self.goToFinish("CreateProductWizard", function (callback) {
+            switch (callback) {
+              case "ValidationError":
+                return false;
                 break;
-              case 'ValidationSuccess':
+              case "ValidationSuccess":
                 self._setDialogSaveAll("msgRegisterSon");
                 break;
               default:
                 return false;
-                break;     
-            }           
+                break;
+            }
           });
         },
 
@@ -471,13 +523,12 @@ sap.ui.define(
           oDialog.open();
         },
 
-        onWizardFinishButton:function(oEvent){
-          var self =this,
-              wizardType = oEvent.getSource().data("dataWizardType");
+        onWizardFinishButton: function (oEvent) {
+          var self = this,
+            wizardType = oEvent.getSource().data("dataWizardType");
 
-          if(wizardType === "Fine")
-            return false;
-          
+          if (wizardType === "Fine") return false;
+
           self.onSaveAll();
         },
 
@@ -486,7 +537,9 @@ sap.ui.define(
             oDataModel = self.getModel(),
             oBundle = self.getResourceBundle(),
             wizardModel = self.getModel(WIZARD_MODEL),
-            classificazioneSonList = self.getModel(CLASSIFICAZIONE_SON_DEEP).getData(),
+            classificazioneSonList = self
+              .getModel(CLASSIFICAZIONE_SON_DEEP)
+              .getData(),
             // Step3List = self.getModel(STEP3_LIST).getData(),
             Gjahr = wizardModel.getProperty("/Gjahr"),
             Ztipodisp3 = wizardModel.getProperty("/Ztipodisp3"),
@@ -511,20 +564,33 @@ sap.ui.define(
             ZE2e = wizardModel.getProperty("/ZE2e"),
             Zlocpag = wizardModel.getProperty("/Zlocpag"),
             Zzonaint = wizardModel.getProperty("/Zzonaint"),
-            Zdataprot = wizardModel.getProperty("/Zdataprot") && wizardModel.getProperty("/Zdataprot") !== null && wizardModel.getProperty("/Zdataprot") !== "" ?
-                        self.formatter.formateDateForDeep(wizardModel.getProperty("/Zdataprot")):
-                        null;
-                                
-          var arrayClassificazioneSonList=[];
-          for(var i=0;i<classificazioneSonList.length;i++){
-              var item = classificazioneSonList[i];
-              if(item.Id === 0 || !item.ZcosDesc || item.ZcosDesc === null || item.ZcosDesc === "")
-                  continue;
-              delete item.Id;
-              delete item.Bukrs;
-              delete item.ZstepSop;
-              item.Zchiavesop ="FITTIZIO";
-              arrayClassificazioneSonList.push(item);
+            Zdataprot =
+              wizardModel.getProperty("/Zdataprot") &&
+              wizardModel.getProperty("/Zdataprot") !== null &&
+              wizardModel.getProperty("/Zdataprot") !== ""
+                ? self.formatter.formateDateForDeep(
+                    wizardModel.getProperty("/Zdataprot")
+                  )
+                : null;
+
+          var bIntermediario1Valorized = self.isIntermediario1Valorized();
+          console.log(bIntermediario1Valorized);
+
+          var arrayClassificazioneSonList = [];
+          for (var i = 0; i < classificazioneSonList.length; i++) {
+            var item = classificazioneSonList[i];
+            if (
+              item.Id === 0 ||
+              !item.ZcosDesc ||
+              item.ZcosDesc === null ||
+              item.ZcosDesc === ""
+            )
+              continue;
+            delete item.Id;
+            delete item.Bukrs;
+            delete item.ZstepSop;
+            item.Zchiavesop = "FITTIZIO";
+            arrayClassificazioneSonList.push(item);
           }
 
           var entityRequestBody = {
@@ -543,17 +609,20 @@ sap.ui.define(
                 Gjahr: !Gjahr || Gjahr === null ? "" : Gjahr,
                 Zchiavesop: "FITTIZIO",
                 Zstep: "",
-                ZufficioCont: !ZufficioCont || ZufficioCont === null ? "" : ZufficioCont,
+                ZufficioCont:
+                  !ZufficioCont || ZufficioCont === null ? "" : ZufficioCont,
                 Zdataprot: Zdataprot,
                 Znumprot: !Znumprot || Znumprot === null ? "" : Znumprot,
                 Lifnr: !Lifnr || Lifnr === null ? "" : Lifnr,
                 Fipos: !Fipos || Fipos === null ? "" : Fipos,
                 Fistl: !Fistl || Fistl === null ? "" : Fistl,
-                Ztipodisp3: !Ztipodisp3 || Ztipodisp3 === null ? "" : Ztipodisp3,
+                Ztipodisp3:
+                  !Ztipodisp3 || Ztipodisp3 === null ? "" : Ztipodisp3,
                 Kostl: !Kostl || Kostl === null ? "" : Kostl,
                 Hkont: !Saknr || Saknr === null ? "" : Saknr,
                 Zwels: !Zwels || Zwels === null ? "" : Zwels,
-                ZCausaleval: !ZZcausaleval || ZZcausaleval === null ? "" : ZZcausaleval,
+                ZCausaleval:
+                  !ZZcausaleval || ZZcausaleval === null ? "" : ZZcausaleval,
                 Iban: !Iban || Iban === null ? "" : Iban,
                 Swift: !Swift || Swift === null ? "" : Swift,
                 Zcoordest: !Zcoordest || Zcoordest === null ? "" : Zcoordest,
@@ -561,41 +630,162 @@ sap.ui.define(
                 Zcausale: !Zcausale || Zcausale === null ? "" : Zcausale,
                 Zzonaint: !Zzonaint || Zzonaint === null ? "" : Zzonaint,
                 ZE2e: !ZE2e || ZE2e === null ? "" : ZE2e,
-                ZimptotDivisa: !ZimptotDivisa || ZimptotDivisa === null ? null :ZimptotDivisa,
-                Trbtr: !Trbtr || Trbtr === null ? null :Trbtr,
-                Twaer: !Twaer || Twaer === null ? null :Twaer,
+                ZimptotDivisa:
+                  !ZimptotDivisa || ZimptotDivisa === null
+                    ? null
+                    : ZimptotDivisa,
+                Trbtr: !Trbtr || Trbtr === null ? null : Trbtr,
+                Twaer: !Twaer || Twaer === null ? null : Twaer,
 
-                /*Modalità pagamento - campi nuovi*/  
-                Zalias:!wizardModel.getProperty("/Zalias") || wizardModel.getProperty("/Zalias") === null ? null : wizardModel.getProperty("/Zalias"),
-                AccTypeId:!wizardModel.getProperty("/AccTypeId") || wizardModel.getProperty("/AccTypeId") === null ? null : wizardModel.getProperty("/AccTypeId"),
-                RegioSosp:!wizardModel.getProperty("/RegioSosp") || wizardModel.getProperty("/RegioSosp") === null ? null : wizardModel.getProperty("/RegioSosp"),
-                ZaccText:!wizardModel.getProperty("/ZaccText") || wizardModel.getProperty("/ZaccText") === null ? null : wizardModel.getProperty("/ZaccText"),
-                Zzposfinent:!wizardModel.getProperty("/Zzposfinent") || wizardModel.getProperty("/Zzposfinent") === null ? null : wizardModel.getProperty("/Zzposfinent"),
-                Zpurpose:!wizardModel.getProperty("/Zpurpose") || wizardModel.getProperty("/Zpurpose") === null ? null : wizardModel.getProperty("/Zpurpose"),
-                Zcausben:!wizardModel.getProperty("/Zcausben") || wizardModel.getProperty("/Zcausben") === null ? null : wizardModel.getProperty("/Zcausben"),
-                Zflagfrutt:!wizardModel.getProperty("/Zflagfrutt") || wizardModel.getProperty("/Zflagfrutt") === null ? null : wizardModel.getProperty("/Zflagfrutt"),
+                /*Modalità pagamento - campi nuovi*/
+                Zalias:
+                  !wizardModel.getProperty("/Zalias") ||
+                  wizardModel.getProperty("/Zalias") === null
+                    ? null
+                    : wizardModel.getProperty("/Zalias"),
+                AccTypeId:
+                  !wizardModel.getProperty("/AccTypeId") ||
+                  wizardModel.getProperty("/AccTypeId") === null
+                    ? null
+                    : wizardModel.getProperty("/AccTypeId"),
+                RegioSosp:
+                  !wizardModel.getProperty("/RegioSosp") ||
+                  wizardModel.getProperty("/RegioSosp") === null
+                    ? null
+                    : wizardModel.getProperty("/RegioSosp"),
+                ZaccText:
+                  !wizardModel.getProperty("/ZaccText") ||
+                  wizardModel.getProperty("/ZaccText") === null
+                    ? null
+                    : wizardModel.getProperty("/ZaccText"),
+                Zzposfinent:
+                  !wizardModel.getProperty("/Zzposfinent") ||
+                  wizardModel.getProperty("/Zzposfinent") === null
+                    ? null
+                    : wizardModel.getProperty("/Zzposfinent"),
+                Zpurpose:
+                  !wizardModel.getProperty("/Zpurpose") ||
+                  wizardModel.getProperty("/Zpurpose") === null
+                    ? null
+                    : wizardModel.getProperty("/Zpurpose"),
+                Zcausben:
+                  !wizardModel.getProperty("/Zcausben") ||
+                  wizardModel.getProperty("/Zcausben") === null
+                    ? null
+                    : wizardModel.getProperty("/Zcausben"),
+                Zflagfrutt:
+                  !wizardModel.getProperty("/Zflagfrutt") ||
+                  wizardModel.getProperty("/Zflagfrutt") === null
+                    ? null
+                    : wizardModel.getProperty("/Zflagfrutt"),
 
                 //Sezione Versante
-                Zcodprov:!wizardModel.getProperty("/Zcodprov") || wizardModel.getProperty("/Zcodprov") === null ? null : wizardModel.getProperty("/Zcodprov"),
-                Zcfcommit:!wizardModel.getProperty("/Zcfcommit") || wizardModel.getProperty("/Zcfcommit") === null ? null : wizardModel.getProperty("/Zcfcommit"),
-                Zcodtrib:!wizardModel.getProperty("/Zcodtrib") || wizardModel.getProperty("/Zcodtrib") === null ? null : wizardModel.getProperty("/Zcodtrib"),             
-                Zperiodrifda:wizardModel.getProperty("/Zperiodrifda") && wizardModel.getProperty("/Zperiodrifda") !== null && wizardModel.getProperty("/Zperiodrifda")!= "" ? 
-                  self.formatter.formateDateForDeep(wizardModel.getProperty("/Zperiodrifda")):
-                  null,
-                Zperiodrifa:wizardModel.getProperty("/Zperiodrifa") && wizardModel.getProperty("/Zperiodrifa") !== null && wizardModel.getProperty("/Zperiodrifa")!= "" ? 
-                  self.formatter.formateDateForDeep(wizardModel.getProperty("/Zperiodrifa")):
-                  null,
-                Zcodinps:!wizardModel.getProperty("/Zcodinps") || wizardModel.getProperty("/Zcodinps") === null ? null : wizardModel.getProperty("/Zcodinps"),
-                Zcodvers:!wizardModel.getProperty("/Zcodvers") || wizardModel.getProperty("/Zcodvers") === null ? null : wizardModel.getProperty("/Zcodvers"),
-                Zcfvers:!wizardModel.getProperty("/Zcfvers") || wizardModel.getProperty("/Zcfvers") === null ? null : wizardModel.getProperty("/Zcfvers"),
-                Zdescvers:!wizardModel.getProperty("/Zdescvers") || wizardModel.getProperty("/Zdescvers") === null ? null : wizardModel.getProperty("/Zdescvers"),
+                Zcodprov:
+                  !wizardModel.getProperty("/Zcodprov") ||
+                  wizardModel.getProperty("/Zcodprov") === null
+                    ? null
+                    : wizardModel.getProperty("/Zcodprov"),
+                Zcfcommit:
+                  !wizardModel.getProperty("/Zcfcommit") ||
+                  wizardModel.getProperty("/Zcfcommit") === null
+                    ? null
+                    : wizardModel.getProperty("/Zcfcommit"),
+                Zcodtrib:
+                  !wizardModel.getProperty("/Zcodtrib") ||
+                  wizardModel.getProperty("/Zcodtrib") === null
+                    ? null
+                    : wizardModel.getProperty("/Zcodtrib"),
+                Zperiodrifda:
+                  wizardModel.getProperty("/Zperiodrifda") &&
+                  wizardModel.getProperty("/Zperiodrifda") !== null &&
+                  wizardModel.getProperty("/Zperiodrifda") != ""
+                    ? self.formatter.formateDateForDeep(
+                        wizardModel.getProperty("/Zperiodrifda")
+                      )
+                    : null,
+                Zperiodrifa:
+                  wizardModel.getProperty("/Zperiodrifa") &&
+                  wizardModel.getProperty("/Zperiodrifa") !== null &&
+                  wizardModel.getProperty("/Zperiodrifa") != ""
+                    ? self.formatter.formateDateForDeep(
+                        wizardModel.getProperty("/Zperiodrifa")
+                      )
+                    : null,
+                Zcodinps:
+                  !wizardModel.getProperty("/Zcodinps") ||
+                  wizardModel.getProperty("/Zcodinps") === null
+                    ? null
+                    : wizardModel.getProperty("/Zcodinps"),
+                Zcodvers:
+                  !wizardModel.getProperty("/Zcodvers") ||
+                  wizardModel.getProperty("/Zcodvers") === null
+                    ? null
+                    : wizardModel.getProperty("/Zcodvers"),
+                Zcfvers:
+                  !wizardModel.getProperty("/Zcfvers") ||
+                  wizardModel.getProperty("/Zcfvers") === null
+                    ? null
+                    : wizardModel.getProperty("/Zcfvers"),
+                Zdescvers:
+                  !wizardModel.getProperty("/Zdescvers") ||
+                  wizardModel.getProperty("/Zdescvers") === null
+                    ? null
+                    : wizardModel.getProperty("/Zdescvers"),
 
-                Zdatavers:wizardModel.getProperty("/Zdatavers") && wizardModel.getProperty("/Zdatavers") !== null && wizardModel.getProperty("/Zdatavers")!= "" ? 
-                  self.formatter.formateDateForDeep(wizardModel.getProperty("/Zdatavers")):
-                  null,
-                Zprovvers:!wizardModel.getProperty("/Zprovvers") || wizardModel.getProperty("/Zprovvers") === null ? null : wizardModel.getProperty("/Zprovvers"),
-                Zsedevers:!wizardModel.getProperty("/Zsedevers") || wizardModel.getProperty("/Zsedevers") === null ? null : wizardModel.getProperty("/Zsedevers")
+                Zdatavers:
+                  wizardModel.getProperty("/Zdatavers") &&
+                  wizardModel.getProperty("/Zdatavers") !== null &&
+                  wizardModel.getProperty("/Zdatavers") != ""
+                    ? self.formatter.formateDateForDeep(
+                        wizardModel.getProperty("/Zdatavers")
+                      )
+                    : null,
+                Zprovvers:
+                  !wizardModel.getProperty("/Zprovvers") ||
+                  wizardModel.getProperty("/Zprovvers") === null
+                    ? null
+                    : wizardModel.getProperty("/Zprovvers"),
+                Zsedevers:
+                  !wizardModel.getProperty("/Zsedevers") ||
+                  wizardModel.getProperty("/Zsedevers") === null
+                    ? null
+                    : wizardModel.getProperty("/Zsedevers"),
 
+                //Sezione Intermediario 2
+
+                Ziban2: bIntermediario1Valorized
+                  ? wizardModel.getProperty("/Ziban2")
+                  : null,
+                Zbic2: bIntermediario1Valorized
+                  ? wizardModel.getProperty("/Zbic2")
+                  : null,
+                Zcoordest2: bIntermediario1Valorized
+                  ? wizardModel.getProperty("/Zcoordest2")
+                  : null,
+                Zdenbanca2: bIntermediario1Valorized
+                  ? wizardModel.getProperty("/Zdenbanca2")
+                  : null,
+                Zclearsyst2: bIntermediario1Valorized
+                  ? wizardModel.getProperty("/Zclearsyst2")
+                  : null,
+                Zstras2: bIntermediario1Valorized
+                  ? wizardModel.getProperty("/Zstras2")
+                  : null,
+                Zcivico2: bIntermediario1Valorized
+                  ? wizardModel.getProperty("/Zcivico2")
+                  : null,
+                Zort012: bIntermediario1Valorized
+                  ? wizardModel.getProperty("/Zort012")
+                  : null,
+                Zregio2: bIntermediario1Valorized
+                  ? wizardModel.getProperty("/Zregio2")
+                  : null,
+                Zpstlz2: bIntermediario1Valorized
+                  ? wizardModel.getProperty("/Zpstlz2")
+                  : null,
+                Zland12: bIntermediario1Valorized
+                  ? wizardModel.getProperty("/Zland12")
+                  : null,
               },
             ],
           };
@@ -615,11 +805,10 @@ sap.ui.define(
                 title: oBundle.getText("msgRegisterSONSuccess"),
                 onClose: function (oAction) {
                   self.downloadFile(result.Zchiavesop);
-                  self.setPropertyGlobal(self.RELOAD_MODEL,"canRefresh",true);
+                  self.setPropertyGlobal(self.RELOAD_MODEL, "canRefresh", true);
                   self.onNavBack();
                 },
               });
-            
             },
             error: function (err) {
               console.log(err);
@@ -651,15 +840,14 @@ sap.ui.define(
           self.getRouter().navTo("listSON");
         },
 
-        closeWizardPanel:function(){
+        closeWizardPanel: function () {
           var self = this,
-              wizard = self.getView().byId("CreateProductWizard"),
-              array = document.querySelectorAll(".expanded");
-          
-          for(var i=0;i<array.length;i++){
-              var panel = sap.ui.getCore().byId(array[i].id);
-              if(panel.getExpanded())
-                  panel.setExpanded(false);                    
+            wizard = self.getView().byId("CreateProductWizard"),
+            array = document.querySelectorAll(".expanded");
+
+          for (var i = 0; i < array.length; i++) {
+            var panel = sap.ui.getCore().byId(array[i].id);
+            if (panel.getExpanded()) panel.setExpanded(false);
           }
           wizard.setCurrentStep(wizard.getSteps()[0]);
         },
@@ -670,10 +858,10 @@ sap.ui.define(
 
           self.resetDataSONModel();
           self.resetWizardModel();
-          self.resetStep3(); 
+          self.resetStep3();
           self.closeWizardPanel();
         },
-/*
+        /*
         resetDataSONModel: function () {
           var self = this;
           self.getView().getModel(DataSON_MODEL).setProperty("/Gjahr", null);
@@ -718,7 +906,7 @@ sap.ui.define(
           self.getView().getModel(DataSON_MODEL).setProperty("/PayMode", []);
 
         },*/
-/*
+        /*
         resetWizardModel: function () {
           var self = this;
 
@@ -876,7 +1064,7 @@ sap.ui.define(
           self.setModel(oModelJson, LOG_MODEL);
           self.setModel(oModelJson, MESSAGE_MODEL);
         },
-/*
+        /*
         resetStep3: function () {
           var self = this;
 
@@ -960,49 +1148,51 @@ sap.ui.define(
         },
 
         onLiveChangeTable: function (oEvent) {
-            var self = this,
-                wizardModel = self.getModel(WIZARD_MODEL),
-                oTable = self.getView().byId(TABLE_STEP3),
-                oTableModel = oTable.getModel(STEP3_LIST),
-                classificazoneSonDeep = self.getModel(CLASSIFICAZIONE_SON_DEEP).getData(),
-                path = oEvent.getSource().getParent().getBindingContextPath();
+          var self = this,
+            wizardModel = self.getModel(WIZARD_MODEL),
+            oTable = self.getView().byId(TABLE_STEP3),
+            oTableModel = oTable.getModel(STEP3_LIST),
+            classificazoneSonDeep = self
+              .getModel(CLASSIFICAZIONE_SON_DEEP)
+              .getData(),
+            path = oEvent.getSource().getParent().getBindingContextPath();
 
-            if(path ==="")
-                return false;
+          if (path === "") return false;
 
-            if(self._indexClassificazioneSON===0){
-                self._indexClassificazioneSON = oTableModel.getData().length;
-            }
+          if (self._indexClassificazioneSON === 0) {
+            self._indexClassificazioneSON = oTableModel.getData().length;
+          }
 
-            var item = oTableModel.getObject(path);
-            item.ZimptotClass = oEvent.getParameters().value;
+          var item = oTableModel.getObject(path);
+          item.ZimptotClass = oEvent.getParameters().value;
 
-            var indexClassificazoneSonDeep = classificazoneSonDeep.findIndex((x)=>x.Id === item.Id);
-            if(indexClassificazoneSonDeep>-1){
-                classificazoneSonDeep.splice(indexClassificazoneSonDeep,1);
-                classificazoneSonDeep.push(item);
-            }else{                
-                classificazoneSonDeep.push(item);
-            }
+          var indexClassificazoneSonDeep = classificazoneSonDeep.findIndex(
+            (x) => x.Id === item.Id
+          );
+          if (indexClassificazoneSonDeep > -1) {
+            classificazoneSonDeep.splice(indexClassificazoneSonDeep, 1);
+            classificazoneSonDeep.push(item);
+          } else {
+            classificazoneSonDeep.push(item);
+          }
 
-            var step3List = oTable.getModel(STEP3_LIST).getData();
-            var sum = 0;
-            for(var i=0; i<step3List.length;i++){
-                var item = step3List[i].ZimptotClass;
-                if(!item || item === null)
-                    item= "0";
-                item.replace(",",".");
-                sum = sum + parseFloat(item);
-            }
-            
-            wizardModel.setProperty("/Zimptotcos", sum.toFixed(2));
-            var oModelJsonCS = new sap.ui.model.json.JSONModel();
-            oModelJsonCS.setData(classificazoneSonDeep);
-            self.setModel(oModelJsonCS, CLASSIFICAZIONE_SON_DEEP);
+          var step3List = oTable.getModel(STEP3_LIST).getData();
+          var sum = 0;
+          for (var i = 0; i < step3List.length; i++) {
+            var item = step3List[i].ZimptotClass;
+            if (!item || item === null) item = "0";
+            item.replace(",", ".");
+            sum = sum + parseFloat(item);
+          }
+
+          wizardModel.setProperty("/Zimptotcos", sum.toFixed(2));
+          var oModelJsonCS = new sap.ui.model.json.JSONModel();
+          oModelJsonCS.setData(classificazoneSonDeep);
+          self.setModel(oModelJsonCS, CLASSIFICAZIONE_SON_DEEP);
         },
 
         // ----------------------------- END MANAGE PAY MODE  -----------------------------  //
-        
+
         onUpdateFinished: function (oEvent) {
           var sTitle,
             oTable = oEvent.getSource(),
@@ -1010,7 +1200,11 @@ sap.ui.define(
             wizardModel = this.getModel(WIZARD_MODEL),
             iTotalItems = step3List.length;
 
-          if (iTotalItems && oTable.getBinding("items").isLengthFinal() && iTotalItems >0) {
+          if (
+            iTotalItems &&
+            oTable.getBinding("items").isLengthFinal() &&
+            iTotalItems > 0
+          ) {
             sTitle = this.getResourceBundle().getText("Step3TableTitleCount", [
               iTotalItems,
             ]);
@@ -1021,7 +1215,6 @@ sap.ui.define(
           this.getView().setBusy(false);
         },
 
-        
         onChangeUpdateDate: function (oEvent) {
           var self = this,
             wizardModel = self.getModel(WIZARD_MODEL);
@@ -1033,10 +1226,9 @@ sap.ui.define(
             return;
           }
           var value = oEvent.getParameter("newValue");
-          value =self.formatter.formatStringForDate(value);
+          value = self.formatter.formatStringForDate(value);
           wizardModel.setProperty("/Zdataprot", value);
         },
-
 
         _stringtoTimestamp: function (dateString, formatDelimiter) {
           var dateTimeParts = dateString.split(formatDelimiter);
@@ -1047,7 +1239,6 @@ sap.ui.define(
           );
           return date;
         },
-        
 
         configLog: function () {
           var self = this;
