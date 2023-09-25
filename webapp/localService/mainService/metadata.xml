@@ -44,6 +44,17 @@
                     <PropertyRef Name="Zstep"/>
                     <PropertyRef Name="Ztipososp"/>
                 </Key>
+                <Property Name="Ziban2" Type="Edm.String" MaxLength="34" sap:unicode="false" sap:label="IBAN" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Zbic2" Type="Edm.String" MaxLength="11" sap:unicode="false" sap:label="SWIFT/BIC" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Zcoordest2" Type="Edm.String" MaxLength="35" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Zdenbanca2" Type="Edm.String" MaxLength="70" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Zclearsyst2" Type="Edm.String" MaxLength="5" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Zstras2" Type="Edm.String" MaxLength="35" sap:unicode="false" sap:label="Street" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Zcivico2" Type="Edm.String" MaxLength="5" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Zort012" Type="Edm.String" MaxLength="35" sap:unicode="false" sap:label="City" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Zregio2" Type="Edm.String" MaxLength="3" sap:unicode="false" sap:label="Region" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Zpstlz2" Type="Edm.String" MaxLength="10" sap:unicode="false" sap:label="Postal Code" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Zland12" Type="Edm.String" MaxLength="3" sap:unicode="false" sap:label="Country" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="ZpdfFirmato" Type="Edm.String" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="ZxmlFirmato" Type="Edm.String" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="ZxmlNonfirmato" Type="Edm.String" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
@@ -90,7 +101,7 @@
                 <Property Name="Zcodvers" Type="Edm.String" MaxLength="50" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Zcfvers" Type="Edm.String" MaxLength="16" sap:unicode="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="ZimptotDivisa" Type="Edm.String" MaxLength="5" sap:unicode="false" sap:label="Currency" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:semantics="currency-code"/>
-                <Property Name="Trbtr" Type="Edm.Decimal" Precision="14" Scale="3" sap:unicode="false" sap:label="TC amount" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Trbtr" Type="Edm.Decimal" Precision="14" Scale="2" sap:unicode="false" sap:label="TC amount" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Zdescwels" Type="Edm.String" MaxLength="50" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Twaer" Type="Edm.String" MaxLength="5" sap:unicode="false" sap:label="Trans. Currency" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:semantics="currency-code"/>
                 <Property Name="ZstatoSop" Type="Edm.String" MaxLength="2" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
@@ -161,7 +172,10 @@
                 <Key>
                     <PropertyRef Name="Fipos"/>
                 </Key>
-                <Property Name="Fipos" Type="Edm.String" Nullable="false" MaxLength="24" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Fipos" Type="Edm.String" Nullable="false" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ZufficioCont" Type="Edm.String" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="Ztipodisp3" Type="Edm.String" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="Gjahr" Type="Edm.String" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
             </EntityType>
             <EntityType Name="Kostn" sap:content-version="1">
                 <Key>
@@ -347,6 +361,12 @@
                 <Property Name="ZufficioCont" Type="Edm.String" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="ZvimDescrufficio" Type="Edm.String" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Fistl" Type="Edm.String" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="ZhfUffcont" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="ZufficioCont"/>
+                </Key>
+                <Property Name="ZufficioCont" Type="Edm.String" Nullable="false" MaxLength="16" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </EntityType>
             <EntityType Name="TipologiaDisp" sap:content-version="1">
                 <Key>
@@ -642,14 +662,14 @@
                 <End Type="ZS4_SOSPAUTPERMANENTE_SRV.Intermediario1" Multiplicity="0..1" Role="ToRole_BancaAccreditoToIntermediario1"/>
                 <ReferentialConstraint>
                     <Principal Role="FromRole_BancaAccreditoToIntermediario1">
-                        <PropertyRef Name="Iban"/>
                         <PropertyRef Name="Zcoordest"/>
+                        <PropertyRef Name="Iban"/>
                         <PropertyRef Name="Zwels"/>
                         <PropertyRef Name="Lifnr"/>
                     </Principal>
                     <Dependent Role="ToRole_BancaAccreditoToIntermediario1">
-                        <PropertyRef Name="Iban"/>
                         <PropertyRef Name="Zcoordest"/>
+                        <PropertyRef Name="Iban"/>
                         <PropertyRef Name="Zwels"/>
                         <PropertyRef Name="Lifnr"/>
                     </Dependent>
@@ -721,6 +741,7 @@
                 <EntitySet Name="TvarvcParameterSet" EntityType="ZS4_SOSPAUTPERMANENTE_SRV.TvarvcParameter" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
                 <EntitySet Name="ListaIbanSet" EntityType="ZS4_SOSPAUTPERMANENTE_SRV.ListaIban" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="PrevalorizzazioneW1Set" EntityType="ZS4_SOSPAUTPERMANENTE_SRV.PrevalorizzazioneW1" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+                <EntitySet Name="ZhfUffcontSet" EntityType="ZS4_SOSPAUTPERMANENTE_SRV.ZhfUffcont" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="TipoDispSet" EntityType="ZS4_SOSPAUTPERMANENTE_SRV.TipologiaDisp" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
                 <EntitySet Name="UserParametersSet" EntityType="ZS4_SOSPAUTPERMANENTE_SRV.UserParameters" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
                 <EntitySet Name="ContoCogeSet" EntityType="ZS4_SOSPAUTPERMANENTE_SRV.ContoCoge" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
@@ -761,6 +782,10 @@
                     <Parameter Name="Gjahr" Type="Edm.String" Mode="In"/>
                     <Parameter Name="Fikrs" Type="Edm.String" Mode="In"/>
                     <Parameter Name="AgrName" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Twaer" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="ZimptotDivisa" Type="Edm.String" Mode="In"/>
+                    <Parameter Name="Trbtr" Type="Edm.Decimal" Mode="In" Precision="2" Scale="2"/>
+                    <Parameter Name="Zimptot" Type="Edm.Decimal" Mode="In" Precision="2" Scale="2"/>
                     <Parameter Name="Ztipodisp3" Type="Edm.String" Mode="In"/>
                     <Parameter Name="Fipos" Type="Edm.String" Mode="In"/>
                     <Parameter Name="Saknr" Type="Edm.String" Mode="In"/>

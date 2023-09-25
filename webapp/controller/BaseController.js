@@ -1113,12 +1113,18 @@ sap.ui.define(
               .getModel()
               .metadataLoaded()
               .then(function () {
+                var filter = [
+                  self.setFilterEQWithKey("Ztipodisp3", Ztipodisp3),
+                  self.setFilterEQWithKey("Gjahr", Gjahr),
+                  self.setFilterEQWithKey("ZufficioCont", ZufficioCont),
+                ];
                 oDataModel.read("/" + Fipos_SET, {
-                  urlParameters: {
-                    Gjahr: Gjahr,
-                    ZufficioCont: ZufficioCont,
-                    Ztipodisp3: Ztipodisp3,
-                  },
+                  filters: filter,
+                  // urlParameters: {
+                  //   Gjahr: Gjahr,
+                  //   ZufficioCont: ZufficioCont,
+                  //   Ztipodisp3: Ztipodisp3,
+                  // },
                   success: function (data, oResponse) {
                     oView.setBusy(false);
                     var message =
@@ -1155,7 +1161,6 @@ sap.ui.define(
         },
 
         goToTwo: function (oEvent) {
-
           var self = this,
             wizardId = oEvent.getSource().getParent().getId(),
             wizard = self.getView().byId(wizardId),
