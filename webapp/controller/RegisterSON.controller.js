@@ -133,10 +133,9 @@ sap.ui.define(
             dataSONModel = self.getModel(DataSON_MODEL),
             oDataModel = self.getModel(),
             oView = self.getView();
-          self
-            .getView()
-            .getModel(WIZARD_MODEL)
-            .setProperty("/isInChange", true);
+
+          self.getView().getModel(WIZARD_MODEL).setProperty("/viewId", "gestioneabilitazioneeson.view.RegisterSON");
+          self.getView().getModel(WIZARD_MODEL).setProperty("/isInChange", true);  
           oView.setBusy(true);
 
           if (
@@ -1311,6 +1310,18 @@ sap.ui.define(
           self.oMessageView.navigateBack();
           self.oLogDialog.open();
         },
+
+        // functionReturnValueAnag:function(obj){
+        //   console.log("functionReturnValueAnag");
+        //   console.log(obj);
+        // },
+
+        // functionReturnValueModPag:function(obj){
+        //   console.log("functionReturnValueModPag");
+        //   console.log(obj);
+        // } 
+
+
       }
     );
   }

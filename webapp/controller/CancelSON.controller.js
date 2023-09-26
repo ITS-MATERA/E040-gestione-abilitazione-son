@@ -282,7 +282,7 @@ sap.ui.define(
                   .getView()
                   .getModel(DETAIL_MODEL)
                   .setProperty("/buttonVisible", false);
-                self.fillWizard(checkList[0]);
+                self.fillWizard(checkList[0],"gestioneabilitazioneeson.view.CancelSON");
               }
               tab.setSelectedKey(oBundle.getText("btnDetail"));
               break;
@@ -305,7 +305,7 @@ sap.ui.define(
                   .getView()
                   .getModel(DETAIL_MODEL)
                   .setProperty("/buttonVisible", false);
-                self.fillWizard(checkList[0]);
+                self.fillWizard(checkList[0],"gestioneabilitazioneeson.view.CancelSON");
               }
               break;
             default:
@@ -410,7 +410,7 @@ sap.ui.define(
                   .getView()
                   .getModel(DETAIL_MODEL)
                   .setProperty("/buttonVisible", false);
-                self.fillWizard(oItem);
+                self.fillWizard(oItem,"gestioneabilitazioneeson.view.CancelSON");
               } else if (action === oBundle.getText("btnWorkflow")) {
                 self.getView().setBusy(true);
                 self

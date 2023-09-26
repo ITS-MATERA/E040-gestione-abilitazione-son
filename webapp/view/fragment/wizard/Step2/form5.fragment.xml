@@ -45,7 +45,7 @@
 												width="100%"
 												editable="{wizardModel>/isInChange}"
 												selectedKey="{wizardModel>/FirstKeyStras}"
-												change="onLiveChangeStras"
+												change="onLiveChangeStras_"
 												items="{wizardModel>/StrasList}"
 												value="{wizardModel>/FirstKeyStras}"
 											>

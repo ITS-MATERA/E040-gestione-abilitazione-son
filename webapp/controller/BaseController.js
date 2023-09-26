@@ -1697,7 +1697,7 @@ sap.ui.define(
               });
             });
         },
-        onLiveChangeStras: function (oEvent) {
+        onLiveChangeStras_: function (oEvent) {
           var self = this,
             wizardModel = self.getModel(WIZARD_MODEL),
             oDataModel = self.getModel(),
@@ -3926,6 +3926,7 @@ sap.ui.define(
         /*REFactoring */
         loadWizardModel() {
           return {
+            viewId:null,
             btnBackVisible: false,
             btnNextVisible: true,
             btnFinishVisible: false,
@@ -4089,6 +4090,10 @@ sap.ui.define(
             .getView()
             .getModel(WIZARD_MODEL)
             .setProperty("/isInChange", false);
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/viewId", null);  
           self
             .getView()
             .getModel(WIZARD_MODEL)
@@ -4620,7 +4625,7 @@ sap.ui.define(
           return oWizardModel;
         },
 
-        fillWizard: function (oItem) {
+        fillWizard: function (oItem, viewId=null) {
           var self = this,
             oWizardModel,
             fruttiferoSet = [],
@@ -4664,7 +4669,7 @@ sap.ui.define(
 
                   self.getSedeBeneficiario(data.Lifnr, data.Zidsede);
                   oWizardModel = self.setWizardModel(data);
-
+                  oWizardModel.viewId = viewId;
                   setTimeout(() => {
                     oWizardModel.getData().FirstKeyStras =
                       self._sedeBeneficiario
@@ -5650,6 +5655,16 @@ sap.ui.define(
             }
           });
         },
+
+        functionReturnValueAnag:function(obj){
+          console.log("functionReturnValueAnag");
+          console.log(obj);
+        },
+
+        functionReturnValueModPag:function(obj){
+          console.log("functionReturnValueModPag");
+          console.log(obj);
+        } 
 
         /**/
       }

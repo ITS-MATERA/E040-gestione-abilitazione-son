@@ -173,7 +173,7 @@ sap.ui.define(
             if (checkList && checkList.length === 1) {
               self.getView().setBusy(true);
               self.getView().getModel(DETAIL_MODEL).setProperty("/headerVisible", true);
-              self.fillWizard(checkList[0]);
+              self.fillWizard(checkList[0],"gestioneabilitazioneeson.view.SignSON");
             }
             
             setTimeout(() => {                
@@ -203,7 +203,7 @@ sap.ui.define(
                     self.getView().getModel(DETAIL_MODEL).setProperty("/buttonEnabled",self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData().Z06Enabled);
                     if(totalRows === 1){
                         self.getView().getModel(DETAIL_MODEL).setProperty("/headerVisible",true);
-                        self.fillWizard(checkList[0]);
+                        self.fillWizard(checkList[0],"gestioneabilitazioneeson.view.SignSON");
                     }   
                     break;
                 case oBundle.getText("btnWorkflow"):
@@ -222,7 +222,7 @@ sap.ui.define(
                     if(totalRows === 1){
                         self.getView().getModel(DETAIL_MODEL).setProperty("/headerVisible",true);
                         self.getView().getModel(DETAIL_MODEL).setProperty("/buttonVisible",false);
-                        self.fillWizard(checkList[0]);
+                        self.fillWizard(checkList[0],"gestioneabilitazioneeson.view.SignSON");
                     }                    
                     break;
                 default:
@@ -319,7 +319,7 @@ sap.ui.define(
                         self.getView().getModel(DETAIL_MODEL).setProperty("/headerVisible",true);
                         self.getView().getModel(DETAIL_MODEL).setProperty("/showSelection",false);
                         self.getView().getModel(DETAIL_MODEL).setProperty("/buttonVisible",false);
-                        self.fillWizard(oItem);
+                        self.fillWizard(oItem,"gestioneabilitazioneeson.view.SignSON");
                     }
                     else if(action === oBundle.getText("btnWorkflow")){
                         self.getView().setBusy(true);

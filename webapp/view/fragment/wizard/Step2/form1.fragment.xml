@@ -4,7 +4,10 @@
 	xmlns:f="sap.ui.layout.form"
 	xmlns:core="sap.ui.core"
 	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:zcontrolanagrafica="acn.zlibanagrafica.controls"
+	xmlns:zcontrolmodpag="acn.zlibmodpag.controls"
 >
+
 	<!-- expandable="true" -->
 	<Panel
 		width="auto"
@@ -14,20 +17,9 @@
 			<OverflowToolbar style="Clear">
 				<Title text="{i18n>wizardStep2SubTitle1}"/>
 				<ToolbarSpacer/>
-				<!-- press="newModalitaPagamentoDialogPress"
-				press="newAnagraficaBeneficiarioPress" -->
-				<!-- <Button   enabled="{wizardModel>/isInChange}"  text="{i18n>btnInsertPayMethod}" type="Emphasized" ></Button> -->
-				<!-- <Button enabled="{wizardModel>/isInChange}"  text="{i18n>btnCreateDataBeneficary}" type="Emphasized" ></Button> -->
-				<Button
-					enabled="false"
-					text="{i18n>btnInsertPayMethod}"
-					type="Emphasized"
-				/>
-				<Button
-					enabled="false"
-					text="{i18n>btnCreateDataBeneficary}"
-					type="Emphasized"
-				/>
+				<!-- enabled="{wizardModel>/isInChange}" -->
+        <zcontrolanagrafica:AnagraficaPopup viewId="{wizardModel>/viewId}"  enabled="false" />
+        <zcontrolmodpag:ModPagamentoPopup viewId="{wizardModel>/viewId}" Lifnr="{wizardModel>/Lifnr}" enabled="false"/>
 			</OverflowToolbar>
 		</headerToolbar>
 		<content>

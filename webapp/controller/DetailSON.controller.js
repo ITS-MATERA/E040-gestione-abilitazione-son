@@ -264,7 +264,7 @@ sap.ui.define(
             self._detailShowed = true;
             detailModel.setProperty("/checkList", checkList);
             detailModel.setProperty("/total", checkList.length);
-            self.fillWizard(checkList[0]);
+            self.fillWizard(checkList[0], "gestioneabilitazioneeson.view.DetailSON");
           }, 2500);
         },
 
@@ -432,7 +432,7 @@ sap.ui.define(
                   .getView()
                   .getModel(DETAIL_MODEL)
                   .setProperty("/buttonVisible", false);
-                self.fillWizard(checkList[0]);
+                self.fillWizard(checkList[0], "gestioneabilitazioneeson.view.DetailSON");
               }
               tab.setSelectedKey(oBundle.getText("btnDetail"));
               break;
@@ -455,7 +455,7 @@ sap.ui.define(
                   .getView()
                   .getModel(DETAIL_MODEL)
                   .setProperty("/buttonVisible", false);
-                self.fillWizard(checkList[0]);
+                self.fillWizard(checkList[0], "gestioneabilitazioneeson.view.DetailSON");
               }
               break;
             default:
@@ -745,7 +745,7 @@ sap.ui.define(
                   .getView()
                   .getModel(DETAIL_MODEL)
                   .setProperty("/buttonVisible", false);
-                self.fillWizard(oItem);
+                self.fillWizard(oItem, "gestioneabilitazioneeson.view.DetailSON");
               } else if (action === oBundle.getText("btnWorkflow")) {
                 self.getView().setBusy(true);
                 self
