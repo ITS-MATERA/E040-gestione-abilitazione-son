@@ -21,13 +21,35 @@
                                                 <layoutData><l:GridData span="XL4 L9 M12 S12" /></layoutData>
                                             </Label>
 
-                                            <zcontrol:InputPosizioneFinanziaria id="idWizardFipos" fase="GEST" spesa="X" 
+                                            <ComboBox
+                                              id="idWizardFipos"
+                                                width="100%"
+                                                items="{
+                                                    path: 'DataModel>/PosizioneFinanziaria',
+                                                    sorter: { path: 'text' }
+                                                }"
+                                                change="wizardFiposChange"
+                                                selectedKey="{wizardModel>/Fipos}"
+                                                editable="{= !${wizardModel>/isInChange} || ( ${wizardModel>/isInChange} 
+                                                  &amp;&amp; ${DataModel>/ZstatoSop} === '00' ) ? false : true }" 
+                                              >
+                                                <core:Item key="{DataModel>Fipos}" text="{DataModel>Fipos}" />
+                                            </ComboBox>
+
+                                            <!-- editable="{= !${wizardModel>/isInChange} || ( ${wizardModel>/isInChange} 
+                                                  &amp;&amp; ${DataModel>/ZstatoSop} === '00' ) ? false : true }"  -->
+
+                                              <!-- filterSecondaryValues="false"
+                                                selectedItemId="empty string"
+                                                selectedKey="empty string" -->
+
+                                            <!-- <zcontrol:InputPosizioneFinanziaria id="idWizardFipos" fase="GEST" spesa="X" 
                                             reale="R" anno="{wizardModel>/Gjahr}" versione="D" maxSuggestionWidth="60%" 
                                             liveChange="onLiveChange" width="100%"
                                             submit="onLiveChange"
                                             app:property="Fipos"
                                             editable="{= !${wizardModel>/isInChange} || ( ${wizardModel>/isInChange} &amp;&amp; ${DataModel>/ZstatoSop} === '00' ) ? false : true }" 
-                                            value="{wizardModel>/Fipos}"/>
+                                            value="{wizardModel>/Fipos}"/> -->
                                         </l:Grid>
                                     </items>     
                                 </FlexBox>                                
@@ -42,15 +64,28 @@
                                             <Label  required="true" design="Bold" width="100%" text="{i18n>wizardFieldFistl}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData><l:GridData span="XL5 L9 M12 S12" /></layoutData>
                                             </Label>
-                                            <zcontrolMatchSar:GestioneLogUser eos="S" id="idWizardFistl" fase="GEST" entrata="X" 
+                                            <ComboBox
+                                                width="100%"
+                                                items="{
+                                                    path: 'DataModel>/StruttAmministrativa',
+                                                    sorter: { path: 'text' }
+                                                }"
+                                                change="wizardFistlChange"
+                                                selectedKey="{wizardModel>/Fistl}"
+                                                editable="{= !${wizardModel>/isInChange} || ( ${wizardModel>/isInChange} 
+                                                  &amp;&amp; ${DataModel>/ZstatoSop} === '00' ) ? false : true }" 
+                                              >
+                                                <core:Item key="{DataModel>Fistl}" text="{DataModel>Fistl}" />
+                                            </ComboBox>
+                                            <!-- <zcontrolMatchSar:GestioneLogUser eos="S" id="idWizardFistl" fase="GEST" entrata="X" 
                                             reale="R" anno="{wizardModel>/Gjahr}" SEM_OBJ="Z_TEST_LIB"  versione="D" width="100%" 
                                             placeholder="Scegli struttura amministrativa"
                                             app:property="Fistl"
                                             value="{wizardModel>/Fistl}"
                                             liveChange="onLiveChange"
                                             submit="onLiveChange"
-                                            editable="{= !${wizardModel>/isInChange} || ( ${wizardModel>/isInChange} &amp;&amp; ${DataModel>/ZstatoSop} === '00' ) ? false : true }" 
-                                            />
+                                            editable="{= !${wizardModel>/isInChange} || ( ${wizardModel>/isInChange} &amp;&amp; ${DataModel>/ZstatoSop} === '00' ) ? false : true }"  -->
+                                            <!-- /> -->
                                         </l:Grid>
                                     </items>     
                                 </FlexBox>                                

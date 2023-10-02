@@ -153,58 +153,50 @@ sap.ui.define(
             });
           }
 
-          self.getInitialParams(function (callback) {
-            self.getView().setBusy(false);
-            if (!callback.success) {
-              sap.m.MessageBox.warning(callback.message, {
-                title: oBundle.getText("titleDialogWarning"),
-                onClose: function (oAction) {
-                  self
-                    .getView()
-                    .getModel(WIZARD_MODEL)
-                    .setProperty("/Zzamministr", null);
-                  self
-                    .getView()
-                    .getModel(WIZARD_MODEL)
-                    .setProperty("/ZufficioCont", null);
-                  self
-                    .getView()
-                    .getModel(WIZARD_MODEL)
-                    .setProperty("/ZvimDescrufficio", null);
-                  self
-                    .getView()
-                    .getModel(WIZARD_MODEL)
-                    .setProperty("/Fistl", null);
-                  self
-                    .getView()
-                    .getModel(DataSON_MODEL)
-                    .setProperty("/Zzamministr", null);
-                  return false;
-                },
-              });
-              return false;
+          self.getStrutturaAmministrativa(function(callback){
+            if (!callback.error) {
+                self.getView().getModel(DataSON_MODEL).setProperty("/StruttAmministrativa", callback.data);
+
+                self.getInitialParams(function (callback) {
+                  self.getView().setBusy(false);
+                  if (!callback.success) {
+                    sap.m.MessageBox.warning(callback.message, {
+                      title: oBundle.getText("titleDialogWarning"),
+                      onClose: function (oAction) {
+                        self.getView().getModel(WIZARD_MODEL).setProperty("/Zzamministr", null);
+                        self.getView().getModel(WIZARD_MODEL).setProperty("/ZufficioCont", null);
+                        self.getView().getModel(WIZARD_MODEL).setProperty("/ZvimDescrufficio", null);
+                        self.getView().getModel(WIZARD_MODEL).setProperty("/Fistl", null);
+                        self.getView().getModel(DataSON_MODEL).setProperty("/Zzamministr", null);
+                        return false;
+                      },
+                    });
+                    return false;
+                  }
+                  self.getView().getModel(WIZARD_MODEL).setProperty("/Zzamministr", callback.data.Zzamministr);
+                  self.getView().getModel(WIZARD_MODEL).setProperty("/ZufficioCont", callback.data.ZufficioCont);
+                  self.getView().getModel(WIZARD_MODEL).setProperty("/ZvimDescrufficio", callback.data.ZvimDescrufficio);
+                  self.getView().getModel(WIZARD_MODEL).setProperty("/Fistl", callback.data.Fistl);
+                  self.getView().getModel(DataSON_MODEL).setProperty("/Zzamministr", callback.data.Zzamministr);
+                });          
+            } 
+            else {
+              self.getView().getModel(DataSON_MODEL).setProperty("/StruttAmministrativa", callback.data);
+              self.getView().getModel(WIZARD_MODEL).setProperty("/Zzamministr", callback.data.Zzamministr);
+              self.getView().getModel(WIZARD_MODEL).setProperty("/ZufficioCont", callback.data.ZufficioCont);
+              self.getView().getModel(WIZARD_MODEL).setProperty("/ZvimDescrufficio", callback.data.ZvimDescrufficio);
+              self.getView().getModel(WIZARD_MODEL).setProperty("/Fistl", callback.data.Fistl);
+              self.getView().getModel(DataSON_MODEL).setProperty("/Zzamministr", callback.data.Zzamministr);
             }
-            self
-              .getView()
-              .getModel(WIZARD_MODEL)
-              .setProperty("/Zzamministr", callback.data.Zzamministr);
-            self
-              .getView()
-              .getModel(WIZARD_MODEL)
-              .setProperty("/ZufficioCont", callback.data.ZufficioCont);
-            self
-              .getView()
-              .getModel(WIZARD_MODEL)
-              .setProperty("/ZvimDescrufficio", callback.data.ZvimDescrufficio);
-            self
-              .getView()
-              .getModel(WIZARD_MODEL)
-              .setProperty("/Fistl", callback.data.Fistl);
-            self
-              .getView()
-              .getModel(DataSON_MODEL)
-              .setProperty("/Zzamministr", callback.data.Zzamministr);
           });
+
+          // self.getPosizioneFinanziaria(function(callback){
+          //   if (!callback.error) {
+          //     self.getView().getModel(DataSON_MODEL).setProperty("/PosizioneFinanziaria", callback.data);
+          //   } 
+          //   else 
+          //     self.getView().getModel(DataSON_MODEL).setProperty("/PosizioneFinanziaria", callback.data);
+          // });          
 
           self.getFruttiferoInfruttifero(function (callback) {
             if (!callback.error) {
@@ -214,6 +206,7 @@ sap.ui.define(
                 .setProperty("/FlagFruttifero", callback.data);
             } else self.getView().getModel(DataSON_MODEL).setProperty("/FlagFruttifero", callback.data);
           });
+
         },
 
         getInitialParams: function (callback) {
