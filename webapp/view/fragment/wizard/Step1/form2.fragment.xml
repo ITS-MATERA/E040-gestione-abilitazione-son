@@ -65,6 +65,7 @@
                                                 <layoutData><l:GridData span="XL5 L9 M12 S12" /></layoutData>
                                             </Label>
                                             <ComboBox
+                                                id="idWizardFistl"
                                                 width="100%"
                                                 items="{
                                                     path: 'DataModel>/StruttAmministrativa',

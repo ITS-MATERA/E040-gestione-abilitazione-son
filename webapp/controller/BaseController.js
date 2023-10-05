@@ -898,7 +898,7 @@ sap.ui.define(
         },
         onSubmitZufficioCont: function (oEvent) {
           var self = this;
-          self.fillZvimDescrufficio();
+          // self.fillZvimDescrufficio();
           self.fillZtipodisp3List();
           self.fillFipos();
         },
@@ -1223,7 +1223,7 @@ sap.ui.define(
 
           if (!wizardModel.getProperty("/isInChange")) return;
 
-          if (wizardType !== WIZARD_TYPE_DETAIL) {
+          // if (wizardType !== WIZARD_TYPE_DETAIL) {
             var Gjahr = wizardModel.getProperty("/Gjahr"),
               Ztipodisp3 = wizardModel.getProperty("/Ztipodisp3"),
               ZufficioCont = wizardModel.getProperty("/ZufficioCont"),
@@ -1298,21 +1298,21 @@ sap.ui.define(
                 "titleDialogError",
                 "msgNoRequiredField",
                 "error",
-                "CreateProductWizard"
+                wizardType !== WIZARD_TYPE_DETAIL ? "CreateProductWizard" : ""
               );
               return false;
             }
-          } else {
-            self.updateDataSON([
-              "Gjahr",
-              "ZufficioCont",
-              "Fipos",
-              "Fistl",
-              "Zdesctipodisp3",
-              "Zimptot",
-              "ZimptotDivisa",
-            ]);
-          }
+          // } else {
+          //   self.updateDataSON([
+          //     "Gjahr",
+          //     "ZufficioCont",
+          //     "Fipos",
+          //     "Fistl",
+          //     "Zdesctipodisp3",
+          //     "Zimptot",
+          //     "ZimptotDivisa",
+          //   ]);
+          // }
         },
         goToThree: function (oEvent) {
           var self = this,
@@ -4664,8 +4664,8 @@ sap.ui.define(
             Ztipodisp3: data.Ztipodisp3,
             Ztipodisp3List: null,
             FiposList: null,
-            Fipos: data.Fipos,
-            Fistl: data.Fistl,
+            Fipos: null,
+            Fistl: null,
             Kostl: data.Kostl,
             Ltext: data.Ltext,
             Skat: data.Skat,
@@ -4754,6 +4754,24 @@ sap.ui.define(
             Zpstlz2: data?.Zpstlz2,
             Zland12: data?.Zland12,
           });
+
+
+          var fistlControl = self.getView().byId("idWizardFistl");
+          fistlControl.setSelectedKey(null);
+          var found = fistlControl.getModel("DataModel").getProperty("/StruttAmministrativa").find(x=> x.Fistl === data.Fistl);
+          if(found){
+            oWizardModel.Fistl = data.Fistl;
+            fistlControl.setSelectedKey(data.Fistl);            
+          }
+
+          var fiposControl = self.getView().byId("idWizardFipos");
+          fiposControl.setSelectedKey(null);
+          var foundFipos = fiposControl.getModel("DataModel").getProperty("/PosizioneFinanziaria").find(x=> x.Fipos === data.Fipos);
+          if(foundFipos){
+            oWizardModel.Fipos = data.Fipos;
+            fiposControl.setSelectedKey(data.Fipos);            
+          }
+
           return oWizardModel;
         },
 
@@ -4813,30 +4831,9 @@ sap.ui.define(
                   );
 
                   self.getSedeBeneficiario(data.Lifnr, data.Zidsede);
-                  oWizardModel = self.setWizardModel(data);
-                  oWizardModel.viewId = viewId;
+                  // oWizardModel = self.setWizardModel(data);
+                  // oWizardModel.viewId = viewId;
                   setTimeout(() => {
-                    oWizardModel.getData().FirstKeyStras = self._sedeBeneficiario ? self._sedeBeneficiario.Stras : "";
-                    oWizardModel.getData().Zidsede = data.Zidsede;
-                    oWizardModel.getData().Ort01 = self._sedeBeneficiario ? self._sedeBeneficiario.Ort01 : "";
-                    oWizardModel.getData().Regio = self._sedeBeneficiario ? self._sedeBeneficiario.Regio : "";
-                    oWizardModel.getData().Pstlz = self._sedeBeneficiario ? self._sedeBeneficiario.Pstlz : "";
-                    oWizardModel.getData().Land1 = self._sedeBeneficiario ? self._sedeBeneficiario.Land1 : "";
-                    oWizardModel.getData().NameFirst = self._beneficiario ? self._beneficiario.NameFirst : "";
-                    oWizardModel.getData().ZzragSoc = self._beneficiario ? self._beneficiario.ZzragSoc : "";
-                    oWizardModel.getData().Zsede = self._beneficiario ? self._beneficiario.Zsede : "";
-                    oWizardModel.getData().Type = self._beneficiario && self._beneficiario.Type === "1" ? true : false; //radio btn
-                    oWizardModel.getData().TaxnumCf = self._beneficiario ? self._beneficiario.TaxnumCf : "";
-                    oWizardModel.getData().Taxnumxl = self._beneficiario ? self._beneficiario.Taxnumxl : "";
-                    oWizardModel.getData().NameLast = self._beneficiario ? self._beneficiario.NameLast : "";
-                    oWizardModel.getData().TaxnumPiva = self._beneficiario ? self._beneficiario.TaxnumPiva : "";
-                    oWizardModel.getData().Zdenominazione = self._beneficiario ? self._beneficiario.Zdenominazione : "";
-                    oWizardModel.getData().Zdurc = self._beneficiario?.Zdurc ?? "";
-                    oWizardModel.getData().Zdstatodes = self._beneficiario?.Zdstatodes ?? "";
-                    oWizardModel.getData().Zdscadenza = self._beneficiario?.Zdscadenza ?? null;
-                    oWizardModel.getData().ZfermAmm = self._beneficiario?.ZfermAmm ?? "";
-
-                    //todo metti il flag fruttifero se ce a db.
 
                     var oDataSONModel = new JSONModel({
                       ZstatoSop: data.ZstatoSop,
@@ -4862,6 +4859,57 @@ sap.ui.define(
                       StruttAmministrativa: struttAmministrativa,
                       PosizioneFinanziaria:posizioneFinanziaria
                     });
+                    self.setModel(oDataSONModel, DataSON_MODEL);
+
+
+                    oWizardModel = self.setWizardModel(data);
+                    oWizardModel.viewId = viewId;
+                    oWizardModel.getData().FirstKeyStras = self._sedeBeneficiario ? self._sedeBeneficiario.Stras : "";
+                    oWizardModel.getData().Zidsede = data.Zidsede;
+                    oWizardModel.getData().Ort01 = self._sedeBeneficiario ? self._sedeBeneficiario.Ort01 : "";
+                    oWizardModel.getData().Regio = self._sedeBeneficiario ? self._sedeBeneficiario.Regio : "";
+                    oWizardModel.getData().Pstlz = self._sedeBeneficiario ? self._sedeBeneficiario.Pstlz : "";
+                    oWizardModel.getData().Land1 = self._sedeBeneficiario ? self._sedeBeneficiario.Land1 : "";
+                    oWizardModel.getData().NameFirst = self._beneficiario ? self._beneficiario.NameFirst : "";
+                    oWizardModel.getData().ZzragSoc = self._beneficiario ? self._beneficiario.ZzragSoc : "";
+                    oWizardModel.getData().Zsede = self._beneficiario ? self._beneficiario.Zsede : "";
+                    oWizardModel.getData().Type = self._beneficiario && self._beneficiario.Type === "1" ? true : false; //radio btn
+                    oWizardModel.getData().TaxnumCf = self._beneficiario ? self._beneficiario.TaxnumCf : "";
+                    oWizardModel.getData().Taxnumxl = self._beneficiario ? self._beneficiario.Taxnumxl : "";
+                    oWizardModel.getData().NameLast = self._beneficiario ? self._beneficiario.NameLast : "";
+                    oWizardModel.getData().TaxnumPiva = self._beneficiario ? self._beneficiario.TaxnumPiva : "";
+                    oWizardModel.getData().Zdenominazione = self._beneficiario ? self._beneficiario.Zdenominazione : "";
+                    oWizardModel.getData().Zdurc = self._beneficiario?.Zdurc ?? "";
+                    oWizardModel.getData().Zdstatodes = self._beneficiario?.Zdstatodes ?? "";
+                    oWizardModel.getData().Zdscadenza = self._beneficiario?.Zdscadenza ?? null;
+                    oWizardModel.getData().ZfermAmm = self._beneficiario?.ZfermAmm ?? "";
+
+                    //todo metti il flag fruttifero se ce a db.
+
+                    // var oDataSONModel = new JSONModel({
+                    //   ZstatoSop: data.ZstatoSop,
+                    //   Gjahr: data.Gjahr,
+                    //   ZufficioCont: data.ZufficioCont,
+                    //   Zdesctipodisp3: data.Zdesctipodisp3,
+                    //   Fipos: data.Fipos,
+                    //   Fistl: data.Fistl,
+                    //   Kostl: data.Kostl,
+                    //   Saknr: data.Saknr,
+                    //   Lifnr: data.Lifnr,
+                    //   NameFirst: self._beneficiario ? self._beneficiario.NameFirst : "",
+                    //   NameLast: self._beneficiario ? self._beneficiario.NameLast : "",
+                    //   Zimptot: data.Zimptot,
+                    //   ZimptotDivisa: data.ZimptotDivisa,
+                    //   TaxnumPiva: self._beneficiario ? self._beneficiario.TaxnumPiva : "",
+                    //   ZzragSoc: self._beneficiario ? self._beneficiario.ZzragSoc : "",
+                    //   TaxnumCf: self._beneficiario ? self._beneficiario.TaxnumCf : "",
+                    //   Zzamministr: self._amministrazione.Value,
+                    //   PayMode: self.payMode,
+                    //   FlagFruttifero: fruttiferoSet,
+                    //   NewPayMode: [],
+                    //   StruttAmministrativa: struttAmministrativa,
+                    //   PosizioneFinanziaria:posizioneFinanziaria
+                    // });
 
                     if (
                       oWizardModel.getData() &&
@@ -4903,7 +4951,7 @@ sap.ui.define(
                         }
                       );
                     }
-                    self.setModel(oDataSONModel, DataSON_MODEL);
+                    // self.setModel(oDataSONModel, DataSON_MODEL);
                     self.setModel(oWizardModel, WIZARD_MODEL);                    
                     self.fillZtipodisp3List();
                     self.getClassificazioneFRomFillWizard(
@@ -5795,6 +5843,13 @@ sap.ui.define(
             if (isNaN(oEvent.key)) {
               oEvent.preventDefault();
             }
+          });
+        },
+
+        notEditable:function(sId){
+          var oInput = this.getView().byId(sId);
+          oInput.attachBrowserEvent("keypress", function (oEvent) {
+            oEvent.preventDefault();
           });
         },
 

@@ -3,6 +3,7 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:f="sap.ui.layout.form"
 	xmlns:core="sap.ui.core"		
+	xmlns:zufficiocontlibrary="custufficiocont.zufficiocontlibrary.controls"
 	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 >
 	<!-- expandable="true" -->
@@ -24,21 +25,31 @@
 				
 					<f:content>
 						
-						<Label design="Bold" text="{i18n>wizardFieldGjahr}" class="sapUiSmallMarginBottom"/>
-				
+						<Label design="Bold" text="{i18n>wizardFieldGjahr}" class="sapUiSmallMarginBottom"/>				
 						<Input editable="{= !${wizardModel>/isInChange} || ( ${wizardModel>/isInChange} &amp;&amp; ${DataModel>/ZstatoSop} === '00' ) ? false : true }" 
 							id="idWizardGjahr"  app:property="Gjahr" value="{wizardModel>/Gjahr}" liveChange="onLiveChange" submit="onSubmitGjahr" >
 							<layoutData>
 								<l:GridData span="XL3 L5 M6 S12"  />
 							</layoutData>
 						</Input>
+
 						<Label design="Bold" text="{i18n>wizardFieldZufficioCont}" class="sapUiSmallMarginBottom"/>
-						<Input editable="{= !${wizardModel>/isInChange} || ( ${wizardModel>/isInChange} &amp;&amp; ${DataModel>/ZstatoSop} === '00' ) ? false : true }" 
+            <zufficiocontlibrary:uffcontInput
+              id="idWizardZufficioCont"
+              editable="{= !${wizardModel>/isInChange} || ( ${wizardModel>/isInChange} &amp;&amp; ${DataModel>/ZstatoSop} === '00' ) ? false : true }" 
+              key="{wizardModel>/ZufficioCont}"
+              value="{wizardModel>/ZufficioCont}"
+              valueOutDescription="{wizardModel>/ZvimDescrufficio}"
+              submit="onSubmitZufficioCont"
+              >
+            </zufficiocontlibrary:uffcontInput>
+
+						<!-- <Input editable="{= !${wizardModel>/isInChange} || ( ${wizardModel>/isInChange} &amp;&amp; ${DataModel>/ZstatoSop} === '00' ) ? false : true }" 
 						 id="idWizardZufficioCont"  app:property="ZufficioCont" value="{wizardModel>/ZufficioCont}" submit="onSubmitZufficioCont"  liveChange="onLiveChange">
 							<layoutData>
 								<l:GridData span="XL3 L5 M6 S12"  />
 							</layoutData>
-						</Input>
+						</Input> -->
 
 						<Label design="Bold" text="{i18n>wizardFieldZdesctipodisp3}" class="sapUiSmallMarginBottom"/>		
 						<ComboBox

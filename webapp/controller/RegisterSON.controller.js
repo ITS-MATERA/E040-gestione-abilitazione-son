@@ -120,6 +120,8 @@ sap.ui.define(
 
           self.acceptOnlyNumber("iptCodicePostale2");
           self.acceptOnlyNumber("iptCivico2");
+          self.notEditable("idWizardFipos");
+          self.notEditable("idWizardFistl");
 
           this._wizard = this.getView().byId("CreateProductWizard");
         },

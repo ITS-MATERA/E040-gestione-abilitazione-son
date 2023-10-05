@@ -153,7 +153,6 @@ sap.ui.define(
             self.setModel(oDataSONModel, DataSON_MODEL);
             self.setModel(Step3List, STEP3_LIST);
             self.setModel(oClassificazioneModel, CLASSIFICAZIONE_SON_DEEP);
-            
             self.getRouter().getRoute("deleteCancelSON").attachPatternMatched(self._onObjectMatched, self);            
         },
 
