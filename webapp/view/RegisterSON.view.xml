@@ -65,10 +65,6 @@
 							type="XML"
 						/>
 						<core:Fragment
-							fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form5"
-							type="XML"
-						/>
-						<core:Fragment
 							fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form6"
 							type="XML"
 						/>
@@ -78,6 +74,10 @@
 						/>
 						<core:Fragment
 							fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.Intermediario2"
+							type="XML"
+						/>
+						<core:Fragment
+							fragmentName="gestioneabilitazioneeson.view.fragment.wizard.Step2.form5"
 							type="XML"
 						/>
 					</VBox>

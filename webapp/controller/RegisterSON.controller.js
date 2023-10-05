@@ -791,8 +791,9 @@ sap.ui.define(
                 return false;
               }
               var first = oBundle.getText("operationOK");
-              var second = oBundle.getText("msgNumberSON");
-              var text = first + "\n" + second + " " + result.Zchiavesop;
+              var second = oBundle.getText("msgNumberSON", [result.Zchiavesop]);
+              var znumsop = self.formatter.deleteFirstZeros(result.SonSet.results[0].Znumsop);
+              var text = first + "\n" + second + znumsop;
               sap.m.MessageBox.success(text, {
                 title: oBundle.getText("msgRegisterSONSuccess"),
                 onClose: function (oAction) {

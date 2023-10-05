@@ -58,16 +58,16 @@
 					press="onDeleteSendSignSON"
 				/>
 				<Button
-					enabled="{actionModel>/DeleteSignSONEnabled}"
-					text="{i18n>btnDeleteSign}"
-					type="Emphasized"
-					press="onDeleteSignSON"
-				/>
-				<Button
 					enabled="{actionModel>/SignSONEnabled}"
 					text="{i18n>btnSign}"
 					type="Emphasized"
 					press="onSignSON"
+				/>
+				<Button
+					enabled="{actionModel>/DeleteSignSONEnabled}"
+					text="{i18n>btnDeleteSign}"
+					type="Emphasized"
+					press="onDeleteSignSON"
 				/>
 				<Button
 					enabled="{actionModel>/RegisterCancelSONEnabled}"

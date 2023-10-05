@@ -380,8 +380,8 @@
 											</Label>
 											<Input
 												value="{wizardModel>/Swift}"
-												editable="{wizardModel>/isInChange}"
-												enabled="{wizardModel>/isBicEditable}"
+												editable="false"
+												enabled="false"
 											>
 												<layoutData>
 													<l:GridData span="XL5 L5 M6 S12"/>

@@ -9,8 +9,10 @@
 		class="margin0 padding0  expanded"
 		backgroundDesign="Transparent"
 		visible="{= 
-			${wizardModel>/PayMode} === 'ID6' || 
-			${wizardModel>/PayMode} === 'ID10' &amp;&amp;
+			(
+				${wizardModel>/PayMode} === 'ID6' || 
+				${wizardModel>/PayMode} === 'ID10'
+			) &amp;&amp;
 			(
 				${wizardModel>/Ziban_i} || 
 				${wizardModel>/Zbic_i} || 

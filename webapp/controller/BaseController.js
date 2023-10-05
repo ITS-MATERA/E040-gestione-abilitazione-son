@@ -860,6 +860,42 @@ sap.ui.define(
           return id;
         },
 
+        onSubmitZcodtrib: function(oEvent) {
+          var self = this,
+              oDataModel = self.getModel(),
+              wizardModel = self.getModel(WIZARD_MODEL),
+              oView = self.getView(),
+              Zcodtrib = wizardModel.getProperty("/Zcodtrib");
+          if (Zcodtrib && Zcodtrib !== null) {
+            var path = oDataModel.createKey("DatiTributoSet", {
+              Zcodtrib: Zcodtrib,
+              Ztiposogg: ""
+            });
+
+            oView.setBusy(true);
+            oDataModel
+              .metadataLoaded()
+              .then(() => {
+                oDataModel.read("/" + path, {
+                  success: (data) => {
+                    oView.setBusy(false);
+                    wizardModel.setProperty("/Zcodtrib", data.Zcodtrib.toUpperCase());
+                    wizardModel.setProperty("/Zcodinps", data.Zcodinps);
+                    wizardModel.setProperty("/Zperiodrifda", data.Zperiodrifda);
+                    wizardModel.setProperty("/Zperiodrifa", data.Zperiodrifa);
+                  },
+                  error: (error) => {
+                    oView.setBusy(false);
+                    console.log(error);
+                  }
+                })
+              });
+          } else {
+            wizardModel.setProperty("/Zcodinps", null);
+            wizardModel.setProperty("/Zperiodrifda", null);
+            wizardModel.setProperty("/Zperiodrifa", null);
+          }
+        },
         onSubmitZufficioCont: function (oEvent) {
           var self = this;
           self.fillZvimDescrufficio();
@@ -1194,7 +1230,9 @@ sap.ui.define(
               Fistl = wizardModel.getProperty("/Fistl"),
               Kostl = wizardModel.getProperty("/Kostl"),
               Saknr = wizardModel.getProperty("/Saknr"),
-              Fipos = wizardModel.getProperty("/Fipos");
+              Fipos = wizardModel.getProperty("/Fipos"),
+              Zimptot = wizardModel.getProperty("/Zimptot"),
+              Trbtr = wizardModel.getProperty("/Trbtr");
 
             if (Fipos !== null && Fistl !== null) {
               var oParam = {
@@ -1213,8 +1251,8 @@ sap.ui.define(
                   .FIKRS,
                 Prctr: self.getModelGlobal(self.AUTHORITY_CHECK_SON).getData()
                   .PRCTR,
-                Zimptot: wizardModel.getProperty("/Zimptot") ?? "0",
-                Trbtr: wizardModel.getProperty("/Trbtr") ?? "0",
+                Zimptot: Zimptot === '' ? "0" : Zimptot ?? "0",
+                Trbtr: Trbtr === '' ? "0" : Trbtr ?? "0",
                 ZimptotDivisa: wizardModel.getProperty("/ZimptotDivisa") ?? "",
                 Twaer: wizardModel.getProperty("/Twaer") ?? "",
               };
@@ -1783,6 +1821,7 @@ sap.ui.define(
             .then(function () {
               oDataModel.read("/" + path, {
                 success: function (data, oResponse) {
+                  self.resetPayModeRelatedData();
                   wizardModel.setProperty("/PayMode", data.Zwels);
                   wizardModel.setProperty("/Banks", data.Banks);
                   wizardModel.setProperty("/Iban", data.Iban);
@@ -1798,6 +1837,7 @@ sap.ui.define(
                       wizardModel.setProperty("/isBicEditable", false);
                       wizardModel.setProperty("/ZZcausaleval", "");
                       wizardModel.setProperty("/Swift", null);
+                      wizardModel.setProperty("/Iban", null);
                       break;
                     case "ID4":
                       wizardModel.setProperty("/isZcoordestEditable", false);
@@ -1907,7 +1947,8 @@ sap.ui.define(
             oDataModel = self.getModel(),
             oBundle = self.getResourceBundle(),
             oView = self.getView(),
-            Zcoordest = wizardModel.getProperty("/Zcoordest");
+            Zcoordest = wizardModel.getProperty("/Zcoordest"),
+            Paymode = wizardModel.getProperty("/PayMode");
 
           if (
             !wizardModel.getProperty("/Lifnr") ||
@@ -1926,7 +1967,10 @@ sap.ui.define(
               .metadataLoaded()
               .then(function () {
                 oDataModel.read("/" + path, {
-                  urlParameters: { Lifnr: wizardModel.getProperty("/Lifnr") },
+                  urlParameters: { 
+                    Lifnr: wizardModel.getProperty("/Lifnr"),
+                    Zwels: Paymode
+                  },
                   success: function (data, oResponse) {
                     var message =
                       oResponse.headers["sap-message"] &&
@@ -2041,7 +2085,7 @@ sap.ui.define(
             .getView()
             .getModel(WIZARD_MODEL)
             .setProperty(
-              "/Zclearsyst_b ",
+              "/Zclearsyst_b",
               entity === null ? entity : entity.Zclearsyst
             );
           self
@@ -2088,7 +2132,7 @@ sap.ui.define(
             .getModel(WIZARD_MODEL)
             .setProperty(
               "/Zcoordest_i",
-              entity === null ? entity : entity.Zcoordest
+              entity === null ? entity : entity.Zcoordesti
             );
           self
             .getView()
@@ -2155,7 +2199,7 @@ sap.ui.define(
             oView = self.getView(),
             Lifnr = wizardModel.getProperty("/Lifnr");
 
-          if (Lifnr !== null) {
+          if (Lifnr && Lifnr !== null) {
             oView.setBusy(true);
             var path = self.getModel().createKey(Beneficiary_SET, {
               Lifnr: Lifnr,
@@ -2166,6 +2210,7 @@ sap.ui.define(
               .then(function () {
                 oDataModel.read("/" + path, {
                   success: function (data, oResponse) {
+                    self.resetPayModeRelatedData();
                     wizardModel.setProperty("/TaxnumCf", data.TaxnumCf);
                     wizardModel.setProperty("/Taxnumxl", data.Taxnumxl);
                     wizardModel.setProperty("/NameFirst", data.NameFirst);
@@ -2239,6 +2284,7 @@ sap.ui.define(
                         wizardModel.setProperty("/isBicEditable", false);
                         wizardModel.setProperty("/ZZcausaleval", "");
                         wizardModel.setProperty("/Swift", null);
+                        wizardModel.setProperty("/Iban", null);
                         break;
                       case "ID4":
                         wizardModel.setProperty("/isZcoordestEditable", false);
@@ -4203,6 +4249,10 @@ sap.ui.define(
           self.getView().getModel(WIZARD_MODEL).setProperty("/Type", true); //radio btn
           self.getView().getModel(WIZARD_MODEL).setProperty("/Taxnumxl", null);
           self.getView().getModel(WIZARD_MODEL).setProperty("/NameLast", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zdurc", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zdstatodes", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/Zdscadenza", null);
+          self.getView().getModel(WIZARD_MODEL).setProperty("/ZfermAmm", null);
           self
             .getView()
             .getModel(WIZARD_MODEL)
@@ -4514,6 +4564,69 @@ sap.ui.define(
           oModelJson.setData([]);
           self.setModel(oModelJson, LOG_MODEL);
           self.setModel(oModelJson, MESSAGE_MODEL);
+        },
+
+        resetPayModeRelatedData: function () {
+          var self = this,
+            wizardModel = self.getModel(WIZARD_MODEL);
+
+            wizardModel.setProperty("/Zalias", null);
+            wizardModel.setProperty("/AccTypeId", null);
+            wizardModel.setProperty("/RegioSosp", null);
+            wizardModel.setProperty("/ZaccText", null);
+            wizardModel.setProperty("/Zzposfinent", null);
+            wizardModel.setProperty("/Zzposfinent", null);
+            wizardModel.setProperty("/Zpurpose", null);
+            wizardModel.setProperty("/Zflagfrutt", null);
+            wizardModel.setProperty("/Zcausben", null);
+            //Sezione Versante
+            wizardModel.setProperty("/Zcfcommit", null);
+            wizardModel.setProperty("/Zcodtrib", null);
+            wizardModel.setProperty("/Zperiodrifa", null);
+            wizardModel.setProperty("/Zperiodrifda", null);
+            wizardModel.setProperty("/Zcodinps", null);
+            wizardModel.setProperty("/Zcodvers", null);
+            wizardModel.setProperty("/Zcfvers", null);
+            wizardModel.setProperty("/Zdescvers", null);
+            wizardModel.setProperty("/Zdatavers", null);
+            wizardModel.setProperty("/Zprovvers", null);
+            wizardModel.setProperty("/Zsedevers", null);
+            //Banca Accredito
+            wizardModel.setProperty("/Ziban_b", null);
+            wizardModel.setProperty("/Zbic_b", null);
+            wizardModel.setProperty("/Zcoordest_b", null);
+            wizardModel.setProperty("/Zdenbanca_b", null);
+            wizardModel.setProperty("/Zclearsyst_b", null);
+            wizardModel.setProperty("/Stras_b", null);
+            wizardModel.setProperty("/Zcivico_b", null);
+            wizardModel.setProperty("/Ort01_b", null);
+            wizardModel.setProperty("/Regio_b", null);
+            wizardModel.setProperty("/Pstlz_b", null);
+            wizardModel.setProperty("/Land1_b", null);
+            //Intermediario 1
+            wizardModel.setProperty("/Ziban_i", null);
+            wizardModel.setProperty("/Zbic_i", null);
+            wizardModel.setProperty("/Zcoordest_i", null);
+            wizardModel.setProperty("/Zdenbanca_i", null);
+            wizardModel.setProperty("/Zclearsyst_i", null);
+            wizardModel.setProperty("/Zstras_i", null);
+            wizardModel.setProperty("/Zcivico_i", null);
+            wizardModel.setProperty("/Zort01_i", null);
+            wizardModel.setProperty("/Zregio_i", null);
+            wizardModel.setProperty("/Zpstlz_i", null);
+            wizardModel.setProperty("/Zland1_i", null);
+            //Intermediario 2
+            wizardModel.setProperty("/Ziban2", null);
+            wizardModel.setProperty("/Zbic2", null);
+            wizardModel.setProperty("/Zcoordest2", null);
+            wizardModel.setProperty("/Zdenbanca2", null);
+            wizardModel.setProperty("/Zclearsyst2", null);
+            wizardModel.setProperty("/Zstras2", null);
+            wizardModel.setProperty("/Zcivico2", null);
+            wizardModel.setProperty("/Zort012", null);
+            wizardModel.setProperty("/Zregio2", null);
+            wizardModel.setProperty("/Zpstlz2", null);
+            wizardModel.setProperty("/Zland12", null);
         },
 
         setWizardModel: function (data) {
@@ -5266,8 +5379,9 @@ sap.ui.define(
                 self._setMessage("titleDialogError", "msgError", "error");
               }
               var first = oBundle.getText("operationOK");
-              var second = oBundle.getText("msgNumberSON");
-              var text = first + "\n" + second + " " + result.Zchiavesop;
+              var second = oBundle.getText("msgNumberSON", [result.Zchiavesop]);
+              var znumsop = self.formatter.deleteFirstZeros(result.SonSet.results[0].Znumsop);
+              var text = first + "\n" + second + znumsop;
               sap.m.MessageBox.success(text, {
                 title: oBundle.getText("operationOK"),
                 onClose: function (oAction) {
