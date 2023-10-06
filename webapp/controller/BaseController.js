@@ -4671,7 +4671,7 @@ sap.ui.define(
             Skat: data.Skat,
             Saknr: data.Hkont,
             Hkont: data.Hkont,
-            Zimptot: data.Zimptot,
+            Zimptot: data.Zimptot === "0.00" ? null : data.Zimptot,
             ZimptotDivisa: data.ZimptotDivisa,
             Trbtr: data.Trbtr,
             Twaer: data.Twaer,
@@ -4760,7 +4760,7 @@ sap.ui.define(
           fistlControl.setSelectedKey(null);
           var found = fistlControl.getModel("DataModel").getProperty("/StruttAmministrativa").find(x=> x.Fistl === data.Fistl);
           if(found){
-            oWizardModel.Fistl = data.Fistl;
+            oWizardModel.getData().Fistl = data.Fistl;
             fistlControl.setSelectedKey(data.Fistl);            
           }
 
@@ -4768,7 +4768,7 @@ sap.ui.define(
           fiposControl.setSelectedKey(null);
           var foundFipos = fiposControl.getModel("DataModel").getProperty("/PosizioneFinanziaria").find(x=> x.Fipos === data.Fipos);
           if(foundFipos){
-            oWizardModel.Fipos = data.Fipos;
+            oWizardModel.getData().Fipos = data.Fipos;
             fiposControl.setSelectedKey(data.Fipos);            
           }
 
@@ -5301,8 +5301,8 @@ sap.ui.define(
                 Ztipodisp3: wizardModel.getProperty("/Ztipodisp3"),
                 Kostl: wizardModel.getProperty("/Kostl"),
                 Hkont: wizardModel.getProperty("/Hkont"),
-                Zwels: wizardModel.getProperty("/Zwels"),
-                ZCausaleval: wizardModel.getProperty("/ZCausaleval"),
+                Zwels: wizardModel.getProperty("/PayMode"),
+                ZCausaleval: wizardModel.getProperty("/ZZcausaleval"),
                 Iban: wizardModel.getProperty("/Iban"),
                 Swift: wizardModel.getProperty("/Swift"),
                 Zcoordest: wizardModel.getProperty("/Zcoordest"),
@@ -5848,7 +5848,7 @@ sap.ui.define(
 
         notEditable:function(sId){
           var oInput = this.getView().byId(sId);
-          oInput.attachBrowserEvent("keypress", function (oEvent) {
+          oInput.attachBrowserEvent("keydown", function (oEvent) {
             oEvent.preventDefault();
           });
         },
