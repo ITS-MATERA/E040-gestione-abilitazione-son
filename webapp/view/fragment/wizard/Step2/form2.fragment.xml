@@ -4,6 +4,7 @@
 	xmlns:f="sap.ui.layout.form"
 	xmlns:core="sap.ui.core"
 	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+  xmlns:zcontrolmccross="acn.zmatchcodecross.controls"
 >
 	<!-- expandable="true" -->
 	<Panel
@@ -133,17 +134,32 @@
 													<l:GridData span="XL5 L5 M4 S12"/>
 												</layoutData>
 											</Label>
-											<Input
+											<!-- <Input
 												id="idWizardZZcausaleval"
 												app:property="ZZcausaleval"
 												value="{wizardModel>/ZZcausaleval}"
 												liveChange="onLiveChange"
 												editable="{wizardModel>/isZZcausalevalEditable}"
-											>
-												<layoutData>
+                        <layoutData>
 													<l:GridData span="XL7 L7 M6 S12"/>
 												</layoutData>
 											</Input>
+											> -->
+                      <VBox>
+                        <zcontrolmccross:MatchCodeCross
+                            id="idWizardZZcausaleval"
+                            value="{wizardModel>/ZZcausaleval}"
+                            editable="{wizardModel>/isZZcausalevalEditable}"
+                            liveChange="onLiveChange"
+                            app:property="ZZcausaleval"
+                            whichMC="CausaleValutaria" 
+                            viewId="{wizardModel>/viewId}"
+                        />
+                        <layoutData>
+													<l:GridData span="XL7 L7 M6 S12"/>
+												</layoutData>
+                      </VBox>
+												
 										</l:Grid>
 									</items>
 								</FlexBox>
@@ -219,7 +235,7 @@
 													<l:GridData span="XL6 L6 M4 S12"/>
 												</layoutData>
 											</Label>
-											<Input
+											<!-- <Input
 												value="{wizardModel>/Zalias}"
 												editable="{= ${wizardModel>/isInChange} &amp;&amp; ${wizardModel>/PayMode} === 'ID3' }"
 												visible="{= ${wizardModel>/PayMode} === 'ID3' ? true : false }"
@@ -227,7 +243,22 @@
 												<layoutData>
 													<l:GridData span="XL5 L5 M6 S12"/>
 												</layoutData>
-											</Input>
+											</Input> -->
+
+                      <VBox>
+                        <zcontrolmccross:MatchCodeCross
+                            value="{wizardModel>/Zalias}"
+                            editable="{= ${wizardModel>/isInChange} &amp;&amp; ${wizardModel>/PayMode} === 'ID3' }"
+                            visible="{= ${wizardModel>/PayMode} === 'ID3' ? true : false }"
+                            whichMC="AliasRGS" 
+                            viewId="{wizardModel>/viewId}"
+                        />
+                        <layoutData>
+													<l:GridData span="XL5 L5 M6 S12"/>
+												</layoutData>
+                      </VBox>
+
+
 										</l:Grid>
 									</items>
 								</FlexBox>

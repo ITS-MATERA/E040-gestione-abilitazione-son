@@ -26,7 +26,8 @@ sap.ui.define(
     Dialog,
     Bar,
     Input,
-    coreLibrary
+    coreLibrary,
+    MessageBox
   ) {
     "use strict";
 
@@ -84,6 +85,8 @@ sap.ui.define(
               }
             });
           }
+          else
+            self.getFistl();
 
           self.getTipoDisposizioneModel();
         },
@@ -391,12 +394,8 @@ sap.ui.define(
             oDataModel = self.getModel(),
             oView = self.getView(),
             addAuthModel = self.getModel(ADD_AUTH_MODEL),
-            oControlFilterBarPosFinSpesa = self
-              .getView()
-              .byId("filterBarPosFinSpesa"),
-            oControlIdFilterStruttAmmResp = self
-              .getView()
-              .byId("idFilterStruttAmmResp"),
+            oControlFilterBarPosFinSpesa = self.getView().byId("filterBarPosFinSpesa"),
+            oControlIdFilterStruttAmmResp = self.getView().byId("idFilterStruttAmmResp"),
             Gjahr = addAuthModel.getProperty("/Gjahr"),
             Fipos =
               oControlFilterBarPosFinSpesa.getValue() &&
@@ -430,22 +429,50 @@ sap.ui.define(
               AgrName: !AgrName || AgrName === null ? "" : AgrName,
               Fikrs: !Fikrs || Fikrs === null ? "" : Fikrs,
             };
-            self.getView().setBusy(true);
-            oDataModel.callFunction("/" + URL_VALIDATION, {
-              method: "GET",
-              urlParameters: oParam,
-              success: function (oData, response) {
-                self.getView().setBusy(false);
-                var arrayMessage = oData.results;
-                var isSuccess = self.isErrorInLog(arrayMessage);
-                if (isSuccess) {
-                  self._insertMethod();
+
+            MessageBox.warning("Si vuole procedere con la registrazione dell’Abilitazione?", {
+              title: "Registrazione abilitazione",
+              actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+              emphasizedAction: MessageBox.Action.YES,
+              onClose: function (oAction) {
+                  if (oAction === sap.m.MessageBox.Action.YES) {
+                    self.getView().setBusy(true);
+                    oDataModel.callFunction("/" + URL_VALIDATION, {
+                      method: "GET",
+                      urlParameters: oParam,
+                      success: function (oData, response) {
+                        self.getView().setBusy(false);
+                        var arrayMessage = oData.results;
+                        var isSuccess = self.isErrorInLog(arrayMessage);
+                        if (isSuccess) {
+                          self._insertMethod();
+                        }
+                      },
+                      error: function (oError) {
+                        self.getView().setBusy(false);
+                      },
+                    });
+
+                  }
                 }
-              },
-              error: function (oError) {
-                self.getView().setBusy(false);
-              },
-            });
+              });
+
+            // self.getView().setBusy(true);
+            // oDataModel.callFunction("/" + URL_VALIDATION, {
+            //   method: "GET",
+            //   urlParameters: oParam,
+            //   success: function (oData, response) {
+            //     self.getView().setBusy(false);
+            //     var arrayMessage = oData.results;
+            //     var isSuccess = self.isErrorInLog(arrayMessage);
+            //     if (isSuccess) {
+            //       self._insertMethod();
+            //     }
+            //   },
+            //   error: function (oError) {
+            //     self.getView().setBusy(false);
+            //   },
+            // });
           } else {
             self._setMessage("titleDialogError", "msgNoRequiredField", "error");
             return false;

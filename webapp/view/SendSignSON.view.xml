@@ -9,7 +9,7 @@
         <Panel class="bgBlue margin0" visible="{detailModel>/headerVisible}">
             <core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.HeaderPanel" type="XML"/>
             <FlexBox justifyContent="End">
-            <Button text="Rettifica" type="Emphasized" press="onChangeSON" enabled="{AuthorityCheckSON>/Z02Enabled}"></Button>
+            <Button text="Rettifica SON" type="Emphasized" press="onChangeSON" enabled="{AuthorityCheckSON>/Z02Enabled}"></Button>
             </FlexBox>
         </Panel>
         <IconTabBar select="onSelectTab" id ="idIconTabBar" selectedKey="{detailModel>/tabSelectedKey}">

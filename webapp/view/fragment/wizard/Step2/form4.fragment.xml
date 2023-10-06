@@ -6,6 +6,7 @@
 	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 >
 	<!-- expandable="true" -->
+	<!-- sezione versante -->
 	<Panel
 		headerText="{i18n>wizardStep2SubTitle4}"
 		width="auto"
@@ -79,8 +80,8 @@
 						class="sapUiSmallMarginBottom"
 					/>
 					<Input
-						editable="{wizardModel>/isInChange}"
-						value="{wizardModel>/Zcodvers}"
+						editable="false"
+            value="{wizardModel>/Zcodvers}"
 					>
 						<layoutData>
 							<l:GridData span="XL6 L6 M6 S12"/>
@@ -92,7 +93,7 @@
 						class="sapUiSmallMarginBottom"
 					/>
 					<Input
-						editable="{wizardModel>/isInChange}"
+						editable="false"            
 						value="{wizardModel>/Zdescvers}"
 					>
 						<layoutData>
@@ -105,7 +106,7 @@
 						class="sapUiSmallMarginBottom"
 					/>
 					<Input
-						editable="{wizardModel>/isInChange}"
+						editable="false"            
 						value="{wizardModel>/Zsedevers}"
 					>
 						<layoutData>
@@ -162,7 +163,7 @@
 						class="sapUiSmallMarginBottom"
 					/>
 					<Input
-						editable="{wizardModel>/isInChange}"
+						editable="false"
 						value="{wizardModel>/Zcfvers}"
 					>
 						<layoutData>
@@ -226,7 +227,7 @@
 						class="sapUiSmallMarginBottom"
 					/>
 					<Input
-						editable="{wizardModel>/isInChange}"
+						editable="false"
 						value="{wizardModel>/Zprovvers}"
 					>
 						<layoutData>

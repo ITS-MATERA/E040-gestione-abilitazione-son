@@ -6,6 +6,7 @@
 	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 	xmlns:zcontrolanagrafica="acn.zlibanagrafica.controls"
 	xmlns:zcontrolmodpag="acn.zlibmodpag.controls"
+  xmlns:zcontrolmccross="acn.zmatchcodecross.controls"
 >
 
 	<!-- expandable="true" -->
@@ -44,7 +45,7 @@
 						text="{i18n>wizardFieldLinfnr}"
 						class="sapUiSmallMarginBottom"
 					/>
-					<Input
+					<!-- <Input
 						editable="{wizardModel>/isInChange}"
 						id="idWizardLifnr"
 						app:property="Lifnr"
@@ -55,7 +56,24 @@
 						<layoutData>
 							<l:GridData span="XL4 L5 M6 S12"/>
 						</layoutData>
-					</Input>
+					</Input> -->
+          <VBox>
+            <zcontrolmccross:MatchCodeCross
+              id="idWizardLifnr"
+              value="{wizardModel>/Lifnr}"
+              editable="{wizardModel>/isInChange}"
+              app:property="Lifnr"
+              submit="onSubmitLifnr"
+              liveChange="onLiveChange"
+              whichMC="Beneficiario" 
+              viewId="{wizardModel>/viewId}"
+            />
+            <layoutData>
+              <l:GridData span="XL5 L5 M6 S12"/>
+            </layoutData>
+          </VBox>
+
+
 					<Label
 						design="Bold"
 						text="{i18n>wizardFieldTaxnumCf}"

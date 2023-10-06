@@ -32,6 +32,7 @@ sap.ui.define(
     "use strict";
 
     const EDM_TYPE = library.EdmType;
+    var EdmType = sap.ui.export.EdmType;
 
     const ACTION_MODEL = "actionModel";
 
@@ -363,8 +364,41 @@ sap.ui.define(
         },
 
         onExport: async function (oEvent) {
-          var self = this;
-          self._configExport();
+          var self = this,
+              aCols, oRowBinding, oSettings, oSheet, oTable;
+  
+          if (!self._oTable) {
+            self._oTable = this.byId("idListAuthTable");
+          }
+
+          oTable = self._oTable;
+          oRowBinding = oTable.getBinding("items");
+          var customList = oRowBinding.oList;
+          var data = customList.map((x) => {
+            var item = x;
+            return item;
+          });
+
+          oRowBinding.oList = data;
+          aCols = self._createColumnConfig();
+
+          oSettings = {
+            workbook: {
+              columns: aCols,
+              hierarchyLevel: "Level",
+            },
+            dataSource: oRowBinding,
+            fileName: "Esportazione Lista Abilitazioni",
+            worker: false, // We need to disable worker because we are using a MockServer as OData Service
+            count:data.length || 10000
+          };
+
+          oSheet = new sap.ui.export.Spreadsheet(oSettings);
+          oSheet.build().finally(function () {
+            oSheet.destroy();
+          });
+
+          // self._configExport();
         },
 
         onChange: function () {
@@ -770,97 +804,97 @@ sap.ui.define(
         // ----------------------------- END MANAGE METHOD  -----------------------------  //
 
         // ----------------------------- START EXPORT -----------------------------  //
-        _configExport: async function () {
-          var oSheet;
-          var self = this;
-          var oDataModel = self.getModel(),
-            oView = self.getView();
-          var oBundle = self.getResourceBundle();
-          var oTable = self.getView().byId(TABLE_LISTAUTH);
-          oView.setBusy(true);
-          self
-            .getModel()
-            .metadataLoaded()
-            .then(function () {
-              oDataModel.read("/" + AUTH_SET, {
-                urlParameters: {},
-                success: async function (data, oResponse) {
-                  oView.setBusy(false);
-                  var oModelJson = new sap.ui.model.json.JSONModel();
-                  oModelJson.setData(data.results);
-                  await oView.setModel(oModelJson, AUTH_MODEL_EXPORT);
-                  var oTableModel = oTable.getModel(AUTH_MODEL_EXPORT);
+        // _configExport: async function () {
+        //   var oSheet;
+        //   var self = this;
+        //   var oDataModel = self.getModel(),
+        //     oView = self.getView();
+        //   var oBundle = self.getResourceBundle();
+        //   var oTable = self.getView().byId(TABLE_LISTAUTH);
+        //   oView.setBusy(true);
+        //   self
+        //     .getModel()
+        //     .metadataLoaded()
+        //     .then(function () {
+        //       oDataModel.read("/" + AUTH_SET, {
+        //         urlParameters: {},
+        //         success: async function (data, oResponse) {
+        //           oView.setBusy(false);
+        //           var oModelJson = new sap.ui.model.json.JSONModel();
+        //           oModelJson.setData(data.results);
+        //           await oView.setModel(oModelJson, AUTH_MODEL_EXPORT);
+        //           var oTableModel = oTable.getModel(AUTH_MODEL_EXPORT);
 
-                  var aCols = self._createColumnConfig();
-                  var oSettings = {
-                    workbook: {
-                      columns: aCols,
-                    },
-                    dataSource: oTableModel.getData(),
-                    fileName: oBundle.getText("listAuthPageTitle"),
-                  };
+        //           var aCols = self._createColumnConfig();
+        //           var oSettings = {
+        //             workbook: {
+        //               columns: aCols,
+        //             },
+        //             dataSource: oTableModel.getData(),
+        //             fileName: oBundle.getText("listAuthPageTitle"),
+        //           };
 
-                  oSheet = new Spreadsheet(oSettings);
-                  oSheet.build().finally(function () {
-                    oSheet.destroy();
-                  });
-                },
-                error: function (error) {
-                  oView.setBusy(false);
-                },
-              });
-            });
-        },
+        //           oSheet = new Spreadsheet(oSettings);
+        //           oSheet.build().finally(function () {
+        //             oSheet.destroy();
+        //           });
+        //         },
+        //         error: function (error) {
+        //           oView.setBusy(false);
+        //         },
+        //       });
+        //     });
+        // },
         _createColumnConfig: function () {
           var self = this;
           var sColLabel = "columnName";
           var oBundle = self.getResourceBundle();
           var aCols = [
             {
-              label: oBundle.getText(sColLabel + "ZufficioCont"),
+              label: "Ufficio ordinante",
               property: "ZufficioCont",
-              type: EDM_TYPE.String,
+              type: EdmType.String,
             },
             {
-              label: oBundle.getText(sColLabel + "ZvimDescrufficio"),
+              label: "Descrizione ufficio",
               property: "ZvimDescrufficio",
-              type: EDM_TYPE.String,
+              type: EdmType.String,
             },
             {
-              label: oBundle.getText(sColLabel + "Fipos"),
+              label: "Posizione Finanziaria",
               property: "Fipos",
-              type: EDM_TYPE.String,
+              type: EdmType.String,
             },
             {
-              label: oBundle.getText(sColLabel + "Fistl"),
+              label: "Struttura Amministrativa Responsabile",
               property: "Fistl",
-              type: EDM_TYPE.String,
+              type: EdmType.String,
             },
             {
-              label: oBundle.getText(sColLabel + "Ztipodisp3"),
+              label: "Tipologia Disposizione",
               property: "Zdesctipodisp3",
-              type: EDM_TYPE.String,
+              type: EdmType.String,
             },
             {
-              label: oBundle.getText(sColLabel + "Datab"),
+              label: "Data inizio validità",
               property: "Datab",
-              type: EDM_TYPE.Date,
+              type: EdmType.Date,
               formatOptions: {
                 pattern: "dd.MM.yyyy",
               },
             },
             {
-              label: oBundle.getText(sColLabel + "Datbi"),
+              label: "Data fine validità",
               property: "Datbi",
-              type: EDM_TYPE.Date,
+              type: EdmType.Date,
               formatOptions: {
                 pattern: "dd.MM.yyyy",
               },
             },
             {
-              label: oBundle.getText(sColLabel + "ZstatoAbi"),
+              label: "Stato",
               property: "ZstatoAbi",
-              type: EDM_TYPE.Enumeration,
+              type: EdmType.Enumeration,
               valueMap: {
                 "00": oBundle.getText("ZstatoAbi00"),
                 "01": oBundle.getText("ZstatoAbi01"),

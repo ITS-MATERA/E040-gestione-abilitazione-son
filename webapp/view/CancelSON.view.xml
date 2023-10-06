@@ -9,7 +9,7 @@
         <Panel class="bgBlue margin0" visible="{detailModel>/headerVisible}">
             <core:Fragment fragmentName="gestioneabilitazioneeson.view.fragment.wizard.HeaderPanel" type="XML"/>
             <FlexBox justifyContent="End">
-            <Button text="Rettifica" type="Emphasized" press="onChangeSON" visible="{= ${wizardModel>/isInChange} ? false : true }" 
+            <Button text="Rettifica SON" type="Emphasized" press="onChangeSON" visible="{= ${wizardModel>/isInChange} ? false : true }" 
                 enabled="{AuthorityCheckSON>/Z02Enabled}" ></Button>
             </FlexBox>
         </Panel>

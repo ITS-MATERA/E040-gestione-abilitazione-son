@@ -5861,7 +5861,13 @@ sap.ui.define(
         functionReturnValueModPag:function(obj){
           console.log("functionReturnValueModPag");
           console.log(obj);
-        } 
+        }, 
+
+        functionReturnValueMC:function(obj){
+          console.log("functionReturnValueMC");
+          console.log(obj);
+          
+        }
 
         /**/
       }
