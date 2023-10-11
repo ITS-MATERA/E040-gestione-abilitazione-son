@@ -30,7 +30,6 @@ sap.ui.define(
     "use strict";
 
     const EDM_TYPE = exportLibrary.EdmType;
-    var EdmType = sap.ui.export.EdmType;
 
     const ACTION_MODEL = "actionModel";
     const LOG_MODEL = "logModel";
@@ -1070,40 +1069,27 @@ sap.ui.define(
         },
 
         onExport: function (oEvent) {
-          var self = this,
-              aCols, oRowBinding, oSettings, oSheet, oTable;
-  
-          if (!self._oTable) {
-            self._oTable = this.byId("idListSonTable");
-          }
+          var oSheet;
+          var self = this;
 
-          oTable = self._oTable;
-          oRowBinding = oTable.getBinding("items");
-          var customList = oRowBinding.oList;
-          var data = customList.map((x) => {
-            var item = x;
-            return item;
-          });
+          var oTable = self.getView().byId(TABLE_LISTSON);
+          var oListSONModel = oTable.getModel("SonSet");
 
-          oRowBinding.oList = data;
-          aCols = self._createColumnConfig();
+          console.log(oListSONModel.getData());
 
-          oSettings = {
+          var aCols = self._createColumnConfig();
+          var oSettings = {
             workbook: {
               columns: aCols,
-              hierarchyLevel: "Level",
             },
-            dataSource: oRowBinding,
+            dataSource: oListSONModel.getData(),
             fileName: "Esportazione Lista SON",
-            worker: false, // We need to disable worker because we are using a MockServer as OData Service
-            count:data.length || 10000
           };
 
-          oSheet = new sap.ui.export.Spreadsheet(oSettings);
+          oSheet = new Spreadsheet(oSettings);
           oSheet.build().finally(function () {
             oSheet.destroy();
           });
-          //self._configExport();
         },
         // ----------------------------- END ON CLICK BUTTONS -----------------------------  //
 
@@ -1122,209 +1108,77 @@ sap.ui.define(
         // ----------------------------- END FORMATTING -----------------------------  //
 
         // ----------------------------- START EXPORT -----------------------------  //
-        _configExport: function () {
-          var oSheet;
-          var self = this;
-          var oDataModel = self.getModel(),
-            oView = self.getView();
-          var oBundle = self.getResourceBundle();
-          var oTable = self.getView().byId(TABLE_LISTSON),
-            listSONModel = this.getModel(LISTSON_MODEL);
-
-          oView.setBusy(true);
-          var headerObject = self.getHeaderFilterSON();
-
-          if (!headerObject.isValidate) {
-            oView.setBusy(false);
-            MessageBox.warning(
-              oBundle.getText(headerObject.validationMessage),
-              {
-                title: oBundle.getText("titleDialogWarning"),
-                onClose: function (oAction) {},
-              }
-            );
-            listSONModel.setProperty("/areFiltersValid", false);
-            oView.setBusy(false);
-            return false;
-          }
-          listSONModel.setProperty("/areFiltersValid", true);
-
-          self
-            .getModel()
-            .metadataLoaded()
-            .then(function () {
-              oDataModel.read("/" + SON_SET, {
-                urlParameters: {},
-                filters: headerObject.filters,
-                success: async function (data, oResponse) {
-                  oView.setBusy(false);
-                  var oModelJson = new sap.ui.model.json.JSONModel();
-                  oModelJson.setData(data.results);
-                  await oView.setModel(oModelJson, SON_MODEL_EXPORT);
-                  var oTableModel = oTable.getModel(SON_MODEL_EXPORT);
-
-                  var aCols = self._createColumnConfig();
-                  var oSettings = {
-                    workbook: {
-                      columns: aCols,
-                    },
-                    dataSource: oTableModel.getData(),
-                    fileName: oBundle.getText("listSONPageTitle"),
-                  };
-
-                  oSheet = new Spreadsheet(oSettings);
-                  oSheet.build().finally(function () {
-                    oSheet.destroy();
-                  });
-                },
-                error: function (error) {
-                  oView.setBusy(false);
-                },
-              });
-            });
-        },
 
         _createColumnConfig: function () {
-          var self =this,
+          var self = this,
             aCols = [],
             oBundle = self.getResourceBundle();
-  
+
           var aCols = [
-              {
-                label: "Chiave SON",
-                property: "Zchiavesop",
-                type: EdmType.String,
+            {
+              label: "Chiave SON",
+              property: "Zchiavesop",
+              type: EDM_TYPE.String,
+            },
+            {
+              label: "Data Reg. SON",
+              property: "Zdatasop",
+              type: EDM_TYPE.Date,
+              format: "dd.MM.yyyy",
+            },
+            {
+              label: "Denominazione Beneficiario",
+              property: "Lifnr",
+              type: EDM_TYPE.String,
+            },
+            {
+              label: "Posizione Finanziaria",
+              property: "Fipos",
+              type: EDM_TYPE.String,
+            },
+            {
+              label: "Struttura Amministrativa",
+              property: "Fistl",
+              type: EDM_TYPE.String,
+            },
+            {
+              label: "Importo",
+              property: "Zimptot",
+              type: EDM_TYPE.String,
+            },
+            {
+              label: "Tipologia Disposizione",
+              property: "Zdesctipodisp3",
+              type: EDM_TYPE.String,
+            },
+            {
+              label: "Stato SON",
+              property: "ZstatoSop",
+              type: EDM_TYPE.Enumeration,
+              valueMap: {
+                "00": oBundle.getText("ZstatoSop00"),
+                "01": oBundle.getText("ZstatoSop01"),
+                "02": oBundle.getText("ZstatoSop02"),
+                "03": oBundle.getText("ZstatoSop03"),
+                "04": oBundle.getText("ZstatoSop04"),
+                "05": oBundle.getText("ZstatoSop05"),
+                "06": oBundle.getText("ZstatoSop06"),
+                "07": oBundle.getText("ZstatoSop07"),
+                "08": oBundle.getText("ZstatoSop08"),
+                "09": oBundle.getText("ZstatoSop09"),
+                10: oBundle.getText("ZstatoSop10"),
+                11: oBundle.getText("ZstatoSop11"),
+                14: oBundle.getText("ZstatoSop14"),
+                15: oBundle.getText("ZstatoSop15"),
+                16: oBundle.getText("ZstatoSop16"),
+                17: oBundle.getText("ZstatoSop17"),
+                18: oBundle.getText("ZstatoSop18"),
               },
-              {
-                label: "Data Reg. SON",
-                property: "Zdatasop",
-                type: EdmType.Date,
-                format: "dd.MM.yyyy",
-              },
-              {
-                label: "Denominazione Beneficiario",
-                property: "Lifnr",
-                type: EdmType.String,
-              },
-              {
-                label: "Posizione Finanziaria",
-                property: "Fipos",
-                type: EdmType.String,
-              },
-              {
-                label: "Struttura Amministrativa",
-                property: "Fistl",
-                type: EdmType.String,
-              },
-              {
-                label: "Importo",
-                property: "Zimptot",
-                type: EdmType.String,
-              },
-              {
-                label: "Tipologia Disposizione",
-                property: "Zdesctipodisp3",
-                type: EdmType.String,
-              },
-              {
-                label: "Stato SON",
-                property: "ZstatoSop",
-                type: EdmType.Enumeration,
-                valueMap: {
-                  "00": oBundle.getText("ZstatoSop00"),
-                  "01": oBundle.getText("ZstatoSop01"),
-                  "02": oBundle.getText("ZstatoSop02"),
-                  "03": oBundle.getText("ZstatoSop03"),
-                  "04": oBundle.getText("ZstatoSop04"),
-                  "05": oBundle.getText("ZstatoSop05"),
-                  "06": oBundle.getText("ZstatoSop06"),
-                  "07": oBundle.getText("ZstatoSop07"),
-                  "08": oBundle.getText("ZstatoSop08"),
-                  "09": oBundle.getText("ZstatoSop09"),
-                  "10": oBundle.getText("ZstatoSop10"),
-                  "11": oBundle.getText("ZstatoSop11"),
-                  "14": oBundle.getText("ZstatoSop14"),
-                  "15": oBundle.getText("ZstatoSop15"),
-                  "16": oBundle.getText("ZstatoSop16"),
-                  "17": oBundle.getText("ZstatoSop17"),
-                  "18": oBundle.getText("ZstatoSop18"),
-                },
-              },
-            ];
-  
+            },
+          ];
+
           return aCols;
         },
-
-
-        // _createColumnConfig: function () {
-        //   var self = this;
-        //   var sColLabel = "columnName";
-        //   var oBundle = self.getResourceBundle();
-        //   var aCols = [
-        //     {
-        //       label: oBundle.getText(sColLabel + "Zchiavesop"),
-        //       property: "Zchiavesop",
-        //       type: EDM_TYPE.String,
-        //     },
-        //     {
-        //       label: oBundle.getText(sColLabel + "Zdatasop"),
-        //       property: "Zdatasop",
-        //       type: EDM_TYPE.Date,
-        //       format: "dd.MM.yyyy",
-        //     },
-        //     {
-        //       label: oBundle.getText(sColLabel + "Lifnr"),
-        //       property: "Lifnr",
-        //       type: EDM_TYPE.String,
-        //     },
-        //     {
-        //       label: oBundle.getText(sColLabel + "Fipos"),
-        //       property: "Fipos",
-        //       type: EDM_TYPE.String,
-        //     },
-        //     {
-        //       label: oBundle.getText(sColLabel + "Fistl"),
-        //       property: "Fistl",
-        //       type: EDM_TYPE.String,
-        //     },
-        //     {
-        //       label: oBundle.getText(sColLabel + "Zimptot"),
-        //       property: "Zimptot",
-        //       type: EDM_TYPE.String,
-        //     },
-        //     {
-        //       label: oBundle.getText(sColLabel + "Ztipodisp3"),
-        //       property: "Zdesctipodisp3",
-        //       type: EDM_TYPE.String,
-        //     },
-        //     {
-        //       label: oBundle.getText(sColLabel + "ZstatoSop"),
-        //       property: "ZstatoSop",
-        //       type: EDM_TYPE.Enumeration,
-        //       valueMap: {
-        //         "00": oBundle.getText("ZstatoSop00"),
-        //         "01": oBundle.getText("ZstatoSop01"),
-        //         "02": oBundle.getText("ZstatoSop02"),
-        //         "03": oBundle.getText("ZstatoSop03"),
-        //         "04": oBundle.getText("ZstatoSop04"),
-        //         "05": oBundle.getText("ZstatoSop05"),
-        //         "06": oBundle.getText("ZstatoSop06"),
-        //         "07": oBundle.getText("ZstatoSop07"),
-        //         "08": oBundle.getText("ZstatoSop08"),
-        //         "09": oBundle.getText("ZstatoSop09"),
-        //         10: oBundle.getText("ZstatoSop10"),
-        //         11: oBundle.getText("ZstatoSop11"),
-        //         14: oBundle.getText("ZstatoSop14"),
-        //         15: oBundle.getText("ZstatoSop15"),
-        //         16: oBundle.getText("ZstatoSop16"),
-        //         17: oBundle.getText("ZstatoSop17"),
-        //         18: oBundle.getText("ZstatoSop18"),
-        //       },
-        //     },
-        //   ];
-
-        //   return aCols;
-        // },
 
         // ----------------------------- END EXPORT -----------------------------  //
 

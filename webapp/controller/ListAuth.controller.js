@@ -363,42 +363,26 @@ sap.ui.define(
           self.getRouter().navTo("startPage");
         },
 
-        onExport: async function (oEvent) {
-          var self = this,
-              aCols, oRowBinding, oSettings, oSheet, oTable;
-  
-          if (!self._oTable) {
-            self._oTable = this.byId("idListAuthTable");
-          }
+        onExport: function (oEvent) {
+          var oSheet;
+          var self = this;
 
-          oTable = self._oTable;
-          oRowBinding = oTable.getBinding("items");
-          var customList = oRowBinding.oList;
-          var data = customList.map((x) => {
-            var item = x;
-            return item;
-          });
+          var oTable = self.getView().byId("idListAuthTable");
+          var oModelAbilitazione = oTable.getModel("AbilitazioneSet");
 
-          oRowBinding.oList = data;
-          aCols = self._createColumnConfig();
-
-          oSettings = {
+          var aCols = self._createColumnConfig();
+          var oSettings = {
             workbook: {
               columns: aCols,
-              hierarchyLevel: "Level",
             },
-            dataSource: oRowBinding,
+            dataSource: oModelAbilitazione.getData(),
             fileName: "Esportazione Lista Abilitazioni",
-            worker: false, // We need to disable worker because we are using a MockServer as OData Service
-            count:data.length || 10000
           };
 
-          oSheet = new sap.ui.export.Spreadsheet(oSettings);
+          oSheet = new Spreadsheet(oSettings);
           oSheet.build().finally(function () {
             oSheet.destroy();
           });
-
-          // self._configExport();
         },
 
         onChange: function () {
@@ -804,47 +788,7 @@ sap.ui.define(
         // ----------------------------- END MANAGE METHOD  -----------------------------  //
 
         // ----------------------------- START EXPORT -----------------------------  //
-        // _configExport: async function () {
-        //   var oSheet;
-        //   var self = this;
-        //   var oDataModel = self.getModel(),
-        //     oView = self.getView();
-        //   var oBundle = self.getResourceBundle();
-        //   var oTable = self.getView().byId(TABLE_LISTAUTH);
-        //   oView.setBusy(true);
-        //   self
-        //     .getModel()
-        //     .metadataLoaded()
-        //     .then(function () {
-        //       oDataModel.read("/" + AUTH_SET, {
-        //         urlParameters: {},
-        //         success: async function (data, oResponse) {
-        //           oView.setBusy(false);
-        //           var oModelJson = new sap.ui.model.json.JSONModel();
-        //           oModelJson.setData(data.results);
-        //           await oView.setModel(oModelJson, AUTH_MODEL_EXPORT);
-        //           var oTableModel = oTable.getModel(AUTH_MODEL_EXPORT);
 
-        //           var aCols = self._createColumnConfig();
-        //           var oSettings = {
-        //             workbook: {
-        //               columns: aCols,
-        //             },
-        //             dataSource: oTableModel.getData(),
-        //             fileName: oBundle.getText("listAuthPageTitle"),
-        //           };
-
-        //           oSheet = new Spreadsheet(oSettings);
-        //           oSheet.build().finally(function () {
-        //             oSheet.destroy();
-        //           });
-        //         },
-        //         error: function (error) {
-        //           oView.setBusy(false);
-        //         },
-        //       });
-        //     });
-        // },
         _createColumnConfig: function () {
           var self = this;
           var sColLabel = "columnName";
