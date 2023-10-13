@@ -17,6 +17,7 @@
 				id="CreateProductWizard"
 				showNextButton="false"
 				finishButtonText="{i18n>btnSaveAll}"
+				complete="onComplete"
 				class="sapUiResponsivePadding--header sapUiResponsivePadding--content"
 			>
 				<WizardStep

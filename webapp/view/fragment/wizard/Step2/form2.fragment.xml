@@ -90,8 +90,9 @@
 													<l:GridData span="XL6 L6 M4 S12"/>
 												</layoutData>
 											</Label>
+                      <!-- editable="{wizardModel>/isInChange}" -->
 											<Input
-												editable="{wizardModel>/isInChange}"
+												editable="false"
 												id="idWizardBanks"
 												app:property="Banks"
 												value="{wizardModel>/Banks}"
@@ -456,6 +457,8 @@
 												liveChange="onLiveChange"
 												submit="onSubmitZcoordest"
 												editable="{wizardModel>/isZcoordestEditable}"
+                        showValueHelp="true"
+                        valueHelpRequest="handleValueHelpZcoordest"
 											>
 												<layoutData>
 													<l:GridData span="XL6 L6 M6 S12"/>

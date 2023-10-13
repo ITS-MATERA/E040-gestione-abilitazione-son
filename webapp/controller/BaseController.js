@@ -109,6 +109,7 @@ sap.ui.define(
         payMode: [],
 
         referInputId: null,
+        _zcoordest:null,
 
         getRouter: function () {
           return UIComponent.getRouterFor(this);
@@ -1829,10 +1830,12 @@ sap.ui.define(
                   wizardModel.setProperty("/Zcoordest", data.ZcoordEst);
                   wizardModel.setProperty("/Zcodprov", data.Zcodprov);
 
+                  wizardModel.setProperty("/isZZcausalevalEditable", data.Banks === 'IT' ? false : true);
+
                   switch (data.Zwels.toUpperCase()) {
                     case "ID3":
                       wizardModel.setProperty("/isZcoordestEditable", false);
-                      wizardModel.setProperty("/isZZcausalevalEditable", false);
+                      // wizardModel.setProperty("/isZZcausalevalEditable", false);
                       wizardModel.setProperty("/isIbanEditable", false);
                       wizardModel.setProperty("/isBicEditable", false);
                       wizardModel.setProperty("/ZZcausaleval", "");
@@ -1841,7 +1844,7 @@ sap.ui.define(
                       break;
                     case "ID4":
                       wizardModel.setProperty("/isZcoordestEditable", false);
-                      wizardModel.setProperty("/isZZcausalevalEditable", false);
+                      // wizardModel.setProperty("/isZZcausalevalEditable", false);
                       wizardModel.setProperty("/isIbanEditable", true);
                       wizardModel.setProperty("/isBicEditable", false);
                       wizardModel.setProperty("/ZZcausaleval", "");
@@ -1849,7 +1852,7 @@ sap.ui.define(
                       break;
                     case "ID5":
                       wizardModel.setProperty("/isZcoordestEditable", false);
-                      wizardModel.setProperty("/isZZcausalevalEditable", false);
+                      // wizardModel.setProperty("/isZZcausalevalEditable", false);
                       wizardModel.setProperty("/isIbanEditable", true);
                       wizardModel.setProperty("/isBicEditable", false);
                       wizardModel.setProperty("/ZZcausaleval", "");
@@ -1857,43 +1860,19 @@ sap.ui.define(
                       break;
                     case "ID6":
                       wizardModel.setProperty("/isZcoordestEditable", true);
-                      wizardModel.setProperty("/isZZcausalevalEditable", true);
+                      // wizardModel.setProperty("/isZZcausalevalEditable", true);
                       wizardModel.setProperty("/isIbanEditable", false);
                       wizardModel.setProperty("/isBicEditable", true);
                       wizardModel.setProperty("/Iban", null);
                       break;
                     case "ID10":
                       wizardModel.setProperty("/isZcoordestEditable", true);
-                      wizardModel.setProperty("/isZZcausalevalEditable", false);
+                      // wizardModel.setProperty("/isZZcausalevalEditable", false);
                       wizardModel.setProperty("/isIbanEditable", true);
                       wizardModel.setProperty("/isBicEditable", true);
                       wizardModel.setProperty("/ZZcausaleval", "");
                       break;
                   }
-
-                  /*
-
-                if (data.Zwels.toUpperCase() === "ID6") {
-                  wizardModel.setProperty("/isZcoordestEditable", true);
-                  wizardModel.setProperty("/isZZcausalevalEditable", true);
-                  wizardModel.setProperty("/isIbanEditable", false);
-                  wizardModel.setProperty("/Iban", null);
-                  wizardModel.setProperty("/isBicEditable", true);
-                } else {
-                  wizardModel.setProperty("/isIbanEditable", true);
-                  wizardModel.setProperty("/isBicEditable", false);
-                  wizardModel.setProperty("/Iban", wizardModel.getProperty("/Iban") && wizardModel.getProperty("/Iban") !== "" 
-                    ? wizardModel.getProperty("/Iban") 
-                    : null);
-                  wizardModel.setProperty("/Swift", null);
-
-                  wizardModel.setProperty("/Zcoordest", wizardModel.getProperty("/Zcoordest") && wizardModel.getProperty("/Zcoordest") !== "" 
-                    ? wizardModel.getProperty("/Zcoordest") 
-                    : null);
-                  wizardModel.setProperty("/isZcoordestEditable", false);
-                  wizardModel.setProperty("/ZZcausaleval", "");
-                  wizardModel.setProperty("/isZZcausalevalEditable", false);
-                }*/
                 },
                 error: function (error) {
                   self.getView().setBusy(false);
@@ -2273,13 +2252,15 @@ sap.ui.define(
                     wizardModel.setProperty("/Zcoordest", pay.ZcoordEst);
                     wizardModel.setProperty("/Zcodprov", pay.Zcodprov);
 
+                    wizardModel.setProperty("/isZZcausalevalEditable", pay.Banks === 'IT' ? false : true);
+
                     switch (pay.Zwels.toUpperCase()) {
                       case "ID3":
                         wizardModel.setProperty("/isZcoordestEditable", false);
-                        wizardModel.setProperty(
-                          "/isZZcausalevalEditable",
-                          false
-                        );
+                        // wizardModel.setProperty(
+                        //   "/isZZcausalevalEditable",
+                        //   false
+                        // );
                         wizardModel.setProperty("/isIbanEditable", false);
                         wizardModel.setProperty("/isBicEditable", false);
                         wizardModel.setProperty("/ZZcausaleval", "");
@@ -2288,10 +2269,10 @@ sap.ui.define(
                         break;
                       case "ID4":
                         wizardModel.setProperty("/isZcoordestEditable", false);
-                        wizardModel.setProperty(
-                          "/isZZcausalevalEditable",
-                          false
-                        );
+                        // wizardModel.setProperty(
+                        //   "/isZZcausalevalEditable",
+                        //   false
+                        // );
                         wizardModel.setProperty("/isIbanEditable", true);
                         wizardModel.setProperty("/isBicEditable", false);
                         wizardModel.setProperty("/ZZcausaleval", "");
@@ -2299,10 +2280,10 @@ sap.ui.define(
                         break;
                       case "ID5":
                         wizardModel.setProperty("/isZcoordestEditable", false);
-                        wizardModel.setProperty(
-                          "/isZZcausalevalEditable",
-                          false
-                        );
+                        // wizardModel.setProperty(
+                        //   "/isZZcausalevalEditable",
+                        //   false
+                        // );
                         wizardModel.setProperty("/isIbanEditable", true);
                         wizardModel.setProperty("/isBicEditable", false);
                         wizardModel.setProperty("/ZZcausaleval", "");
@@ -2310,44 +2291,30 @@ sap.ui.define(
                         break;
                       case "ID6":
                         wizardModel.setProperty("/isZcoordestEditable", true);
-                        wizardModel.setProperty(
-                          "/isZZcausalevalEditable",
-                          true
-                        );
-                        if (pay.Banks.toUpperCase() === "IT")
-                          wizardModel.setProperty(
-                            "/isZZcausalevalEditable",
-                            false
-                          );
+                        // wizardModel.setProperty(
+                        //   "/isZZcausalevalEditable",
+                        //   true
+                        // );
+                        // if (pay.Banks.toUpperCase() === "IT")
+                        //   wizardModel.setProperty(
+                        //     "/isZZcausalevalEditable",
+                        //     false
+                        //   );
                         wizardModel.setProperty("/isIbanEditable", false);
                         wizardModel.setProperty("/isBicEditable", true);
                         wizardModel.setProperty("/Iban", null);
                         break;
                       case "ID10":
                         wizardModel.setProperty("/isZcoordestEditable", true);
-                        wizardModel.setProperty(
-                          "/isZZcausalevalEditable",
-                          false
-                        );
+                        // wizardModel.setProperty(
+                        //   "/isZZcausalevalEditable",
+                        //   false
+                        // );
                         wizardModel.setProperty("/isIbanEditable", true);
                         wizardModel.setProperty("/isBicEditable", true);
                         wizardModel.setProperty("/ZZcausaleval", "");
                         break;
                     }
-
-                    /*
-
-                  wizardModel.setProperty("/PayMode", data.results[0].Zwels);
-                  wizardModel.setProperty("/Banks", data.results[0].Banks);
-                  wizardModel.setProperty("/Iban", data.results[0].Iban);
-                  wizardModel.setProperty("/Swift", data.results[0].Swift);
-                  wizardModel.setProperty("/Zcoordest", data.results[0].ZcoordEst);
-
-                  if(data.results[0].Banks.toUpperCase() !== 'IT'){
-                    wizardModel.setProperty("/isZZcausalevalEditable", true);
-                  }else{
-                    wizardModel.setProperty("/isZZcausalevalEditable", false);
-                  }*/
                   } else {
                     self
                       .getView()
@@ -5835,6 +5802,62 @@ sap.ui.define(
           }
 
           return false;
+        },
+        
+        handleValueHelpZcoordest:function(oEvent){
+          var self =this;
+          if(!self._zcoordest){
+            self._zcoordest = sap.ui.core.Fragment.load({
+              id: self.getView().getId(),
+              name: "gestioneabilitazioneeson.view.fragment.valueHelp.ValueHelpZcoordest",
+              controller: self
+            }).then(function(oDialog){
+              return oDialog;
+            }.bind(this));
+          }
+          self._zcoordest.then(function(oDialog){
+            var oDataModel = self.getView().getModel(),
+              filters=[];
+            self.getView().setBusy(true);
+
+            filters.push(new FILTER("Lifnr",EQ,self.getView().getModel(WIZARD_MODEL).getProperty("/Lifnr")));
+            filters.push(new FILTER("Zwels",EQ,self.getView().getModel(WIZARD_MODEL).getProperty("/PayMode")));
+
+            oDataModel.read("/ZcoordestSet", {
+              filters:filters,
+              success: function (data, oResponse) {
+                self.getView().setBusy(false);
+                //data.results.splice(0, 1);
+                var oModelJson = new JSONModel({
+                  ZcoordestList:data.results
+                });
+                oDialog.setModel(oModelJson, "ZcoordestModel");
+                oDialog._searchField.setVisible(false);
+                oDialog.open();
+              },
+              error: function (error) {
+                self.getView().setBusy(false);
+              },
+            });            
+          });
+        },
+        
+        _handleValueHelpCloseZcoordest:function(oEvent){
+          var self =this,
+            aSelectedItems = oEvent.getParameter("selectedItems"),
+            oInput = self.getView().byId("idWizardZcoordest"),
+            sProperty = oInput.data("property"),
+            wizardModel = self.getModel(WIZARD_MODEL);
+
+          if (aSelectedItems && aSelectedItems.length > 0) {
+            wizardModel.setProperty("/" + sProperty, aSelectedItems[0].getTitle());
+            self.onSubmitZcoordest(null);
+          }
+        },
+
+        onComplete:function(oEvent){
+          var self = this;
+          console.log("aaaaa");
         },
 
         acceptOnlyNumber: function (sId) {

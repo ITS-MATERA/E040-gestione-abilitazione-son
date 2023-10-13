@@ -25,7 +25,7 @@
 				
 					<f:content>
 						
-						<Label design="Bold" text="{i18n>wizardFieldGjahr}" class="sapUiSmallMarginBottom"/>				
+						<Label design="Bold" text="{i18n>wizardFieldGjahr}" class="sapUiSmallMarginBottom" required="true"/>				
 						<Input editable="{= !${wizardModel>/isInChange} || ( ${wizardModel>/isInChange} &amp;&amp; ${DataModel>/ZstatoSop} === '00' ) ? false : true }" 
 							id="idWizardGjahr"  app:property="Gjahr" value="{wizardModel>/Gjahr}" liveChange="onLiveChange" submit="onSubmitGjahr" >
 							<layoutData>
@@ -33,7 +33,7 @@
 							</layoutData>
 						</Input>
 
-						<Label design="Bold" text="{i18n>wizardFieldZufficioCont}" class="sapUiSmallMarginBottom"/>
+						<Label design="Bold" text="{i18n>wizardFieldZufficioCont}" class="sapUiSmallMarginBottom" required="true"/>
             <zufficiocontlibrary:uffcontInput
               id="idWizardZufficioCont"
               editable="{= !${wizardModel>/isInChange} || ( ${wizardModel>/isInChange} &amp;&amp; ${DataModel>/ZstatoSop} === '00' ) ? false : true }" 
@@ -51,7 +51,7 @@
 							</layoutData>
 						</Input> -->
 
-						<Label design="Bold" text="{i18n>wizardFieldZdesctipodisp3}" class="sapUiSmallMarginBottom"/>		
+						<Label design="Bold" text="{i18n>wizardFieldZdesctipodisp3}" class="sapUiSmallMarginBottom" required="true"/>		
 						<ComboBox
 							id="idWizardZdesctipodisp3"
 							width="100%"
