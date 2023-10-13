@@ -269,7 +269,7 @@ sap.ui.define(
             sBeneficiario.setValue(""),
             sFiposFrom.setValue(""),
             sFiposTo.setValue(""),
-            sFistl.setValue("");
+            sFistl?.setValue("");
         },
 
         onBeforeRendering: function () {
