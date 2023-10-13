@@ -5,6 +5,7 @@
 	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 	xmlns:zcontrol="zsap.com.r3.cobi.s4.custposfin.z_s4_zposfin.controls"
 	xmlns:zcontrolMatchSar="zsap.com.r3.cobi.s4.custapiuser.z_s4_userlog.controls"
+	xmlns:zcontrolmccross="acn.zmatchcodecross.controls"
 >
 	<VBox class="bgWhite">
 		<items>
@@ -253,16 +254,11 @@
 				<VBox >
 					<items>
 						<Label  design="Bold" text="{i18n>filterNameLifnr}"></Label>
-							<FlexBox  alignItems="Start">								
-								<Input
-									id="fBeneficiario"
-									app:searchPropertyModel="Lifnr"								
-									>	
-								    <layoutData>
-										<FlexItemData  growFactor="4" />
-									</layoutData>
-								</Input>
-							</FlexBox>
+							<zcontrolmccross:MatchCodeCross
+								id="fBeneficiario"
+								app:searchPropertyModel="Lifnr"	
+								whichMC="Beneficiario" 
+							/>
 					</items>
 					<layoutData><l:GridData  span="XL2 L4 M4 S12" indent="XL10 L8 M8 S0" moveBackwards="XL10 L8 M8 S0"/></layoutData>
 				</VBox>	
