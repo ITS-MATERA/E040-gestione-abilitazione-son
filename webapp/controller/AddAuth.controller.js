@@ -46,6 +46,7 @@ sap.ui.define(
       "gestioneabilitazioneeson.controller.AddAuth",
       {
         formatter: formatter,
+        _tipoDispDialog:null,
 
         onInit: function () {
           var oAddAuthModel;
@@ -72,6 +73,7 @@ sap.ui.define(
         _onObjectMatched: function () {
           var self = this,
             authModel = self.getModelGlobal(self.AUTHORITY_CHECK_ABILITAZIONE);
+          self._tipoDispDialog = null;
 
           if (!authModel || authModel === null) {
             self.getAuthorityCheck(self.FILTER_AUTH_OBJ, function (callback) {
@@ -88,6 +90,9 @@ sap.ui.define(
           else
             self.getFistl();
 
+          var inputDatabControl = self.getView().byId("idInputDatab"); 
+          inputDatabControl.setDateValue(new Date());
+          self.getModel(ADD_AUTH_MODEL).setProperty("/Datab",formatter.formatStringForDate(inputDatabControl.getValue()));
           self.getTipoDisposizioneModel();
         },
 
@@ -407,8 +412,6 @@ sap.ui.define(
               oControlIdFilterStruttAmmResp.getValue() !== ""
                 ? oControlIdFilterStruttAmmResp.getValue()
                 : "",
-            // Fipos = addAuthModel.getProperty("/Fipos"),
-            // Fistl = addAuthModel.getProperty("/Fistl"),
             Fikrs = self
               .getModelGlobal(self.AUTHORITY_CHECK_ABILITAZIONE)
               .getData().FIKRS,
@@ -418,6 +421,11 @@ sap.ui.define(
             Prctr = self
               .getModelGlobal(self.AUTHORITY_CHECK_ABILITAZIONE)
               .getData().PRCTR;
+
+          
+
+
+
 
           if (Fipos !== null && Fistl !== null) {
             var oParam = {
@@ -484,6 +492,60 @@ sap.ui.define(
           self.oLogDialog.open();
         },
 
+
+        handleValueHelp:function(oEvent){
+          var self =this,
+            control = self.getView().byId("idInputZtipodisp3");
+
+          control.setTokens([]);
+          if(!self._tipoDispDialog){
+            self._tipoDispDialog = sap.ui.core.Fragment.load({
+              id: self.getView().getId(),
+              name: "gestioneabilitazioneeson.view.fragment.valueHelp.ValueHelpTipoDisp",
+              controller: self
+            }).then(function(oDialog){
+              return oDialog;
+            }.bind(this));
+          }
+          self._tipoDispDialog.then(function(oDialog){
+            var addAuthModel = self.getModel(ADD_AUTH_MODEL);
+            var oDataModel = self.getModel();
+            self.getView().setBusy(true);
+
+            oDataModel.read("/" + Ztipodisp3_SET, {
+              success: function (data, oResponse) {
+                self.getView().setBusy(false);
+                data.results.splice(0, 1);
+                addAuthModel.setProperty("/Ztipodisp3List", data.results);
+                var oModelJson = new JSONModel({
+                  Ztipodisp3List:data.results
+                });
+                oDialog.setModel(oModelJson, "TipologiaDispModel");
+                oDialog._searchField.setVisible(false);
+                oDialog.open();
+              },
+              error: function (error) {
+                self.getView().setBusy(false);
+              },
+            });            
+          });
+        },
+
+        _handleValueHelpClose:function(oEvent){
+          var self =this,
+            aSelectedItems = oEvent.getParameter("selectedItems"),
+            oMultiInput = self.byId("idInputZtipodisp3");
+
+          if (aSelectedItems && aSelectedItems.length > 0) {
+            aSelectedItems.forEach(function (oItem) {
+              oMultiInput.addToken(new sap.m.Token({
+                key:oItem.getTitle(),
+                text: oItem.getDescription()
+              }));
+            });
+          }
+        },
+
         _insertMethod: function () {
           var self = this,
             oDataModel = self.getModel(),
@@ -535,7 +597,8 @@ sap.ui.define(
                 !ZufficioCont || ZufficioCont === null ? "" : ZufficioCont,
               Fipos: !Fipos || Fipos === null ? "" : Fipos,
               Fistl: !Fistl || Fistl === null ? "" : Fistl,
-              Ztipodisp3: !Ztipodisp3 || Ztipodisp3 === null ? "" : Ztipodisp3,
+              // Ztipodisp3: !Ztipodisp3 || Ztipodisp3 === null ? "" : Ztipodisp3,
+              Ztipodisp3: null,
               Datab: !DatabTs || DatabTs === null ? "" : DatabTs,
               Datbi: !DatbiTs || DatbiTs === null ? "" : DatbiTs,
               Zchiaveabi: "Zchiaveabi",
@@ -543,6 +606,14 @@ sap.ui.define(
               Bukrs: "S001",
             },
           ];
+
+          var control = self.getView().byId("idInputZtipodisp3"),
+            arrDisp =[];
+          
+          for(var i=0; i<control.getTokens().length;i++){
+            var item = control.getTokens()[i];
+            arrDisp.push(item.getKey());
+          }
 
           var entityRequestBody = {
             Bukrs: "",
@@ -555,9 +626,9 @@ sap.ui.define(
 
           self.getView().setBusy(true);
           oDataModel.create("/" + URL_DEEP, entityRequestBody, {
+            urlParameters: {"zTipoDisp": arrDisp.toString()},
             success: function (result) {
               self.getView().setBusy(false);
-
               var arrayMessage = result.AbilitazioneMessageSet.results;
 
               var isSuccess = self.isErrorInLog(arrayMessage);

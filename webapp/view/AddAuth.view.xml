@@ -65,7 +65,21 @@
 					<Label  design="Bold" required="true" width="100%" text="{i18n>columnNameZtipodisp3}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
 						<layoutData><l:GridData span="XL2 L2 M6 S12" linebreak="true"/></layoutData>
 					</Label>
-					<ComboBox
+
+           <MultiInput 
+              id="idInputZtipodisp3"
+              valueHelpRequest="handleValueHelp">
+            <core:Item  key="{addAuhModel>Ztipodisp3}" text="{addAuhModel>Zdesctipodisp3}" />
+            <layoutData><l:GridData span="XL4 L5 M6 S12"/></layoutData>
+           </MultiInput> 
+
+
+
+
+
+
+
+					<!-- <ComboBox
 						id="idInputZtipodisp3"
 						width="100%"				
 						change="onLiveChangeZtipodisp3List"
@@ -73,7 +87,7 @@
 						>
 						<core:Item  key="{addAuhModel>Ztipodisp3}" text="{addAuhModel>Zdesctipodisp3}" />
 						<layoutData><l:GridData span="XL4 L5 M6 S12"/></layoutData>
-					</ComboBox>	
+					</ComboBox>	 -->
 
 					<!-- 5riga -->
 					<Label  design="Bold" required="true" width="100%" text="{i18n>columnNameDatab}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
