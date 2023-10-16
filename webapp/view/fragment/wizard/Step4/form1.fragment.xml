@@ -3,6 +3,7 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core"
     xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+    xmlns:zcontrolmccross="acn.zmatchcodecross.controls"
 >
 
     <!-- expandable="true" -->
@@ -68,9 +69,21 @@
                                             <Label  required="true"   design="Bold" width="100%" text="{i18n>fieldNameZlocpag}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData><l:GridData span="XL2 L4 M7 S12" /></layoutData>
                                             </Label>
-                                            <Input   editable="{wizardModel>/isInChange}" id="idWizardZlocpag"  app:property="Zlocpag" width="100%" value="{wizardModel>/Zlocpag}" liveChange="onLiveChange">
+                                            <VBox>
+                                                <zcontrolmccross:MatchCodeCross
+                                                    id="idWizardZlocpag"
+                                                    whichMC="LocalitaPagamento"
+                                                    editable="{wizardModel>/isInChange}"
+                                                    app:property="Zlocpag"
+                                                    width="100%"
+                                                    value="{wizardModel>/Zlocpag}"
+                                                    liveChange="onLiveChange"
+                                                />
                                                 <layoutData><l:GridData span="XL4 L6 M7 S12"/></layoutData>
-                                            </Input>
+                                            </VBox>
+                                            <!-- <Input   editable="{wizardModel>/isInChange}" id="idWizardZlocpag"  app:property="Zlocpag" width="100%" value="{wizardModel>/Zlocpag}" liveChange="onLiveChange">
+                                                <layoutData><l:GridData span="XL4 L6 M7 S12"/></layoutData>
+                                            </Input> -->
                                         </l:Grid>
                                     </items>     
                                 </FlexBox>                                
@@ -119,9 +132,21 @@
                                             <Label  required="true" design="Bold" width="100%" text="{i18n>fieldNameZzonaint}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
                                                 <layoutData><l:GridData span="XL2 L4 M7 S12" /></layoutData>
                                             </Label>
-                                            <Input  editable="{wizardModel>/isInChange}" id="idWizardZzonaint"  app:property="Zzonaint" width="100%" value="{wizardModel>/Zzonaint}" liveChange="onLiveChange">
+                                            <VBox>
+                                                <zcontrolmccross:MatchCodeCross
+                                                    id="idWizardZzonaint"
+                                                    whichMC="ZonaIntervento"
+                                                    editable="{wizardModel>/isInChange}"
+                                                    app:property="Zzonaint"
+                                                    width="100%"
+                                                    value="{wizardModel>/Zzonaint}"
+                                                    liveChange="onLiveChange"
+                                                />
                                                 <layoutData><l:GridData span="XL3 L6 M7 S12"/></layoutData>
-                                            </Input>
+                                            </VBox>
+                                            <!-- <Input  editable="{wizardModel>/isInChange}" id="idWizardZzonaint"  app:property="Zzonaint" width="100%" value="{wizardModel>/Zzonaint}" liveChange="onLiveChange">
+                                                <layoutData><l:GridData span="XL3 L6 M7 S12"/></layoutData>
+                                            </Input> -->
                                         </l:Grid>
                                     </items>     
                                 </FlexBox>                                
