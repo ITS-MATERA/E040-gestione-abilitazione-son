@@ -227,9 +227,10 @@ sap.ui.define(
           });
           self.setModel(oAddAuthModel, ADD_AUTH_MODEL);
 
-          var cbZtipodisp3 = self.getView().byId("idInputZtipodisp3");
-          cbZtipodisp3.setSelectedKey(null);
-          cbZtipodisp3.setValue(null);
+          var control = self.getView().byId("idInputZtipodisp3");
+          control.setTokens([]);
+          // cbZtipodisp3.setSelectedKey(null);
+          // cbZtipodisp3.setValue(null);
 
           var dpDatab = self.getView().byId("idInputDatab");
           dpDatab.setValue(null);
@@ -626,9 +627,13 @@ sap.ui.define(
             AbilitazioneMessageSet: [],
           };
 
+          var oParam = {
+            ZTipoDisp: arrDisp.toString()
+          };
+
           self.getView().setBusy(true);
           oDataModel.create("/" + URL_DEEP, entityRequestBody, {
-            urlParameters: {"zTipoDisp": arrDisp.toString()},
+            urlParameters: oParam,
             success: function (result) {
               self.getView().setBusy(false);
               var arrayMessage = result.AbilitazioneMessageSet.results;
@@ -642,8 +647,7 @@ sap.ui.define(
             error: function (err) {
               self.getView().setBusy(false);
             },
-            async: true,
-            urlParameters: {},
+            async: true
           });
         },
       }

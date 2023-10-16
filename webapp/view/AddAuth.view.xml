@@ -36,7 +36,7 @@
 					<Label  design="Bold" required="true" width="100%" text="{i18n>columnNameZufficioCont}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
 						<layoutData><l:GridData span="XL2 L2 M6 S12" linebreak="true"/></layoutData>
 					</Label>
-					<Input type="Number" width="100%" id="idInputZufficioCont" value="{addAuhModel>/ZufficioCont}" submit="onSubmitZufficioCont" liveChange="onLiveChange" app:property="ZufficioCont">
+					<Input width="100%" id="idInputZufficioCont" value="{addAuhModel>/ZufficioCont}" submit="onSubmitZufficioCont" liveChange="onLiveChange" app:property="ZufficioCont">
 						<layoutData><l:GridData span="XL2 L2 M6 S12"/></layoutData>
 					</Input>
 					<Label  design="Bold"  width="100%" text="{i18n>columnNameZvimDescrufficio}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">

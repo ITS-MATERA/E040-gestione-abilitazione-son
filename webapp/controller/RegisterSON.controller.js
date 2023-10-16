@@ -521,7 +521,10 @@ sap.ui.define(
           var self = this,
             wizardType = oEvent.getSource().data("dataWizardType");
 
-          if (wizardType === "Fine") return false;
+          if (wizardType === "Fine"){
+            location.reload();
+            return false;
+          } 
 
           self.onSaveAll();
         },
