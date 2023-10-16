@@ -552,6 +552,7 @@ sap.ui.define(
             addAuthModel = self.getModel(ADD_AUTH_MODEL),
             ZufficioCont = addAuthModel.getProperty("/ZufficioCont"),
             Gjahr = addAuthModel.getProperty("/Gjahr"),
+            control = self.getView().byId("idInputZtipodisp3"),
             // Fipos = addAuthModel.getProperty("/Fipos"),
             // Fistl = addAuthModel.getProperty("/Fistl"),
             oControlFilterBarPosFinSpesa = self
@@ -570,16 +571,18 @@ sap.ui.define(
               oControlIdFilterStruttAmmResp.getValue() !== ""
                 ? oControlIdFilterStruttAmmResp.getValue()
                 : "",
-            Ztipodisp3 = addAuthModel.getProperty("/Ztipodisp3"),
+            //Ztipodisp3 = addAuthModel.getProperty("/Ztipodisp3"),
             Datab = addAuthModel.getProperty("/Datab"),
             Datbi = addAuthModel.getProperty("/Datbi");
+
+          var listZtipoDisp =  control.getTokens();
 
           if (
             ZufficioCont === null ||
             Gjahr === null ||
             Fipos === null ||
             Fistl === null ||
-            Ztipodisp3 === null ||
+            listZtipoDisp.length === 0 ||
             Datab === null ||
             Datbi === null
           ) {
@@ -607,8 +610,7 @@ sap.ui.define(
             },
           ];
 
-          var control = self.getView().byId("idInputZtipodisp3"),
-            arrDisp =[];
+          var arrDisp =[];
           
           for(var i=0; i<control.getTokens().length;i++){
             var item = control.getTokens()[i];
