@@ -4,7 +4,6 @@
 	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 >
 <SelectDialog
-		id="valueHelpDialog"
 		title="Coordinate Estere"
     items="{
 			path: 'ZcoordestModel>/ZcoordestList'
