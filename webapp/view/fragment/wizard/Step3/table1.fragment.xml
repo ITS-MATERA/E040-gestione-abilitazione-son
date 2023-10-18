@@ -110,7 +110,7 @@
 						app:dialogName="selectDialogZcos"
 						app:searchPropertyModel="Zcos"
 						app:fragmentName="Zcos"
-						app:datapathmodel="CodiceGestionaleMcSet"
+						app:datapathmodel="ZES_COD_GEST_SET"
 						app:pathName="CodiceGestionale"
 						valueHelpRequest="onValueHelpRequestedZcos"
 						width="65%"

@@ -48,6 +48,8 @@ sap.ui.define(
     const EQ = sap.ui.model.FilterOperator.EQ;
     const BT = sap.ui.model.FilterOperator.BT;
     const NE = sap.ui.model.FilterOperator.NE;
+    const GE = sap.ui.model.FilterOperator.GE;
+    const LE = sap.ui.model.FilterOperator.LE;
     const FILTER = sap.ui.model.Filter;
 
     const ZufficioCont_SET = "UfficioContMcSet";
@@ -3957,6 +3959,7 @@ sap.ui.define(
         /*REFactoring */
         loadWizardModel() {
           return {
+            viewName: null,
             viewId:null,
             btnBackVisible: false,
             btnNextVisible: true,
@@ -4127,6 +4130,10 @@ sap.ui.define(
             .getView()
             .getModel(WIZARD_MODEL)
             .setProperty("/viewId", null);  
+          self
+            .getView()
+            .getModel(WIZARD_MODEL)
+            .setProperty("/viewName", null);  
           self
             .getView()
             .getModel(WIZARD_MODEL)
@@ -4831,6 +4838,7 @@ sap.ui.define(
 
                     oWizardModel = self.setWizardModel(data);
                     oWizardModel.viewId = viewId;
+                    oWizardModel.getData().viewName = viewId;
                     oWizardModel.getData().FirstKeyStras = self._sedeBeneficiario ? self._sedeBeneficiario.Stras : "";
                     oWizardModel.getData().Zidsede = data.Zidsede;
                     oWizardModel.getData().Ort01 = self._sedeBeneficiario ? self._sedeBeneficiario.Ort01 : "";
@@ -5216,6 +5224,7 @@ sap.ui.define(
               item.ZcosDesc === ""
             )
               continue;
+            item.ZcosDesc = item.ZcosDesc.slice(0,30);
             delete item.Id;
             arrayClassificazioneSonList.push(item);
           }
@@ -5556,7 +5565,7 @@ sap.ui.define(
           self.setModel(oModelJsonCS, CLASSIFICAZIONE_SON_DEEP);
         },
 
-        onValueHelpRequestedZcos: function (oEvent) {
+        onValueHelpRequestedZcos_old: function (oEvent) {
           var self = this,
             oDataModel = self.getModel(),
             wizardModel = self.getModel(WIZARD_MODEL),
@@ -5604,6 +5613,76 @@ sap.ui.define(
                 error: function (error) {},
               });
             });
+        },
+
+        onValueHelpRequestedZcos: function (oEvent) {
+          var self = this,
+            oDataModel = self.getModel(),
+            oModelCodGest = self.getModel("ZSS4_CO_GEST_ANAGRAFICHE_SRV"),
+            wizardModel = self.getModel(WIZARD_MODEL),
+            Gjahr = wizardModel.getProperty("/Gjahr"),
+            aFilters = [],
+            inputContextPath = oEvent
+              .getSource()
+              .getBindingInfo("value")
+              .binding.getContext()
+              .getPath();
+
+          var inputId = oEvent.getSource().data().id;
+          var fragmentName = oEvent.getSource().data().fragmentName;
+          var path = oEvent.getSource().data().datapathmodel;
+          var pathName = oEvent.getSource().data().pathName;
+          var dialogName = oEvent.getSource().data().dialogName;
+          var oDialog = self.openDialog(
+            "gestioneabilitazioneeson.view.fragment.valueHelp.ValueHelp" +
+              fragmentName
+          );
+          console.log(oDialog);
+
+          var dCurrentDate = new Date();
+          var sCurrentDate =
+            dCurrentDate.getFullYear().toString() +
+            ( dCurrentDate.getMonth() + 1).toString() +
+            dCurrentDate.getDate().toString();
+
+          aFilters.push(self.setFilterEQWithKey("ANNO", Gjahr));
+          aFilters.push(self.setFilterEQWithKey("FASE", "GEST"));
+          aFilters.push(self.setFilterEQWithKey("MC", "X"));
+          aFilters.push(self.setFilterEQWithKey("REALE", "R"));
+          aFilters.push(self.setFilterEQWithKey("LOEKZ", ""));
+          aFilters.push(new FILTER("DATBIS", GE, sCurrentDate));
+          aFilters.push(new FILTER("DATAB", LE, sCurrentDate));
+
+          oDataModel.read("/UserParametersSet('BUK')", {
+            success: function (data) {
+              aFilters.push(self.setFilterEQWithKey("FIKRS", data.Value));
+            },
+            error: function () {},
+          });
+
+          oModelCodGest.read("/" + path, {
+            filters: aFilters,
+            success: function(data) {
+              var aCosData = data.results.reduce((acc, obj) => acc.concat([{
+                  Zcos: obj.CODICE_GESTIONALE,
+                  ZcosDesc: obj.DESCRIZIONE,
+                  Zimptotcos: 0
+                }]), []);
+              var oModelJson = new sap.ui.model.json.JSONModel(aCosData);
+              var oTable = sap.ui.getCore().byId(dialogName);
+              oTable.setModel(oModelJson, pathName);
+              if (
+                  inputContextPath &&
+                  inputContextPath !== null &&
+                  inputContextPath !== ""
+                )
+                  self.referInputId = inputContextPath;
+
+                oTable.data("inputId", inputId);
+                oDialog.open();
+            },
+            error: function() {}
+          });
         },
 
         onLiveChangeTable: function (oEvent) {
@@ -5889,9 +5968,13 @@ sap.ui.define(
         }, 
 
         functionReturnValueMC:function(obj){
-          console.log("functionReturnValueMC");
-          console.log(obj);
-          
+          var self = this,
+            oWizardModel = self.getModel(WIZARD_MODEL);
+          if (obj?.Zcodtrib) {
+            oWizardModel.setProperty("/Zcodinps", obj?.Zcodinps);
+            oWizardModel.setProperty("/Zperiodrifda", obj?.Zperiodrifda);
+            oWizardModel.setProperty("/Zperiodrifa", obj?.Zperiodrifa);
+          }
         }
 
         /**/

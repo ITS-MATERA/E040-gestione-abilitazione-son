@@ -136,7 +136,8 @@ sap.ui.define(
             oDataModel = self.getModel(),
             oView = self.getView();
 
-          self.getView().getModel(WIZARD_MODEL).setProperty("/viewId", "gestioneabilitazioneeson.view.RegisterSON");
+          self.getView().getModel(WIZARD_MODEL).setProperty("/viewId", self.getView().getId());
+          self.getView().getModel(WIZARD_MODEL).setProperty("/viewName", self.getView().getViewName());
           self.getView().getModel(WIZARD_MODEL).setProperty("/isInChange", true);  
           oView.setBusy(true);
 
@@ -587,6 +588,7 @@ sap.ui.define(
             delete item.Bukrs;
             delete item.ZstepSop;
             item.Zchiavesop = "FITTIZIO";
+            item.ZcosDesc = item.ZcosDesc.slice(0,30);
             arrayClassificazioneSonList.push(item);
           }
 
@@ -1319,8 +1321,6 @@ sap.ui.define(
         //   console.log("functionReturnValueModPag");
         //   console.log(obj);
         // } 
-
-
       }
     );
   }

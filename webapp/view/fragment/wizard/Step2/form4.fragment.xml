@@ -4,6 +4,7 @@
 	xmlns:f="sap.ui.layout.form"
 	xmlns:core="sap.ui.core"
 	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:zcontrolmccross="acn.zmatchcodecross.controls"
 >
 	<!-- expandable="true" -->
 	<!-- sezione versante -->
@@ -199,7 +200,20 @@
 						text="{i18n>wizardFieldZcodtrib}"
 						class="sapUiSmallMarginBottom"
 					/>
-					<Input
+					<VBox>
+						<zcontrolmccross:MatchCodeCross
+							id="idWizardZcodtrib"
+							viewId="{wizardModel>/viewName}"
+							whichMC="CodiceTributo" 
+							editable="{= ${wizardModel>/Zcodprov} !== null &amp;&amp; ${wizardModel>/Zcodprov} !== '' &amp;&amp; ${wizardModel>/isInChange} ? true : false }"
+							value="{wizardModel>/Zcodtrib}"
+							submit="onSubmitZcodtrib"
+						/>
+						<layoutData>
+							<l:GridData span="XL6 L6 M6 S12"/>
+						</layoutData>
+					</VBox>
+					<!-- <Input
 						editable="{= ${wizardModel>/Zcodprov} !== null &amp;&amp; ${wizardModel>/Zcodprov} !== '' &amp;&amp; ${wizardModel>/isInChange} ? true : false }"
 						value="{wizardModel>/Zcodtrib}"
 						submit="onSubmitZcodtrib"
@@ -207,7 +221,7 @@
 						<layoutData>
 							<l:GridData span="XL6 L6 M6 S12"/>
 						</layoutData>
-					</Input>
+					</Input> -->
 					<Label
 						design="Bold"
 						text="{i18n>wizardFieldZcodinps}"

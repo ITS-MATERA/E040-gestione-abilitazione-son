@@ -146,20 +146,20 @@
 												</layoutData>
 											</Input>
 											> -->
-                      <VBox>
-                        <zcontrolmccross:MatchCodeCross
-                            id="idWizardZZcausaleval"
-                            value="{wizardModel>/ZZcausaleval}"
-                            editable="{wizardModel>/isZZcausalevalEditable}"
-                            liveChange="onLiveChange"
-                            app:property="ZZcausaleval"
-                            whichMC="CausaleValutaria" 
-                            viewId="{wizardModel>/viewId}"
-                        />
-                        <layoutData>
+											<VBox>
+												<zcontrolmccross:MatchCodeCross
+													id="idWizardZZcausaleval"
+													value="{wizardModel>/ZZcausaleval}"
+													editable="{wizardModel>/isZZcausalevalEditable}"
+													liveChange="onLiveChange"
+													app:property="ZZcausaleval"
+													whichMC="CausaleValutaria" 
+													viewId="{wizardModel>/viewId}"
+												/>
+												<layoutData>
 													<l:GridData span="XL7 L7 M6 S12"/>
 												</layoutData>
-                      </VBox>
+                      						</VBox>
 												
 										</l:Grid>
 									</items>
@@ -191,7 +191,24 @@
 													<l:GridData span="XL5 L5 M4 S12"/>
 												</layoutData>
 											</Label>
-											<Input
+											<VBox>
+												<zcontrolmccross:MatchCodeCross
+													id="idWizardIban"
+													whichMC="Iban" 
+                            						viewId="{wizardModel>/viewId}"
+													editable="{wizardModel>/isInChange}"
+													enabled="{wizardModel>/isIbanEditable}"
+													Lifnr="{wizardModel>/Lifnr}"
+													app:property="Iban"
+													value="{wizardModel>/Iban}"
+													liveChange="onLiveChange"
+													submit="onSubmitIban"
+												/>
+												<layoutData>
+													<l:GridData span="XL7 L7 M6 S12"/>
+												</layoutData>
+											</VBox>
+											<!-- <Input
 												editable="{wizardModel>/isInChange}"
 												id="idWizardIban"
 												enabled="{wizardModel>/isIbanEditable}"
@@ -203,7 +220,7 @@
 												<layoutData>
 													<l:GridData span="XL7 L7 M6 S12"/>
 												</layoutData>
-											</Input>
+											</Input> -->
 										</l:Grid>
 									</items>
 								</FlexBox>
