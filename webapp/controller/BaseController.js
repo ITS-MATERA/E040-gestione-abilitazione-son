@@ -1519,25 +1519,6 @@ sap.ui.define(
                       success: function (data, oResponse) {
                         var array = [],
                           sum = 0;
-                        // array.push({
-                        //   Zchiavesop: null,
-                        //   Bukrs: null,
-                        //   Zetichetta: null,
-                        //   Zposizione: null,
-                        //   ZstepSop: null,
-                        //   Zzcig: null,
-                        //   Zzcup: null,
-                        //   Zcpv: null,
-                        //   ZcpvDesc: null,
-                        //   Zcos: null,
-                        //   ZcosDesc: null,
-                        //   Belnr: null,
-                        //   ZimptotClass: null,
-                        //   Zflagcanc: null,
-                        //   ZstatoClass: null,
-                        //   Id: 0,
-                        // });
-
                         for (var i = 0; i < data.results.length; i++) {
                           var item = data.results[i];
                           item.Id = i + 1;
@@ -1721,7 +1702,10 @@ sap.ui.define(
               var oModelJson = new sap.ui.model.json.JSONModel();
               oModelJson.setData(array);
               self.getView().setModel(oModelJson, STEP3_LIST);
-              self.getView().setModel(oModelJson, CLASSIFICAZIONE_SON_DEEP);
+
+              // var oModelJson1 = new sap.ui.model.json.JSONModel();
+              // oModelJson1.setData(array);
+              // self.getView().setModel(oModelJson1, CLASSIFICAZIONE_SON_DEEP);
               self
                 .getView()
                 .getModel(WIZARD_MODEL)
@@ -1731,7 +1715,50 @@ sap.ui.define(
               var oModelJson = new sap.ui.model.json.JSONModel();
               oModelJson.setData([]);
               self.getView().setModel(oModelJson, STEP3_LIST);
-              self.getView().setModel(oModelJson, CLASSIFICAZIONE_SON_DEEP);
+              // var oModelJson1 = new sap.ui.model.json.JSONModel();
+              // oModelJson1.setData([]);
+              // self.getView().setModel(oModelJson1, CLASSIFICAZIONE_SON_DEEP);
+            },
+          });
+        },
+
+        getClassificazioneFRomFillWizard2(wizardModel) {
+          var self = this,
+            array = [],
+            sum = 0,
+            oModel = self.getModel();
+
+          var filters = [
+            self.setFilterEQWithKey("Bukrs", wizardModel.getProperty("/Bukrs")),
+            self.setFilterEQWithKey(
+              "Zchiavesop",
+              wizardModel.getProperty("/Zchiavesop")
+            ),
+          ];
+
+          oModel.read("/" + CLASSIFICAZIONE_SON_SET, {
+            filters: filters,
+            urlParameters: { Gjahr: wizardModel.getProperty("/Gjahr") },
+            success: function (data, oResponse) {
+              for (var i = 0; i < data.results.length; i++) {
+                var item = data.results[i];
+                item.Id = i + 1;
+                sum = sum + parseFloat(item.ZimptotClass);
+                array.push(item);
+              }
+              
+              var oModelJson1 = new sap.ui.model.json.JSONModel();
+              oModelJson1.setData(array);
+              self.getView().setModel(oModelJson1, CLASSIFICAZIONE_SON_DEEP);
+              self
+                .getView()
+                .getModel(WIZARD_MODEL)
+                .setProperty("/Zimptotcos", sum.toFixed(2));
+            },
+            error: function (e) {
+              var oModelJson1 = new sap.ui.model.json.JSONModel();
+              oModelJson1.setData([]);
+              self.getView().setModel(oModelJson1, CLASSIFICAZIONE_SON_DEEP);
             },
           });
         },
@@ -4998,6 +5025,9 @@ sap.ui.define(
                     self.setModel(oWizardModel, WIZARD_MODEL);                    
                     self.fillZtipodisp3List();
                     self.getClassificazioneFRomFillWizard(
+                      self.getView().getModel(WIZARD_MODEL)
+                    );
+                    self.getClassificazioneFRomFillWizard2(
                       self.getView().getModel(WIZARD_MODEL)
                     );
                     self.getView().setBusy(false);
