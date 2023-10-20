@@ -261,8 +261,17 @@ sap.ui.define(
         },
 
         onSubmitGjahr: function (oEvent) {
-          var self = this;
+          var self = this,
+            addAuthModel = self.getModel(ADD_AUTH_MODEL),
+            controlIdInputDatbi = self.getView().byId("idInputDatbi");
           self.fillZvimDescrufficio();
+
+          var sNewValue = oEvent.getParameter("value");
+          if(sNewValue.length === 4){
+            var date =  new Date(sNewValue+"/12/31");
+            controlIdInputDatbi.setDateValue(date);
+            addAuthModel.setProperty("/" + controlIdInputDatbi.data("property"), date);
+          }
         },
 
         onSubmitZufficioCont: function (oEvent) {
@@ -288,6 +297,24 @@ sap.ui.define(
 
           addAuthModel.setProperty("/" + sProperty, sNewValue);
         },
+
+        onLiveChangeGjahr:function(oEvent){
+          var self =this,
+            sNewValue = oEvent.getParameter("value"),
+            controlIdInputDatbi = self.getView().byId("idInputDatbi"),
+            addAuthModel = self.getModel(ADD_AUTH_MODEL);
+
+          var sProperty = oEvent.getSource().data("property");  
+          addAuthModel.setProperty("/" + sProperty, sNewValue);
+
+          if(sNewValue.length === 4){
+            var date =  new Date(sNewValue+"/12/31");
+            controlIdInputDatbi.setDateValue(date);
+            addAuthModel.setProperty("/" + controlIdInputDatbi.data("property"), date);
+          }
+        },
+
+
         onLiveChangeZtipodisp3List: function (oEvent) {
           var self = this,
             addAuthModel = self.getModel(ADD_AUTH_MODEL);
@@ -514,6 +541,7 @@ sap.ui.define(
             self.getView().setBusy(true);
 
             oDataModel.read("/" + Ztipodisp3_SET, {
+              urlParameters:{"ZufficioCont": !addAuthModel.getData().ZufficioCont || addAuthModel.getData().ZufficioCont === null ? "" : addAuthModel.getData().ZufficioCont},
               success: function (data, oResponse) {
                 self.getView().setBusy(false);
                 data.results.splice(0, 1);

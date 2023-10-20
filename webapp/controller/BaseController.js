@@ -864,11 +864,13 @@ sap.ui.define(
         },
 
         onSubmitZcodtrib: function(oEvent) {
+          //GIANNI
           var self = this,
-              oDataModel = self.getModel(),
-              wizardModel = self.getModel(WIZARD_MODEL),
-              oView = self.getView(),
-              Zcodtrib = wizardModel.getProperty("/Zcodtrib");
+            oBundle = self.getResourceBundle(),
+            oDataModel = self.getModel(),
+            wizardModel = self.getModel(WIZARD_MODEL),
+            oView = self.getView(),
+            Zcodtrib = wizardModel.getProperty("/Zcodtrib");
           if (Zcodtrib && Zcodtrib !== null) {
             var path = oDataModel.createKey("DatiTributoSet", {
               Zcodtrib: Zcodtrib,
@@ -880,12 +882,28 @@ sap.ui.define(
               .metadataLoaded()
               .then(() => {
                 oDataModel.read("/" + path, {
-                  success: (data) => {
-                    oView.setBusy(false);
-                    wizardModel.setProperty("/Zcodtrib", data.Zcodtrib.toUpperCase());
-                    wizardModel.setProperty("/Zcodinps", data.Zcodinps);
-                    wizardModel.setProperty("/Zperiodrifda", data.Zperiodrifda);
-                    wizardModel.setProperty("/Zperiodrifa", data.Zperiodrifa);
+                  success: (data, oResponse) => {
+                    var message =
+                      oResponse.headers["sap-message"] &&
+                      oResponse.headers["sap-message"] !== ""
+                        ? JSON.parse(oResponse.headers["sap-message"])
+                        : null;
+                    oView.setBusy(false);    
+                    if (message && message.severity === "error") {
+                      sap.m.MessageBox.warning(message.message, {
+                        title: oBundle.getText("titleDialogWarning"),
+                        onClose: function (oAction) {
+                          return false;
+                        },
+                      });
+                      return false;
+                    }
+                    else{
+                      wizardModel.setProperty("/Zcodtrib", data.Zcodtrib.toUpperCase());
+                      wizardModel.setProperty("/Zcodinps", data.Zcodinps);
+                      wizardModel.setProperty("/Zperiodrifda", data.Zperiodrifda);
+                      wizardModel.setProperty("/Zperiodrifa", data.Zperiodrifa);
+                    }
                   },
                   error: (error) => {
                     oView.setBusy(false);
@@ -900,11 +918,48 @@ sap.ui.define(
           }
         },
         onSubmitZufficioCont: function (oEvent) {
-          var self = this;
+          var self = this,
+            wizardModel = self.getModel(WIZARD_MODEL),
+            ufficioValue = oEvent.getParameters().value;
+            
+          if(ufficioValue && ufficioValue !== "" && wizardModel.getData().Gjahr && wizardModel.getData().Gjahr !== "")
+            self._checkUfficioOrdinante(ufficioValue, wizardModel.getData().Gjahr);
           // self.fillZvimDescrufficio();
           self.fillZtipodisp3List();
           self.fillFipos();
         },
+
+        _checkUfficioOrdinante:function(ZufficioCont,Gjahr){
+          var self =this,
+            oBundle = self.getResourceBundle(),
+            oDataModel = self.getModel();
+          self.getView().setBusy(true);
+          oDataModel.callFunction("/CheckUfficioAbilitato", {
+                method: "GET",
+                urlParameters: {
+                  Gjahr: Gjahr,
+                  ZufficioCont:ZufficioCont
+                },
+                success: function (oData, response) {
+                  self.getView().setBusy(false);
+                  if(oData.results.length>0){
+                    var item = oData.results[0];
+                    sap.m.MessageBox.warning(item.Text, {
+                      title: oBundle.getText("titleDialogWarning"),
+                      onClose: function (oAction) {
+                        return false;
+                      },
+                    });
+                    return false;
+                  }
+                },
+                error: function (oError) {
+                  console.log(oError);
+                  self.getView().setBusy(false);
+                },
+              });
+        },
+
 
         fillZvimDescrufficio: function () {
           var self = this,
@@ -948,7 +1003,9 @@ sap.ui.define(
             oView = self.getView(),
             Gjahr = wizardModel.getProperty("/Gjahr"),
             ZufficioCont = wizardModel.getProperty("/ZufficioCont");
-
+            wizardModel.setProperty("/Ztipodisp3List", []);
+            wizardModel.setProperty("/Ztipodisp3", null);
+            
           if (Gjahr !== null && ZufficioCont !== null) {
             oView.setBusy(true);
             self
@@ -1061,15 +1118,22 @@ sap.ui.define(
 
         onSubmitKostl: function (oEvent) {
           var self = this,
+            value = oEvent.getParameters().value,
             wizardModel = self.getModel(WIZARD_MODEL),
             oDataModel = self.getModel(),
             oView = self.getView(),
             Kostl = wizardModel.getProperty("/Kostl");
 
+          if(!value || value === null || value === ""){
+            wizardModel.setProperty("/Ltext", null);
+            wizardModel.setProperty("/Kostl", null);
+            return false;
+          }  
+
           if (Kostl !== null) {
             oView.setBusy(true);
             var path = self.getModel().createKey(KostlMcSet_SET, {
-              Kostl: Kostl,
+              Kostl: Kostl
             });
             self
               .getModel()
@@ -1159,6 +1223,9 @@ sap.ui.define(
             Ztipodisp3 === null ||
             Ztipodisp3 === ""
           ) {
+            self.getView().byId("idWizardFipos").setSelectedKey(null);
+            self.getView().getModel(DataSON_MODEL).setProperty("/PosizioneFinanziaria", []);
+            wizardModel.setProperty("/Fipos", null);
             return false;
           } else {
             oView.setBusy(true);
@@ -1199,11 +1266,12 @@ sap.ui.define(
                     } else {
                       oView.setBusy(false);
                       self.getView().getModel(DataSON_MODEL).setProperty("/PosizioneFinanziaria", data.results);
-                      if (data && data.results && data.results.length > 0){
-                        self.getView().byId("idWizardFipos").setSelectedKey(data.results[0].Fipos);
-                        wizardModel.setProperty("/Fipos",data.results[0].Fipos);
-                      }
-                      else wizardModel.setProperty("/Fipos", null);
+                      // if (data && data.results && data.results.length > 0){
+                      //   self.getView().byId("idWizardFipos").setSelectedKey(data.results[0].Fipos);
+                      //   wizardModel.setProperty("/Fipos",data.results[0].Fipos);
+                      // }
+                      // else wizardModel.setProperty("/Fipos", null);
+                      wizardModel.setProperty("/Fipos", null);
                     }
                   },
                   error: function (error) {

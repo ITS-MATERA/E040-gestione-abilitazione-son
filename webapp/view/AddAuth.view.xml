@@ -27,7 +27,7 @@
 					<Label  design="Bold" required="true" width="100%" text="{i18n>fieldNameGJAHR}" class="sapUiTinyMarginTop sapUiLargeMarginEnd">
 						<layoutData><l:GridData span="XL2 L2 M6 S12" /></layoutData>
 					</Label>
-					<Input type="Number"  id="idInputGjahr" value="{addAuhModel>/Gjahr}" submit="onSubmitGjahr" liveChange="onLiveChange" app:property="Gjahr">
+					<Input type="Number"  id="idInputGjahr" value="{addAuhModel>/Gjahr}" maxLength="4" submit="onSubmitGjahr" liveChange="onLiveChangeGjahr" app:property="Gjahr">
 						<layoutData><l:GridData span="XL2 L2 M6 S12"/></layoutData>
 					</Input>
 					<Toolbar  height="1px"> </Toolbar>
@@ -72,12 +72,6 @@
             <core:Item  key="{addAuhModel>Ztipodisp3}" text="{addAuhModel>Zdesctipodisp3}" />
             <layoutData><l:GridData span="XL4 L5 M6 S12"/></layoutData>
            </MultiInput> 
-
-
-
-
-
-
 
 					<!-- <ComboBox
 						id="idInputZtipodisp3"

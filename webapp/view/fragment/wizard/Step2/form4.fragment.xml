@@ -81,7 +81,6 @@
 						class="sapUiSmallMarginBottom"
 					/>
 					<Input
-						editable="false"
             value="{wizardModel>/Zcodvers}"
 					>
 						<layoutData>
@@ -93,8 +92,7 @@
 						text="{i18n>wizardFieldDescrizioneVersante}"
 						class="sapUiSmallMarginBottom"
 					/>
-					<Input
-						editable="false"            
+					<Input         
 						value="{wizardModel>/Zdescvers}"
 					>
 						<layoutData>
@@ -106,8 +104,7 @@
 						text="{i18n>wizardFieldSedeVersante}"
 						class="sapUiSmallMarginBottom"
 					/>
-					<Input
-						editable="false"            
+					<Input         
 						value="{wizardModel>/Zsedevers}"
 					>
 						<layoutData>
@@ -164,7 +161,6 @@
 						class="sapUiSmallMarginBottom"
 					/>
 					<Input
-						editable="false"
 						value="{wizardModel>/Zcfvers}"
 					>
 						<layoutData>
@@ -241,7 +237,6 @@
 						class="sapUiSmallMarginBottom"
 					/>
 					<Input
-						editable="false"
 						value="{wizardModel>/Zprovvers}"
 					>
 						<layoutData>
