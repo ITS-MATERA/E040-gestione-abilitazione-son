@@ -5605,7 +5605,9 @@ sap.ui.define(
               (x) => x.Id === selectedItem.Id
             );
             if (indexClassificazoneSonDeep > -1) {
-              classificazoneSonDeep.splice(indexClassificazoneSonDeep, 1);
+              var aRemovedItem = classificazoneSonDeep.splice(indexClassificazoneSonDeep, 1);
+              aRemovedItem[0].Zflagcanc = "X";
+              classificazoneSonDeep = !aRemovedItem[0].Zposizione ? classificazoneSonDeep : classificazoneSonDeep.concat(aRemovedItem);
             } else {
               var item = Object.assign({}, selectedItem);
               item.Zflagcanc = item.Zposizione !== null ? "X" : null;
@@ -5615,7 +5617,7 @@ sap.ui.define(
             var indiceStep3 = step3List.findIndex(
               (x) => x.Id === selectedItem.Id
             );
-            step3List.splice(indiceStep3, 1);
+            indiceStep3 > -1 ? step3List.splice(indiceStep3, 1) : "";
           }
           var sum = 0;
           for (var i = 0; i < step3List.length; i++) {
