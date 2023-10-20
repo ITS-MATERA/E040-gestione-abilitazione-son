@@ -5497,10 +5497,8 @@ sap.ui.define(
             success: function (result) {
               self.getView().setBusy(false);
               var arrayMessage = result.SonMessageSet.results;
-              var arrayError = arrayMessage.filter((el) => el.Msgty === "E");
-              console.log(result.Zchiavesop);
-              if (arrayError.length > 0) {
-                self._setMessage("titleDialogError", "msgError", "error");
+              if (!self.isErrorInLog(arrayMessage)) {
+                return false;
               }
               var first = oBundle.getText("operationOK");
               var second = oBundle.getText("msgNumberSON", [result.Zchiavesop]);
