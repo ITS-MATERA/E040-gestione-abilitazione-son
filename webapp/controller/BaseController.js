@@ -921,6 +921,7 @@ sap.ui.define(
           var self = this,
             wizardModel = self.getModel(WIZARD_MODEL),
             ufficioValue = oEvent.getParameters().value;
+            wizardModel.setProperty("/Ztipodisp3", null);
             
           if(ufficioValue && ufficioValue !== "" && wizardModel.getData().Gjahr && wizardModel.getData().Gjahr !== "")
             self._checkUfficioOrdinante(ufficioValue, wizardModel.getData().Gjahr);
@@ -1004,8 +1005,8 @@ sap.ui.define(
             Gjahr = wizardModel.getProperty("/Gjahr"),
             ZufficioCont = wizardModel.getProperty("/ZufficioCont");
             wizardModel.setProperty("/Ztipodisp3List", []);
-            wizardModel.setProperty("/Ztipodisp3", null);
-            
+            //wizardModel.setProperty("/Ztipodisp3", null);
+            //Ztipodisp3
           if (Gjahr !== null && ZufficioCont !== null) {
             oView.setBusy(true);
             self
@@ -1111,6 +1112,7 @@ sap.ui.define(
         onSubmitGjahr: function (oEvent) {
           var self = this,
             wizardModel = self.getModel(WIZARD_MODEL);
+            wizardModel.setProperty("/Ztipodisp3", null);
           self.fillZvimDescrufficio();
           self.fillZtipodisp3List();
           self.fillFipos();
@@ -1159,7 +1161,7 @@ sap.ui.define(
             oDataModel = self.getModel(),
             oView = self.getView(),
             Saknr = wizardModel.getProperty("/Saknr");
-          if (Saknr !== null) {
+          if (Saknr !== null && Saknr !== "") {
             oView.setBusy(true);
             var path = self.getModel().createKey(ContoCogeSet_SET, {
               Saknr: Saknr,
@@ -1179,7 +1181,10 @@ sap.ui.define(
                   },
                 });
               });
-          } else return false;
+          } else {
+            wizardModel.setProperty("/Skat", null);
+            return false
+          };
         },
 
         onLiveChangeZtipodisp3List: function (oEvent) {
@@ -5022,8 +5027,10 @@ sap.ui.define(
                       );
                     }
                     // self.setModel(oDataSONModel, DataSON_MODEL);
-                    self.setModel(oWizardModel, WIZARD_MODEL);                    
-                    self.fillZtipodisp3List();
+                    
+                    self.setModel(oWizardModel, WIZARD_MODEL);      
+                    self.fillZtipodisp3List();              
+                    
                     self.getClassificazioneFRomFillWizard(
                       self.getView().getModel(WIZARD_MODEL)
                     );
