@@ -2049,7 +2049,8 @@ sap.ui.define(
           )
             return false;
 
-          if (Zcoordest !== null) {
+          self.fillBanks();
+          if (Zcoordest) {
             oView.setBusy(true);
             var path = self.getModel().createKey(ZcoordestSet_SET, {
               Zcoordest: Zcoordest,
@@ -2090,8 +2091,10 @@ sap.ui.define(
                   },
                 });
               });
-            self.fillBanks();
-          } else return false;
+            } else { 
+              wizardModel.setProperty("/Swift", null);
+              return false
+            };
         },
 
         getBancaAccreditoIntermediario: function (callback) {
@@ -2498,7 +2501,10 @@ sap.ui.define(
             Lifnr = wizardModel.getProperty("/Lifnr"),
             Zcoordest = wizardModel.getProperty("/Zcoordest");
 
-          if (Zwels !== null && Iban !== null && Lifnr !== null) {
+            Zcoordest = !Zcoordest ? '' : Zcoordest;
+            Iban = !Iban ? '' : Iban;
+
+          if (Zwels !== null && (Iban || Zcoordest) && Lifnr !== null) {
             oView.setBusy(true);
             var path = self.getModel().createKey(ZbanksSet_SET, {
               Iban: Iban,
@@ -2532,7 +2538,14 @@ sap.ui.define(
                   },
                 });
               });
-          } else return false;
+          } else {
+            wizardModel.setProperty("/Banks", null);
+            self
+                .getView()
+                .getModel(WIZARD_MODEL)
+                .setProperty("/isZZcausalevalEditable", true);
+            return false;
+          };
         },
 
         resolveChecklist: function (checklist) {
