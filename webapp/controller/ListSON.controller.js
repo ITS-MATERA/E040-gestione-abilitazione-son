@@ -1073,16 +1073,28 @@ sap.ui.define(
           var self = this;
 
           var oTable = self.getView().byId(TABLE_LISTSON);
+          var oRowBinding = oTable.getBinding("items");
+          var customList = oRowBinding.oList;
+          var data = customList.map((x) => {
+            var item = x;
+            item.Zimptot = self.formatter.convertFormattedNumber(
+              item.Zimptot
+            );
+            return item;
+          });
+
           var oListSONModel = oTable.getModel("SonSet");
 
-          console.log(oListSONModel.getData());
+          //console.log(oListSONModel.getData());
 
           var aCols = self._createColumnConfig();
           var oSettings = {
             workbook: {
               columns: aCols,
+              hierarchyLevel: "Level",
             },
-            dataSource: oListSONModel.getData(),
+            dataSource: data,
+            // dataSource: oListSONModel.getData(),
             fileName: "Esportazione Lista SON",
           };
 
@@ -1145,6 +1157,7 @@ sap.ui.define(
               label: "Importo",
               property: "Zimptot",
               type: EDM_TYPE.String,
+              textAlign: 'end'
             },
             {
               label: "Tipologia Disposizione",

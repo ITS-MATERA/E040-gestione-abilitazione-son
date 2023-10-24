@@ -89,7 +89,7 @@
 						id="linkPosFinSpesaChange"
 						anno="{AbilitazioneSet>Gjahr}"
 						eos="S"
-						fikrs="S001"
+						fikrs="{AuthorityCheckAbilitazione>/FIKRS}"
 						fase="GEST"
 						reale="R"
 						versione="D"
