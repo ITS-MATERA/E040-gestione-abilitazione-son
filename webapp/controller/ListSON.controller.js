@@ -1128,7 +1128,7 @@ sap.ui.define(
             },
             {
               label: "Denominazione Beneficiario",
-              property: "Lifnr",
+              property: "Beneficiario",
               type: EDM_TYPE.String,
             },
             {
