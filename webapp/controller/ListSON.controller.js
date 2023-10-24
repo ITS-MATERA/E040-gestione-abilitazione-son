@@ -185,7 +185,7 @@ sap.ui.define(
               oDataModel.read("/" + path, {
                 success: function (data, oResponse) {
                   self.getView().setBusy(false);
-                  console.log(data);
+                  // console.log(data);
                   if (data && data.Value !== null && data.Value !== "")
                     self.getView().byId("fZzamministr").setValue(data.Value);
 

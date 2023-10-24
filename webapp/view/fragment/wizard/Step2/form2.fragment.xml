@@ -199,6 +199,7 @@
 													editable="{wizardModel>/isInChange}"
 													enabled="{wizardModel>/isIbanEditable}"
 													Lifnr="{wizardModel>/Lifnr}"
+													Zwels="{wizardModel>/PayMode}"
 													app:property="Iban"
 													value="{wizardModel>/Iban}"
 													liveChange="onLiveChange"

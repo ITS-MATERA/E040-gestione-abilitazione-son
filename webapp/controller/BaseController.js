@@ -1357,8 +1357,8 @@ sap.ui.define(
                       "Fipos",
                       "Fistl",
                       "Zdesctipodisp3",
-                      "Zimptot",
-                      "ZimptotDivisa",
+                      Zimptot && parseFloat(Zimptot) > 0 ? "Zimptot" : "Trbtr",
+                      Zimptot && parseFloat(Zimptot) > 0 ? "ZimptotDivisa" :"Twaer",
                     ]);
                   }
                 },
@@ -1799,6 +1799,16 @@ sap.ui.define(
 
           for (let i = 0; i < array.length; i++) {
             valueProperty = wizardModel.getProperty("/" + array[i]);
+
+            if(array[i] === "Trbtr")
+              dataSONModel.setProperty("/Zimptot", valueProperty);
+            
+            if(array[i] === "Twaer")
+              dataSONModel.setProperty("/ZimptotDivisa", valueProperty);
+            
+            //   Zimptot && parseFloat(Zimptot) > 0 ? "Zimptot" : "Trbtr",
+            // Zimptot && parseFloat(Zimptot) > 0 ? "ZimptotDivisa" :"Twaer",
+
             dataSONModel.setProperty("/" + array[i], valueProperty);
           }
         },
@@ -1903,7 +1913,8 @@ sap.ui.define(
           var self = this,
             oDataModel = self.getModel(),
             wizardModel = self.getModel(WIZARD_MODEL),
-            ocontroller = self.getView().byId(oEvent.getParameters().id),
+            // ocontroller = self.getView().byId(oEvent.getParameters().id),
+            ocontroller = self.getView().byId("idWizardPayMode"),
             selectedKey = ocontroller.getSelectedKey();
 
           if (
@@ -6063,14 +6074,160 @@ sap.ui.define(
         },
 
         functionReturnValueAnag:function(obj){
+          var self =this,
+            wizardModel = self.getView().getModel(WIZARD_MODEL);
           console.log("functionReturnValueAnag");
           console.log(obj);
+          if(obj.data.MessageType === "S" && obj.data.Lifnr !== ""){
+            console.log(obj.data.Lifnr);//TODO:da canc  
+            var data = obj.data;
+            wizardModel.setProperty("/Lifnr",data.Lifnr);
+            self.onSubmitLifnr();
+            var control = self.getView().byId("idWizardPayMode");
+            control.setSelectedKey(data.Zwels);
+            self._preval(data.Iban, data.ZCoordest);            
+          }
         },
 
         functionReturnValueModPag:function(obj){
+          //giannilecci
+          var self =this;
           console.log("functionReturnValueModPag");
           console.log(obj);
+          
+          if(obj.data.MessageType === "S"){
+            var data = obj.data.QuietVaglia.results[0];
+            if(data.Zwels && data.Zwels !== ""){
+              console.log(data.Zwels);
+              var control = self.getView().byId("idWizardPayMode");
+              control.setSelectedKey(data.Zwels);
+              self._preval(data.Iban, data.ZCoordest);
+            }
+          }
         }, 
+
+        _preval:function(iban, zCoordest){
+          var self =this,
+            oDataModel = self.getModel(),
+            wizardModel = self.getView().getModel(WIZARD_MODEL);
+
+          self.getView().setBusy(true);
+          var path = self.getModel().createKey("ZwelsDetailSet", {
+            Lifnr: wizardModel.getProperty("/Lifnr"),
+            Zwels: wizardModel.getProperty("/PayMode"),
+          });
+
+          var urlParameters = {
+            Iban: iban && iban !== "" ? iban : "",
+            Zcoordest: zCoordest && zCoordest !== "" ? zCoordest : ""
+          };
+
+          self.getModel().metadataLoaded().then(function () {
+              oDataModel.read("/"+path, {
+                urlParameters:urlParameters,
+                success: function (data, oResponse) {
+                  self.getView().setBusy(false);
+                  console.log(data);//TODO:Da canc
+                  self.resetPayModeRelatedData();
+                  wizardModel.setProperty("/PayMode", data.Zwels);
+                  wizardModel.setProperty("/Banks", data.Banks);
+                  wizardModel.setProperty("/Iban", data.Iban);
+                  wizardModel.setProperty("/Swift", data.Swift);
+                  wizardModel.setProperty("/Zcoordest", data.ZcoordEst);
+                  wizardModel.setProperty("/Zcodprov", data.Zcodprov);
+
+                  wizardModel.setProperty("/isZZcausalevalEditable", data.Banks === 'IT' ? false : true);
+
+                  switch (data.Zwels.toUpperCase()) {
+                    case "ID3":
+                      wizardModel.setProperty("/isZcoordestEditable", false);
+                      // wizardModel.setProperty("/isZZcausalevalEditable", false);
+                      wizardModel.setProperty("/isIbanEditable", false);
+                      wizardModel.setProperty("/isBicEditable", false);
+                      wizardModel.setProperty("/ZZcausaleval", "");
+                      wizardModel.setProperty("/Swift", null);
+                      wizardModel.setProperty("/Iban", null);
+                      break;
+                    case "ID4":
+                      wizardModel.setProperty("/isZcoordestEditable", false);
+                      // wizardModel.setProperty("/isZZcausalevalEditable", false);
+                      wizardModel.setProperty("/isIbanEditable", true);
+                      wizardModel.setProperty("/isBicEditable", false);
+                      wizardModel.setProperty("/ZZcausaleval", "");
+                      wizardModel.setProperty("/Swift", null);
+                      break;
+                    case "ID5":
+                      wizardModel.setProperty("/isZcoordestEditable", false);
+                      // wizardModel.setProperty("/isZZcausalevalEditable", false);
+                      wizardModel.setProperty("/isIbanEditable", true);
+                      wizardModel.setProperty("/isBicEditable", false);
+                      wizardModel.setProperty("/ZZcausaleval", "");
+                      wizardModel.setProperty("/Swift", null);
+                      wizardModel.setProperty("/Iban", data && data.Iban && data.Iban !== "" ? data.Iban : null);
+                      break;
+                    case "ID6":
+                      wizardModel.setProperty("/isZcoordestEditable", true);
+                      // wizardModel.setProperty("/isZZcausalevalEditable", true);
+                      wizardModel.setProperty("/isIbanEditable", false);
+                      wizardModel.setProperty("/isBicEditable", true);
+                      wizardModel.setProperty("/Iban", data && data.Iban && data.Iban !== "" ? data.Iban : null);
+
+                      wizardModel.setProperty("/Ziban_b", data && data.Zibanb && data.Zibanb !== "" ? data.Zibanb : null);
+                      wizardModel.setProperty("/Zbic_b", data && data.Zbicb && data.Zbicb !== "" ? data.Zbicb : null);
+                      wizardModel.setProperty("/Zcoordest_b", data && data.Zcoordestb && data.Zcoordestb !== "" ? data.Zcoordestb : null);
+                      wizardModel.setProperty("/Zdenbanca_b", data && data.ZdenBanca && data.ZdenBanca !== "" ? data.ZdenBanca : null);
+                      wizardModel.setProperty("/Zclearsyst_b", data && data.ZclearSyst && data.ZclearSyst !== "" ? data.ZclearSyst : null);
+                      wizardModel.setProperty("/Stras_b", data && data.Stras && data.Stras !== "" ? data.Stras : null);
+                      wizardModel.setProperty("/Zcivico_b", data && data.Zcivico && data.Zcivico !== "" ? data.Zcivico : null);
+                      wizardModel.setProperty("/Ort01_b", data && data.Ort01 && data.Ort01 !== "" ? data.Ort01 : null);
+                      wizardModel.setProperty("/Regio_b", data && data.Regio && data.Regio !== "" ? data.Regio : null);
+                      wizardModel.setProperty("/Pstlz_b", data && data.Pstlz && data.Pstlz !== "" ? data.Pstlz : null);
+                      wizardModel.setProperty("/Land1_b", data && data.Land1 && data.Land1 !== "" ? data.Land1 : null);
+
+
+                      wizardModel.setProperty("/Ziban_b", data && data.Zibanb && data.Zibanb !== "" ? data.Zibanb : null);
+                      wizardModel.setProperty("/Zbic_b", data && data.Zbicb && data.Zbicb !== "" ? data.Zbicb : null);
+                      wizardModel.setProperty("/Zcoordest_b", data && data.Zcoordestb && data.Zcoordestb !== "" ? data.Zcoordestb : null);
+                      wizardModel.setProperty("/Zdenbanca_b", data && data.ZdenBanca && data.ZdenBanca !== "" ? data.ZdenBanca : null);
+                      wizardModel.setProperty("/Zclearsyst_b", data && data.ZclearSyst && data.ZclearSyst !== "" ? data.ZclearSyst : null);
+                      wizardModel.setProperty("/Stras_b", data && data.Stras && data.Stras !== "" ? data.Stras : null);
+                      wizardModel.setProperty("/Zcivico_b", data && data.Zcivico && data.Zcivico !== "" ? data.Zcivico : null);
+                      wizardModel.setProperty("/Ort01_b", data && data.Ort01 && data.Ort01 !== "" ? data.Ort01 : null);
+                      wizardModel.setProperty("/Regio_b", data && data.Regio && data.Regio !== "" ? data.Regio : null);
+                      wizardModel.setProperty("/Pstlz_b", data && data.Pstlz && data.Pstlz !== "" ? data.Pstlz : null);
+                      wizardModel.setProperty("/Land1_b", data && data.Land1 && data.Land1 !== "" ? data.Land1 : null);
+
+                      wizardModel.setProperty("/Ziban_i",data && data.Zibani && data.Zibani !== "" ? data.Zibani : null);
+                      wizardModel.setProperty("/Zbic_i", data && data.Zbici && data.Zbici !== "" ? data.Zbici : null);
+                      wizardModel.setProperty("/Zcoordest_i", data && data.Zcoordesti && data.Zcoordesti !== "" ? data.Zcoordesti : null);
+                      wizardModel.setProperty("/Zdenbanca_i",data && data.ZdenBancai && data.ZdenBancai !== "" ? data.ZdenBancai : null);
+                      wizardModel.setProperty("/Zclearsyst_i",data && data.ZclearSysti && data.ZclearSysti !== "" ? data.ZclearSysti : null);
+                      wizardModel.setProperty("/Stras_i",data && data.Strasi && data.Strasi !== "" ? data.Strasi : null);
+                      wizardModel.setProperty("/Zcivico_i",data && data.Zcivicoi && data.Zcivicoi !== "" ? data.Zcivicoi : null);
+                      wizardModel.setProperty("/Ort01_i",data && data.Ort01i && data.Ort01i !== "" ? data.Ort01i : null);
+                      wizardModel.setProperty("/Regio_i",data && data.Regioi && data.Regioi !== "" ? data.Regioi : null);
+                      wizardModel.setProperty("/Pstlz_i",data && data.Pstlzi && data.Pstlzi !== "" ? data.Pstlzi : null);
+                      wizardModel.setProperty("/Land1_i",data && data.Land1i && data.Land1i !== "" ? data.Land1i : null);
+
+
+
+                      break;
+                    case "ID10":
+                      wizardModel.setProperty("/isZcoordestEditable", true);
+                      // wizardModel.setProperty("/isZZcausalevalEditable", false);
+                      wizardModel.setProperty("/isIbanEditable", true);
+                      wizardModel.setProperty("/isBicEditable", true);
+                      wizardModel.setProperty("/ZZcausaleval", "");
+                      break;
+                  }
+                },
+                error: function (error) {
+                  self.getView().setBusy(false);
+                }
+              })
+          });
+        },
+
 
         functionReturnValueMC:function(obj){
           var self = this,

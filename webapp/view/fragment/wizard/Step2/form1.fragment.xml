@@ -19,8 +19,8 @@
 				<Title text="{i18n>wizardStep2SubTitle1}"/>
 				<ToolbarSpacer/>
 				<!-- enabled="{wizardModel>/isInChange}" -->
-        <zcontrolanagrafica:AnagraficaPopup viewId="{wizardModel>/viewId}"  enabled="false" />
-        <zcontrolmodpag:ModPagamentoPopup viewId="{wizardModel>/viewId}" Lifnr="{wizardModel>/Lifnr}" enabled="false"/>
+        <zcontrolanagrafica:AnagraficaPopup viewId="{wizardModel>/viewName}" enabled="{wizardModel>/isInChange}" />
+        <zcontrolmodpag:ModPagamentoPopup viewId="{wizardModel>/viewName}" Lifnr="{wizardModel>/Lifnr}" enabled="{wizardModel>/isInChange}"/>
 			</OverflowToolbar>
 		</headerToolbar>
 		<content>

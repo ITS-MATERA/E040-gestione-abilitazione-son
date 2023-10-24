@@ -283,6 +283,7 @@ sap.ui.define(
                           res[y]["Zchiaveabi"] === list[i]["Zchiaveabi"] &&
                           res[y]["ZstepAbi"] === list[i]["ZstepAbi"]
                         ) {
+                          list[i]["Datbi"] = res[y]["Datbi"];
                           oTable.setSelectedItem(oTable.getItems()[y]);
                         }
                       }

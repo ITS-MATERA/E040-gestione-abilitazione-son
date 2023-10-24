@@ -27,7 +27,7 @@
 	</VBox>
 	<Table
 		id="idTableStep3"
-		mode="MultiSelect"
+		mode="{= ${wizardModel>/isInChange} ? 'MultiSelect' : 'None' }"
 		fixedLayout="false"
 		contextualWidth="Auto"
 		growing="true"

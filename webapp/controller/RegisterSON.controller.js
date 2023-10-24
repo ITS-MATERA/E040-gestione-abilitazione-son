@@ -122,7 +122,10 @@ sap.ui.define(
           self.acceptOnlyNumber("iptCivico2");
 
           self.notEditable("idWizardFipos");
-
+          // console.log(self.getView().getId())
+          // console.log(self.getView().getViewName())
+          self.getView().getModel(WIZARD_MODEL).setProperty("/viewId", self.getView().getId());
+          self.getView().getModel(WIZARD_MODEL).setProperty("/viewName", self.getView().getViewName());
           this._wizard = this.getView().byId("CreateProductWizard");
         },
         onBeforeRendering: function () {
@@ -135,9 +138,9 @@ sap.ui.define(
             dataSONModel = self.getModel(DataSON_MODEL),
             oDataModel = self.getModel(),
             oView = self.getView();
-
-          self.getView().getModel(WIZARD_MODEL).setProperty("/viewId", self.getView().getId());
-          self.getView().getModel(WIZARD_MODEL).setProperty("/viewName", self.getView().getViewName());
+          //console.log(self.getView().getId());
+          // self.getView().getModel(WIZARD_MODEL).setProperty("/viewId", self.getView().getId());
+          // self.getView().getModel(WIZARD_MODEL).setProperty("/viewName", self.getView().getViewName());
           self.getView().getModel(WIZARD_MODEL).setProperty("/isInChange", true);  
           oView.setBusy(true);
 
@@ -155,7 +158,7 @@ sap.ui.define(
               }
             });
           }
-
+          
           self.getStrutturaAmministrativa(function(callback){
             if (!callback.error) {
                 self.getView().getModel(DataSON_MODEL).setProperty("/StruttAmministrativa", callback.data);

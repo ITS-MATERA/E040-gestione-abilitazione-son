@@ -92,7 +92,7 @@
                     <items>
                         <Label text="{i18n>wizardSONDataFipos}" class="sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
                         <!-- <Text  text="{DataModel>/Fipos}" /> -->
-                        <zcontrolPosFin:LinkPosizioneFinanziaria id="linkPosFinSpesa" anno="{DataModel>/Gjahr}" eos="S" fikrs="S001" fase="GEST" 
+                        <zcontrolPosFin:LinkPosizioneFinanziaria id="linkPosFinSpesa" anno="{DataModel>/Gjahr}" eos="S" fikrs="{AuthorityCheckSON>/FIKRS}" fase="GEST" 
                         reale="R" versione="D" fipex="{DataModel>/Fipos}" 
                         datbis="99991231" text="{DataModel>/Fipos}" semanticObject="ESAMINAMODIFICA"/>
                     </items>
@@ -101,7 +101,7 @@
                 <HBox >
                     <items>
                         <Label text="{i18n>wizardSONDataFistl}" class="sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
-                        <zcontrollinkSar:LinkSar id="linkSarBilancio" anno="{DataModel>/Gjahr}" eos="E" fikrs="S001" fase="GEST" SEM_OBJ="" reale="R" 
+                        <zcontrollinkSar:LinkSar id="linkSarBilancio" anno="{DataModel>/Gjahr}" eos="E" fikrs="{AuthorityCheckSON>/FIKRS}" fase="GEST" SEM_OBJ="" reale="R" 
                             versione="D" bilancio="" fictr="{DataModel>/Fistl}" datbis="99991231" text="{DataModel>/Fistl}"/>
                         <!-- <Text  text="{DataModel>/Fistl}" /> -->
                     </items>
