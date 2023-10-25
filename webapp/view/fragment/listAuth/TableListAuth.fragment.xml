@@ -3,6 +3,7 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:zcontrolPosFin="zsap.com.r3.cobi.s4.custposfin.z_s4_zposfinlink.controls"
+	xmlns:zcontrollinkSar="custlinksar.custlinksar.controls"
 >
 	<Table
 		id="idListAuthTable"
@@ -103,7 +104,21 @@
 						text="{AbilitazioneSet>Fipos}"
 						semanticObject="ESAMINAMODIFICA"
 					/>
-					<Text text="{AbilitazioneSet>Fistl}"/>
+					<zcontrollinkSar:LinkSar
+						id="linkSarBilancio"
+						anno="{AbilitazioneSet>Gjahr}"
+						eos="E"
+						fikrs="{AuthorityCheckAbilitazione>/FIKRS}"
+						fase="GEST"
+						SEM_OBJ=""
+						reale="R"
+						versione="D"
+						bilancio=""
+						fictr="{AbilitazioneSet>Fistl}"
+						datbis="99991231"
+						text="{AbilitazioneSet>Fistl}"
+					/>
+					<!-- <Text text="{AbilitazioneSet>Fistl}"/> -->
 					<Text text="{AbilitazioneSet>Zdesctipodisp3}"/>
 					<Text text="{
 						path: 'AbilitazioneSet>Datab',
