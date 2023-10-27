@@ -23,7 +23,7 @@
                                 'pattern': 'dd.MM.yyyy HH.mm'
                             }
                         }"	
-                        text="{WorkFlow>DescStato} da {WorkFlow>Utente}"  
+                        text="{= ${WorkFlow>ZstatoSop} === '00' ? ${i18n>ZstatoSop00Alt} : ${WorkFlow>DescStato}} dall'utente '{WorkFlow>Utente}'"  
                         userName="{WorkFlow>DescStato}"
                         icon="{= ${WorkFlow>IsLast} === 'X' ? 'sap-icon://favorite' : 'sap-icon://person-placeholder' }">
                 </c:TimelineItem>

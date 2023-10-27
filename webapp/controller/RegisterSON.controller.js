@@ -579,7 +579,8 @@ sap.ui.define(
 
           var arrayClassificazioneSonList = [];
           for (var i = 0; i < classificazioneSonList.length; i++) {
-            var item = classificazioneSonList[i];
+            var item = Object.assign({}, classificazioneSonList[i]);
+            // var item = classificazioneSonList[i];
             if (
               item.Id === 0 ||
               !item.ZcosDesc ||

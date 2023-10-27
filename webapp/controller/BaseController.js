@@ -456,15 +456,15 @@ sap.ui.define(
             return object;
           }
 
-          if (
-            !sZufficioCont.getValue() ||
-            sZufficioCont.getValue() === null ||
-            sZufficioCont.getValue() === ""
-          ) {
-            object.isValidate = false;
-            object.validationMessage = "msgNoRequiredField";
-            return object;
-          }
+          // if (
+          //   !sZufficioCont.getValue() ||
+          //   sZufficioCont.getValue() === null ||
+          //   sZufficioCont.getValue() === ""
+          // ) {
+          //   object.isValidate = false;
+          //   object.validationMessage = "msgNoRequiredField";
+          //   return object;
+          // }
 
           if (
             sCapitolo &&
@@ -1523,6 +1523,7 @@ sap.ui.define(
                       },
                       success: function (data, oResponse) {
                         var array = [],
+                          aCloneData = [],
                           sum = 0;
                         for (var i = 0; i < data.results.length; i++) {
                           var item = data.results[i];
@@ -1531,17 +1532,36 @@ sap.ui.define(
                           array.push(item);
                         }
                         var oModelJson = new sap.ui.model.json.JSONModel();
+                        if (array.length === 0) {
+                          array.push({
+                            Zchiavesop: null,
+                            Bukrs: null,
+                            Zetichetta: COS,
+                            ZstepSop: null,
+                            Zposizione: "",
+                            Zcos: null,
+                            ZcosDesc: null,
+                            ZimptotClass: null,
+                            Id: 1
+                          });
+                        }
                         oModelJson.setData(array);
                         self.getView().setModel(oModelJson, STEP3_LIST);
                         self
                           .getView()
                           .getModel(WIZARD_MODEL)
                           .setProperty("/Zimptotcos", sum.toFixed(2));
+                        
+                        aCloneData = aCloneData.concat(array);
+                        var oModelData = new sap.ui.model.json.JSONModel(aCloneData);
+                        self.getView().setModel(oModelData, CLASSIFICAZIONE_SON_DEEP);
                       },
                       error: function (error) {
                         var oModelJson = new sap.ui.model.json.JSONModel();
                         oModelJson.setData([]);
                         self.getView().setModel(oModelJson, STEP3_LIST);
+                        var oModelData = new sap.ui.model.json.JSONModel([]);
+                        self.getView().setModel(oModelData, CLASSIFICAZIONE_SON_DEEP);
                         wizard.previousStep();
                         self.handleButtonsVisibility(1);
                       },
@@ -1576,7 +1596,8 @@ sap.ui.define(
           if (!wizardModel.getProperty("/isInChange")) return;
 
           var len = Step3List.length;
-          if (len <= 0) {
+          var iFirstEmptyRow = Step3List.findIndex((x) => !x.Zcos || !x.ZimptotClass);
+          if (len <= 0 || iFirstEmptyRow > -1) {
             sap.m.MessageBox.error(oBundle.getText("msgNoRequiredField"), {
               title: oBundle.getText("titleDialogError"),
               onClose: function (oAction) {
@@ -2526,11 +2547,13 @@ sap.ui.define(
                         .getView()
                         .getModel(WIZARD_MODEL)
                         .setProperty("/isZZcausalevalEditable", true);
-                    } else {
-                      self
-                        .getView()
-                        .getModel(WIZARD_MODEL)
-                        .setProperty("/isZZcausalevalEditable", false);
+                      } else {
+                        self
+                          .getView()
+                          .getModel(WIZARD_MODEL)
+                          .setProperty("/isZZcausalevalEditable", false);
+                        wizardModel.setProperty("/ZZcausaleval", null);
+                        wizardModel.setProperty("/ZCausaleval", null);
                     }
                   },
                   error: function (error) {
@@ -5010,46 +5033,46 @@ sap.ui.define(
                     //   PosizioneFinanziaria:posizioneFinanziaria
                     // });
 
-                    if (
-                      oWizardModel.getData() &&
-                      oWizardModel.getData().PayMode !== null &&
-                      oWizardModel.getData().PayMode !== "" &&
-                      self.payMode.length > 0
-                    ) {
-                      self.getPayModeByLifnr(
-                        data.Lifnr,
-                        oWizardModel.getData().PayMode,
-                        false,
-                        function (callback) {
-                          if (!callback.error) {
-                            var record = callback.data[0];
-                            if (record) {
-                              oWizardModel.getData().Banks =
-                                oWizardModel.getData().Banks === ""
-                                  ? record.Banks
-                                  : oWizardModel.getData().Banks;
-                              oWizardModel.getData().Iban =
-                                oWizardModel.getData().Iban === ""
-                                  ? record.Iban
-                                  : oWizardModel.getData().Iban;
-                              oWizardModel.getData().Swift =
-                                oWizardModel.getData().Swift === ""
-                                  ? record.Swift
-                                  : oWizardModel.getData().Swift;
-                              oWizardModel.getData().Zcoordest =
-                                oWizardModel.getData().Zcoordest === ""
-                                  ? record.ZcoordEst
-                                  : oWizardModel.getData().Zcoordest;
+                    // if (
+                    //   oWizardModel.getData() &&
+                    //   oWizardModel.getData().PayMode !== null &&
+                    //   oWizardModel.getData().PayMode !== "" &&
+                    //   self.payMode.length > 0
+                    // ) {
+                    //   self.getPayModeByLifnr(
+                    //     data.Lifnr,
+                    //     oWizardModel.getData().PayMode,
+                    //     false,
+                    //     function (callback) {
+                    //       if (!callback.error) {
+                    //         var record = callback.data[0];
+                    //         if (record) {
+                    //           oWizardModel.getData().Banks =
+                    //             oWizardModel.getData().Banks === ""
+                    //               ? record.Banks
+                    //               : oWizardModel.getData().Banks;
+                    //           oWizardModel.getData().Iban =
+                    //             oWizardModel.getData().Iban === ""
+                    //               ? record.Iban
+                    //               : oWizardModel.getData().Iban;
+                    //           oWizardModel.getData().Swift =
+                    //             oWizardModel.getData().Swift === ""
+                    //               ? record.Swift
+                    //               : oWizardModel.getData().Swift;
+                    //           oWizardModel.getData().Zcoordest =
+                    //             oWizardModel.getData().Zcoordest === ""
+                    //               ? record.ZcoordEst
+                    //               : oWizardModel.getData().Zcoordest;
 
-                              oWizardModel.getData().Zcodprov =
-                                oWizardModel.getData().Zcodprov === ""
-                                  ? record.Zcodprov
-                                  : oWizardModel.getData().Zcodprov;
-                            }
-                          }
-                        }
-                      );
-                    }
+                    //           oWizardModel.getData().Zcodprov =
+                    //             oWizardModel.getData().Zcodprov === ""
+                    //               ? record.Zcodprov
+                    //               : oWizardModel.getData().Zcodprov;
+                    //         }
+                    //       }
+                    //     }
+                    //   );
+                    // }
                     // self.setModel(oDataSONModel, DataSON_MODEL);
                     
                     self.setModel(oWizardModel, WIZARD_MODEL);      
@@ -5345,7 +5368,8 @@ sap.ui.define(
 
           var arrayClassificazioneSonList = [];
           for (var i = 0; i < classificazioneSonList.length; i++) {
-            var item = classificazioneSonList[i];
+            var item = Object.assign({}, classificazioneSonList[i]);
+            // var item = classificazioneSonList[i];
             if (
               item.Id === 0 ||
               !item.ZcosDesc ||

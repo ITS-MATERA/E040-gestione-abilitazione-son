@@ -401,6 +401,10 @@ sap.ui.define(
                 .setProperty("/headerVisible", true);
               break;
             case oBundle.getText("btnWorkflow"):
+              // self
+              //   .getView()
+              //   .getModel(DETAIL_MODEL)
+              //   .setProperty("/showSelection", true);
               self
                 .getView()
                 .getModel(DETAIL_MODEL)
@@ -718,6 +722,10 @@ sap.ui.define(
               hasChangeList = false;
               successTitle = oBundle.getText("btnChangeSON");
               break;
+            case oBundle.getText("btnWorkflow"):
+                oTable = self.getView().byId("idTableWorkflow");
+                action = oBundle.getText("btnWorkflow");
+                break;
             default:
               console.log("default");
               break;

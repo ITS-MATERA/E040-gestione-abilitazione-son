@@ -63,7 +63,7 @@
 			<!-- ZufficioCont -->				
 				<VBox >
 					<items>
-						<Label  design="Bold" text="{i18n>filterNameZufficioCont}" required="true"></Label>
+						<Label  design="Bold" text="{i18n>filterNameZufficioCont}"></Label>
 							<FlexBox  alignItems="Start">								
 								<Input
 									id="fZufficioCont"
@@ -114,7 +114,7 @@
 			<!-- ZstatoSop -->				
 				<VBox >
 					<items>
-						<Label  design="Bold" text="{i18n>filterNameZstatoSop}" required = "true" tooltip = "required" labelFor="fExercise"></Label>
+						<Label  design="Bold" text="{i18n>filterNameZstatoSop}" tooltip = "required" labelFor="fExercise"></Label>
 						<ComboBox
 							id="fZstatoSop"
 							width="100%"
@@ -136,7 +136,7 @@
 			<!-- Zdesctipodisp3 -->					
 				<VBox >
 					<items>
-						<Label  design="Bold" text="{i18n>filterNameZdesctipodisp3}" required = "true" tooltip = "required" labelFor="fExercise"></Label>
+						<Label  design="Bold" text="{i18n>filterNameZdesctipodisp3}" tooltip = "required" labelFor="fExercise"></Label>
 						<ComboBox
 							id="fZdesctipodisp3"
 							width="100%"
@@ -156,7 +156,7 @@
 			<!-- Zricann -->						
 				<VBox >
 					<items>
-						<Label  design="Bold" text="{i18n>filterNameZricann}" required = "true" tooltip = "required" labelFor="fExercise"></Label>
+						<Label  design="Bold" text="{i18n>filterNameZricann}" tooltip = "required" labelFor="fExercise"></Label>
 						<ComboBox
 							id="fZricann"
 							width="100%"

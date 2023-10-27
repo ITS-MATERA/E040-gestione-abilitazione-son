@@ -486,9 +486,9 @@ sap.ui.define(
           // //TO DO
           // self._resetAfterAction();
           self._setEntityProperties();
-
+          var dtPicker = self.getView().byId("idDateAllChange");
+          dtPicker?.setValue(null);
           //var checklist = listAuthModel.getProperty("/checkList");
-          console.log("checklist BACK _setEntityProperties", checklist);
         },
 
         onChangeUpdateDateAll: function (oEvent) {
@@ -719,6 +719,8 @@ sap.ui.define(
           self.resetLog();
           var checkBox = self.getView().byId(CHECK_ALL);
           checkBox.setSelected(false);
+          var dtPicker = self.getView().byId("idDateAllChange");
+          dtPicker?.setValue(null);
         },
 
         _saveChanges: function (flag = "") {

@@ -352,7 +352,7 @@ sap.ui.define(
             ZufficioCont = addAuthModel.getProperty("/ZufficioCont"),
             Gjahr = addAuthModel.getProperty("/Gjahr");
 
-          if (Gjahr !== null && ZufficioCont !== null) {
+          if (Gjahr !== null && ZufficioCont) {
             var path = self.getModel().createKey(ZufficioCont_SET, {
               ZufficioCont: ZufficioCont,
               Gjahr: Gjahr,
@@ -376,11 +376,14 @@ sap.ui.define(
                   },
                 });
               });
+          } else {
+            addAuthModel.setProperty("/ZvimDescrufficio", null)
           }
         },
 
         fillZtipodisp3List: function () {
           var self = this,
+            oBundle = self.getResourceBundle(),
             addAuthModel = self.getModel(ADD_AUTH_MODEL),
             oDataModel = self.getModel(),
             oView = self.getView(),
@@ -396,6 +399,20 @@ sap.ui.define(
                   urlParameters: { ZufficioCont: ZufficioCont },
                   success: function (data, oResponse) {
                     oView.setBusy(false);
+                    var message =
+                      oResponse.headers["sap-message"] &&
+                      oResponse.headers["sap-message"] !== ""
+                        ? JSON.parse(oResponse.headers["sap-message"])
+                        : null;
+                    if (message && message.severity === "error") {
+                      sap.m.MessageBox.warning(message.message, {
+                        title: oBundle.getText("titleDialogWarning"),
+                        onClose: function (oAction) {
+                          return false;
+                        },
+                      });
+                      return false;
+                    }
                     data.results.splice(0, 1);
                     addAuthModel.setProperty("/Ztipodisp3List", data.results);
                   },
@@ -668,7 +685,7 @@ sap.ui.define(
 
               var isSuccess = self.isErrorInLog(arrayMessage);
               if (isSuccess) {
-                self.setPropertyGlobal(self.RELOAD_MODEL, "canRefresh", true);
+                self.setPropertyGlobal(self.RELOAD_MODEL_AUTH, "canRefresh", true);
                 self.onNavBack();
               }
             },

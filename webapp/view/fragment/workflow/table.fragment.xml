@@ -11,15 +11,16 @@
 		selectionChange="onSelectedItem"
 		updateFinished="onUpdateFinishedDetail"
 		items="{
-			path: 'listTable>/'
+			path: 'checkList>/'
 		}"
 	>
 		<headerToolbar>
 			<OverflowToolbar>
 				<Title
-					text="{detailModel>/detailTableTitle}"
+					text="{i18n>listSONPageTitle}"
 					class="sapUiTinyMargin titleSize"
 				/>
+				<!-- <Title text="{detailModel>/detailTableTitle}" class="sapUiTinyMargin titleSize" /> -->
 				<ToolbarSpacer/>
 			</OverflowToolbar>
 		</headerToolbar>
@@ -92,21 +93,21 @@
 		<items>
 			<ColumnListItem vAlign="Middle">
 				<cells>
-					<Text text="{listTable>Zchiavesop}"/>
+					<Text text="{checkList>Zchiavesop}"/>
 					<Text text="{
-						path: 'listTable>Zdatasop',
+						path: 'checkList>Zdatasop',
 						type: 'sap.ui.model.type.Date',
 						formatOptions: {
 							pattern: 'dd.MM.yyyy'
 						}
 					}"/>
-					<Text text="{listTable>Beneficiario}"/>
-					<Text text="{listTable>Fipos}"/>
-					<Text text="{listTable>Fistl}"/>
-					<Text text="{listTable>Zimptot}"/>
-					<Text text="{listTable>Ztipodisp3}"/>
+					<Text text="{checkList>Beneficiario}"/>
+					<Text text="{checkList>Fipos}"/>
+					<Text text="{checkList>Fistl}"/>
+					<Text text="{checkList>Zimptot}"/>
+					<Text text="{checkList>Ztipodisp3}"/>
 					<Text text="{
-						path: 'listTable>ZstatoSop',
+						path: 'checkList>ZstatoSop',
 						formatter: '.formatter.formatZstatoSop'
 					}"/>
 				</cells>
