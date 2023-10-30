@@ -1027,6 +1027,42 @@ sap.ui.define(
           } else return false;
         },
 
+        fillZtipodisp3ListWizard: function (value) {
+          var self = this,
+            wizardModel = self.getModel(WIZARD_MODEL),
+            oDataModel = self.getModel(),
+            oView = self.getView(),
+            Gjahr = wizardModel.getProperty("/Gjahr"),
+            ZufficioCont = wizardModel.getProperty("/ZufficioCont");
+            wizardModel.setProperty("/Ztipodisp3List", []);
+            //wizardModel.setProperty("/Ztipodisp3", null);
+            //Ztipodisp3
+          if (Gjahr !== null && ZufficioCont !== null) {
+            oView.setBusy(true);
+            self
+              .getModel()
+              .metadataLoaded()
+              .then(function () {
+                oDataModel.read("/" + Ztipodisp3_SET, {
+                  urlParameters: { Gjahr: Gjahr, ZufficioCont: ZufficioCont },
+                  success: function (data, oResponse) {
+                    
+                    wizardModel.setProperty("/Ztipodisp3List", data.results);
+                    if(value && value !== ""){
+                      var idWizardZdesctipodisp3 = self.getView().byId("idWizardZdesctipodisp3");
+                      if(idWizardZdesctipodisp3)
+                        idWizardZdesctipodisp3.setSelectedKey(value);
+                    } 
+                    oView.setBusy(false);                    
+                  },
+                  error: function (error) {
+                    oView.setBusy(false);
+                  },
+                });
+              });
+          } else return false;
+        },
+
         onLiveChange: function (oEvent) {
           var self = this,
             sNewValue,
@@ -5005,78 +5041,9 @@ sap.ui.define(
                     oWizardModel.getData().Zdstatodes = self._beneficiario?.Zdstatodes ?? "";
                     oWizardModel.getData().Zdscadenza = self._beneficiario?.Zdscadenza ?? null;
                     oWizardModel.getData().ZfermAmm = self._beneficiario?.ZfermAmm ?? "";
-
-                    //todo metti il flag fruttifero se ce a db.
-
-                    // var oDataSONModel = new JSONModel({
-                    //   ZstatoSop: data.ZstatoSop,
-                    //   Gjahr: data.Gjahr,
-                    //   ZufficioCont: data.ZufficioCont,
-                    //   Zdesctipodisp3: data.Zdesctipodisp3,
-                    //   Fipos: data.Fipos,
-                    //   Fistl: data.Fistl,
-                    //   Kostl: data.Kostl,
-                    //   Saknr: data.Saknr,
-                    //   Lifnr: data.Lifnr,
-                    //   NameFirst: self._beneficiario ? self._beneficiario.NameFirst : "",
-                    //   NameLast: self._beneficiario ? self._beneficiario.NameLast : "",
-                    //   Zimptot: data.Zimptot,
-                    //   ZimptotDivisa: data.ZimptotDivisa,
-                    //   TaxnumPiva: self._beneficiario ? self._beneficiario.TaxnumPiva : "",
-                    //   ZzragSoc: self._beneficiario ? self._beneficiario.ZzragSoc : "",
-                    //   TaxnumCf: self._beneficiario ? self._beneficiario.TaxnumCf : "",
-                    //   Zzamministr: self._amministrazione.Value,
-                    //   PayMode: self.payMode,
-                    //   FlagFruttifero: fruttiferoSet,
-                    //   NewPayMode: [],
-                    //   StruttAmministrativa: struttAmministrativa,
-                    //   PosizioneFinanziaria:posizioneFinanziaria
-                    // });
-
-                    // if (
-                    //   oWizardModel.getData() &&
-                    //   oWizardModel.getData().PayMode !== null &&
-                    //   oWizardModel.getData().PayMode !== "" &&
-                    //   self.payMode.length > 0
-                    // ) {
-                    //   self.getPayModeByLifnr(
-                    //     data.Lifnr,
-                    //     oWizardModel.getData().PayMode,
-                    //     false,
-                    //     function (callback) {
-                    //       if (!callback.error) {
-                    //         var record = callback.data[0];
-                    //         if (record) {
-                    //           oWizardModel.getData().Banks =
-                    //             oWizardModel.getData().Banks === ""
-                    //               ? record.Banks
-                    //               : oWizardModel.getData().Banks;
-                    //           oWizardModel.getData().Iban =
-                    //             oWizardModel.getData().Iban === ""
-                    //               ? record.Iban
-                    //               : oWizardModel.getData().Iban;
-                    //           oWizardModel.getData().Swift =
-                    //             oWizardModel.getData().Swift === ""
-                    //               ? record.Swift
-                    //               : oWizardModel.getData().Swift;
-                    //           oWizardModel.getData().Zcoordest =
-                    //             oWizardModel.getData().Zcoordest === ""
-                    //               ? record.ZcoordEst
-                    //               : oWizardModel.getData().Zcoordest;
-
-                    //           oWizardModel.getData().Zcodprov =
-                    //             oWizardModel.getData().Zcodprov === ""
-                    //               ? record.Zcodprov
-                    //               : oWizardModel.getData().Zcodprov;
-                    //         }
-                    //       }
-                    //     }
-                    //   );
-                    // }
-                    // self.setModel(oDataSONModel, DataSON_MODEL);
                     
                     self.setModel(oWizardModel, WIZARD_MODEL);      
-                    self.fillZtipodisp3List();              
+                    self.fillZtipodisp3ListWizard(self.getModel(WIZARD_MODEL).getProperty("/Ztipodisp3"));              
                     
                     self.getClassificazioneFRomFillWizard(
                       self.getView().getModel(WIZARD_MODEL)
@@ -5084,8 +5051,9 @@ sap.ui.define(
                     self.getClassificazioneFRomFillWizard2(
                       self.getView().getModel(WIZARD_MODEL)
                     );
+
                     self.getView().setBusy(false);
-                  }, 4000);
+                  }, 4500);
                 },
                 error: function (error) {
                   console.log(error);
